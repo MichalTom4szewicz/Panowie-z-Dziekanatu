@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from './chat.service';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +8,7 @@ import { ChatService } from './chat.service';
 export class AppComponent implements OnInit {
   title = 'clientApp';
 
-  constructor(/*public chatService: ChatService*/) {}
+  constructor() {}
 
-  ngOnInit() {
-    // this.chatService.sendMessage("DUPA")
-  }
+  ngOnInit() {}
 }
