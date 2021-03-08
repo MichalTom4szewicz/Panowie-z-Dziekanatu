@@ -13,9 +13,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ClassesComponent } from './components/enrollment-for-classes/classes/classes.component';
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
