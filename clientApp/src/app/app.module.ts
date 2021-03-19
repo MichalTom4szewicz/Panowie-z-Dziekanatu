@@ -14,9 +14,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ClassesComponent } from './components/enrollment-for-classes/classes/classes.component';
+import { ClassGridComponent } from './components/enrollment-for-classes/class-grid/class-grid.component';
+import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid/class-grid-day/class-grid-day.component';
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridComponent, ClassGridDayComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,

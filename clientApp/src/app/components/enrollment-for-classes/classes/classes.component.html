@@ -1,7 +1,7 @@
-<mat-card class="class-box" [ngClass]="{'project': class.typ === 'P', 'exercise': class.typ === 'C', 'seminar': class.typ === 'S', 'laboratories': class.typ === 'L', 'lecture': class.typ === 'W'}">
-    <p>{{class.startTime.hours}}:{{class.startTime.minutes}}-{{class.endTime.hours}}:{{class.endTime.minutes}}</p>
-    <p><b>{{class.name}}</b></p>
-    <p>{{class.building}} / {{class.room}}</p>
-    <p>{{class.host}}</p>
-    <p>{{class.typ}}</p>
+<mat-card [ngClass]="{'project': classes.typ === 'P', 'exercise': classes.typ === 'C', 'seminar': classes.typ === 'S', 'laboratories': classes.typ === 'L', 'lecture': classes.typ === 'W'}">
+    <p>{{getTime(classes.startTime)}}-{{getTime(classes.endTime)}}</p>
+    <p><b>{{classes.name}}</b></p>
+    <p>{{classes.building}} / {{classes.room}}</p>
+    <p>{{classes.host}}</p>
+    <p>{{classes.typ}}</p>
 </mat-card>

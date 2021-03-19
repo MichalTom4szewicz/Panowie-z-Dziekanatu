@@ -1,3 +1,4 @@
+import { Time } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Classes } from 'src/app/domain/classes';
 
@@ -8,10 +9,19 @@ import { Classes } from 'src/app/domain/classes';
 })
 export class ClassesComponent implements OnInit {
 
-  @Input() class: Classes;
+  @Input() classes: Classes;
 
   constructor() { }
 
   ngOnInit(): void {}
 
+  public getTime(time: Time): string {
+    return time.hours.toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    }) + ":" + time.minutes.toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    });
+  }
 }
