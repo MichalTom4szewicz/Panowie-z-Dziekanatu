@@ -13,12 +13,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDialogModule } from '@angular/material/dialog';
+
 import { ClassesComponent } from './components/enrollment-for-classes/classes/classes.component';
-import { ClassGridComponent } from './components/enrollment-for-classes/class-grid/class-grid.component';
-import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid/class-grid-day/class-grid-day.component';
+import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
+import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
+import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
+import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridComponent, ClassGridDayComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -31,6 +36,8 @@ import { ClassGridDayComponent } from './components/enrollment-for-classes/class
 		MatInputModule,
 		MatButtonModule,
 		MatIconModule,
+		MatGridListModule,
+		MatDialogModule
 	],
 	providers: [],
 	bootstrap: [AppComponent],

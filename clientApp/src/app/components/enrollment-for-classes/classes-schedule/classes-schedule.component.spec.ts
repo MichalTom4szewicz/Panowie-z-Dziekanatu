@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClassGridComponent } from './class-grid.component';
+import { ClassesScheduleComponent } from './classes-schedule.component';
 
-describe('ClassGridComponent', () => {
-  let component: ClassGridComponent;
-  let fixture: ComponentFixture<ClassGridComponent>;
+describe('ClassesScheduleComponent', () => {
+  let component: ClassesScheduleComponent;
+  let fixture: ComponentFixture<ClassesScheduleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClassGridComponent ]
+      declarations: [ ClassesScheduleComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ClassGridComponent);
+    fixture = TestBed.createComponent(ClassesScheduleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

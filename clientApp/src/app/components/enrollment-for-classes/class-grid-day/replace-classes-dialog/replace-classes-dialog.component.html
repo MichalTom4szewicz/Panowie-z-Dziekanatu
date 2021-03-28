@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Wybrane zajęcia kolidują już z wybranymi</h1>
+<div mat-dialog-content>
+  <pzd-classes *ngFor="let class of classes" [classes]="class" class="classes-display"></pzd-classes>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doNothing()">Cofnij</button>
+  <button mat-button (click)="replace()">Zastąp</button>
+</div>

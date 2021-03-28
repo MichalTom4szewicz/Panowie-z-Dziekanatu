@@ -7,6 +7,6 @@
         <p *ngFor="let time of hours">{{getHour(time)}}</p>
     </div>
     <div *ngFor="let listOfClasses of sortedClasses">
-        <pzd-classes (click)="select()" *ngFor="let classes of listOfClasses" class="classes-display" [ngStyle]="getPosition(classes)" [classes]="classes"></pzd-classes>
+        <pzd-classes (click)="select(classes)" *ngFor="let classes of listOfClasses" class="classes-display" [ngStyle]="getPosition(classes[0])" [classes]="classes[0]" [status]="classes[1]"></pzd-classes>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<mat-card [ngClass]="{'project': classes.typ === 'P', 'exercise': classes.typ === 'C', 'seminar': classes.typ === 'S', 'laboratories': classes.typ === 'L', 'lecture': classes.typ === 'W'}">
+<mat-card [ngClass]="getClass()">
     <p>{{getTime(classes.startTime)}}-{{getTime(classes.endTime)}}</p>
     <p><b>{{classes.name}}</b></p>
     <p>{{classes.building}} / {{classes.room}}</p>

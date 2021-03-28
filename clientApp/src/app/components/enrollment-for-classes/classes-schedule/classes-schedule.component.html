@@ -1,0 +1,43 @@
+<mat-grid-list cols="22" rowHeight="15px" gutterSize="0px">
+    <mat-grid-tile
+        [colspan]="1"
+        [rowspan]="1">
+    </mat-grid-tile>
+    <mat-grid-tile
+        *ngFor="let day of weekDays"
+        [colspan]="3"
+        [rowspan]="1">
+        {{day}}
+    </mat-grid-tile>
+    <mat-grid-tile
+        [colspan]="1"
+        [rowspan]="42">
+        <mat-grid-list cols="1" rowHeight="15px" gutterSize="0px" class="nested-grid">
+            <div *ngFor="let hour of hours">
+                <mat-grid-tile
+                    [colspan]="1"
+                    [rowspan]="1">
+                    {{getHour(hour)}}
+                </mat-grid-tile>
+                <mat-grid-tile
+                    [colspan]="1"
+                    [rowspan]="2">
+                </mat-grid-tile>
+            </div>
+        </mat-grid-list>
+    </mat-grid-tile>
+    <mat-grid-tile
+        *ngFor="let scheduleForOneDay of schedule"
+        [colspan]="3"
+        [rowspan]="42">
+        <mat-grid-list cols="1" rowHeight="0.75px" gutterSize="0px" class="nested-grid">
+            <mat-grid-tile
+                *ngFor="let classes of scheduleForOneDay"
+                [colspan]="1"
+                [rowspan]="classes.rows">
+                <pzd-classes *ngIf="classes.isNotEmpty" [classes]="classes.classes"></pzd-classes>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-grid-tile>
+  </mat-grid-list>
+  
