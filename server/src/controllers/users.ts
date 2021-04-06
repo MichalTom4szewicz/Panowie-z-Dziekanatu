@@ -1,4 +1,4 @@
-import {createConnection} from "typeorm";
+import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
 
@@ -9,19 +9,28 @@ const jwt = require('jsonwebtoken')
 
 
 usersRouter.get('/', async (request: Request, response: Response) => {
-  createConnection().then(async connection => {
-    const users = await connection.manager.find(User);
-    return response.json(users)
-  })
-  .catch(error => logger.error(error));
+  await getConnection()
+    .createQueryBuilder()
+    .select("user")
+    .from(User, "user")
+    .execute()
+    .then(items => {
+      return response.json(items)
+    })
+    .catch(error => logger.error(error));
 })
 
 usersRouter.get('/:id', async (request: Request, response: Response) => {
-  createConnection().then(async connection => {
-    const user = await connection.manager.findOne(request.params.id);
-    return response.json(user)
-  })
-  .catch(error => logger.error(error));
+  await getConnection()
+    .createQueryBuilder()
+    .select("user")
+    .from(User, "user")
+    .where("user.id = :id", {id: request.params.id})
+    .execute()
+    .then(item => {
+      return response.json(item)
+    })
+    .catch(error => logger.error(error));
 })
 
 
