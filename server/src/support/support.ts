@@ -39,7 +39,7 @@ export function compareClasses(c1: any, c2: any): number{
     return sTime1 - sTime2
 }
 
-export function alter(x: any, className: string): any {
+export function alterKeys(x: any, className: string): any {
     let new_x = []
     for(let item of x) {
         let new_item = {}
@@ -52,4 +52,33 @@ export function alter(x: any, className: string): any {
     }
 
     return new_x;
+}
+
+export function processCollisions(newItems: Class[]):Array<Class[]> {
+    let nonColliding: Array<Class[]>  = []
+    let wstawiono = false
+    let koliduje = false
+
+    nonColliding.push([newItems[0]])
+    for(let i=1; i<newItems.length; i++) {
+        for(let j=0; j<nonColliding.length; j++) {
+            for(let k=0; k<nonColliding[j].length; k++) {
+                if(classesCollide(newItems[i], nonColliding[j][k])) {
+                koliduje = true;
+                }
+            }
+            if(!koliduje) {
+                nonColliding[j].push(newItems[i]);
+                wstawiono = true;
+                koliduje = false;
+                break;
+            }
+            koliduje = false;
+        }
+        if(!wstawiono) {
+            nonColliding.push([newItems[i]]);
+        }
+        wstawiono = false;
+    }
+    return nonColliding
 }

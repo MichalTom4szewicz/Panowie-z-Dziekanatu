@@ -1,12 +1,12 @@
-import {createConnection, getConnection} from "typeorm";
+import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
 import {Request, Response} from "express"
-import {classesCollide, compareClasses, alter} from "../support/support"
+import {compareClasses, alterKeys, processCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
 
-
+// example: host:8000/classes/weekDay?weekDay=wDay
 classesRouter.get('/weekDay', async (request: Request, response: Response) => {
   await getConnection()
     .createQueryBuilder()
@@ -15,36 +15,11 @@ classesRouter.get('/weekDay', async (request: Request, response: Response) => {
     .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
     .execute()
     .then(items => {
-      let newItems = alter(items, "class");
+      let newItems = alterKeys(items, "class");
       newItems.sort(compareClasses);
+      newItems = processCollisions(newItems);
 
-      let nonColliding: Array<Class[]>  = []
-      let wstawiono = false
-      let koliduje = false
-
-      nonColliding.push([newItems[0]])
-      for(let i=1; i<newItems.length; i++) {
-          for(let j=0; j<nonColliding.length; j++) {
-            for(let k=0; k<nonColliding[j].length; k++) {
-              if(classesCollide(newItems[i], nonColliding[j][k])) {
-                koliduje = true;
-              }
-            }
-            if(!koliduje) {
-              nonColliding[j].push(newItems[i]);
-              wstawiono = true;
-              koliduje = false;
-              break;
-            }
-            koliduje = false;
-          }
-          if(!wstawiono) {
-            nonColliding.push([newItems[i]]);
-          }
-          wstawiono = false;
-      }
-
-      return response.json(nonColliding)
+      return response.json(newItems)
     })
     .catch(error => logger.error(error));
 })
