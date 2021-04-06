@@ -1,9 +1,33 @@
 import {createConnection, getConnection} from "typeorm";
 import {Class} from "../entity/Class";
 import {Request, Response} from "express"
+import {classesCollide, compareClasses, alter} from "../support/support"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
+
+
+classesRouter.get('/weekDay', async (request: Request, response: Response) => {
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
+    .execute()
+    .then(items => {
+      let newItems = alter(items, "class");
+
+      newItems.sort(compareClasses)
+
+      // for(let i=0; i<newItems.length-1; i++) {
+      //   tu cos zaraz wymysle
+      // }
+
+
+      return response.json(newItems)
+    })
+    .catch(error => logger.error(error));
+})
 
 classesRouter.get('/', async (request: Request, response: Response) => {
   await getConnection()
@@ -29,6 +53,8 @@ classesRouter.get('/:id', async (request: Request, response: Response) => {
     })
     .catch(error => logger.error(error));
 })
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 classesRouter.delete('/deleteDummy', async (request: Request, response: Response) => {
   await getConnection()
