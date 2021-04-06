@@ -18,17 +18,12 @@ classesRouter.get('/weekDay', async (request: Request, response: Response) => {
       let newItems = alter(items, "class");
       newItems.sort(compareClasses);
 
-      let index = 0;
       let nonColliding: Array<Class[]>  = []
       let wstawiono = false
       let koliduje = false
 
       nonColliding.push([newItems[0]])
-      // nonColliding.push([])
       for(let i=1; i<newItems.length; i++) {
-        // if(nonColliding[index].length === 0) {
-        //   nonColliding[index].push(newItems[i])
-        // } else {
           for(let j=0; j<nonColliding.length; j++) {
             for(let k=0; k<nonColliding[j].length; k++) {
               if(classesCollide(newItems[i], nonColliding[j][k])) {
@@ -47,7 +42,6 @@ classesRouter.get('/weekDay', async (request: Request, response: Response) => {
             nonColliding.push([newItems[i]]);
           }
           wstawiono = false;
-        // }
       }
 
       return response.json(nonColliding)
