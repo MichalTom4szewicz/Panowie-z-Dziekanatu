@@ -1,4 +1,6 @@
 import app from'./app'
+import {createConnection, Connection} from "typeorm";
+
 const http = require('http')
 const logger = require('./utils/logger')
 
@@ -6,7 +8,11 @@ const server = http.createServer(app)
 const PORT = 8000;
 
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
+  await createConnection()
+    .then(() => {
+      logger.info("Created database connections pool");
+    });
   logger.info(`Server running on port ${PORT}`)
 })
 
