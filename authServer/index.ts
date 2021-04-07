@@ -1,16 +1,24 @@
-import express, { Request, Response, Router } from 'express';
+import express from 'express';
+import { UsersController } from "./controllers/UsersController";
+import { AuthenticationController } from "./controllers/AuthenticationController";
+import {ConfigHelper} from "./helpers/ConfigHelper";
+import {AuthServerBuilder, morganLogger} from "./helpers/AuthServerBuilder";
 
-const PORT = 4848;
+ConfigHelper.init();
 
 const app = express();
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  return res.status(200).json({
-    success: true,
-  });
-});
+const controllers = [UsersController, AuthenticationController]
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+const authServer = new AuthServerBuilder()
+  .setCertPath(ConfigHelper.config.CRT_PATH)
+  .setKeyPath(ConfigHelper.config.KEY_PATH)
+  .setControllers(controllers)
+  .setMorganLogger(morganLogger)
+  .setPort(ConfigHelper.config.AUTH_API_PORT)
+  .setRequestListener(true)
+  .setJsonParser(true)
+  .build();
+
+authServer.start();

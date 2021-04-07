@@ -1,0 +1,17 @@
+{
+  "name": "default",
+  "type": "sqlite",
+  "database": "db.sqlite",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "./database/entities/**/*.ts"
+  ],
+  "migrations": [
+    "./database/migrations/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "./database/migrations"
+  }
+}
+

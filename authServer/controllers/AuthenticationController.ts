@@ -1,10 +1,64 @@
 import jwt from 'jsonwebtoken';
-import {Request, Response} from "express";
+import {compare} from 'bcrypt';
+import {Request, Response, Router} from "express";
+import {UsersRepository} from "../repositories/UsersRepository";
+import {JwtHelper} from "../helpers/JwtHelper";
+import {SqliteConnection} from "../database/SqliteConnection";
+import {BaseController} from "./BaseController";
 
-export class AuthenticationController {
+export class AuthenticationController extends BaseController {
+  constructor(private usersRepository: UsersRepository) {
+    super();
+  }
 
-  public authenticate(request: Request, response: Response): void {
-    const { username, password } = request.body;
+  public async authenticate(request: Request, response: Response): Promise<Response> {
+    try {
+      const { username, password } = request.body;
+      if (username && password) {
+        const user = await this.usersRepository.getUserById(username);
+        if (user) {
+          const isPasswordOk = await compare(password, user.password);
+          if (isPasswordOk) {
+            const token = JwtHelper.sign(user);
+            return response.status(200).json({
+              success: true,
+              token
+            });
+          }
+        }
+      }
+      return response.status(200).json({
+        success: false,
+        result: "Incorrect username or password"
+      });
+    } catch (e) {
+      return response.status(200).json({
+        success: false,
+        result: "Incorrect username or password"
+      });
+    }
+  }
 
+  public async verifyToken(request: Request, response: Response): Promise<Response> {
+    const token = request.header('token');
+    if (token) {
+      const x = jwt.decode(token, {
+        json: true
+      });
+      return response.status(200).json(x);
+    }
+    return response.status(200).json({
+      success: false
+    });
+  }
+
+  public static addRouterPaths(router: Router): void {
+    router.post('/authenticate', async (req: Request, res: Response) => {
+      return new AuthenticationController(new UsersRepository(await SqliteConnection.getConnection())).authenticate(req, res);
+    });
+
+    router.get('/verify', async (req: Request, res: Response) => {
+      return new AuthenticationController(new UsersRepository(await SqliteConnection.getConnection())).verifyToken(req, res);
+    });
   }
 }

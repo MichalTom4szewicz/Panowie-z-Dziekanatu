@@ -1,16 +1,39 @@
-export interface User {
-  username: string,
-  password: string,
+import {Connection, Repository} from "typeorm";
+import {User} from "../database/entities/User";
+
+export class TokenContent {
+  username: string;
+  password: string;
 }
 
 export class UsersRepository {
-  private _users: User[] = [];
+  private readonly _repository: Repository<User>;
 
-  public getUserByUsername(username: string): User {
-    return this._users.find(user => user.username === username);
+  constructor(private _connection: Connection) {
+    this._repository = this._connection.getRepository(User);
   }
 
-  public addUser(user: User): void {
-    this._users.push(user);
+  public async getUsers(): Promise<User[]> {
+    return this._repository.find();
+  }
+
+  public async addUser(user: TokenContent): Promise<void> {
+    try {
+      await this._repository.save(user as User);
+    } catch (e) {
+      return Promise.reject(new Error("Cannot save user"));
+    }
+  }
+
+  public async getUserById(id: string): Promise<TokenContent> {
+    try {
+      const result = await this._repository.findOneOrFail(id);
+      return {
+        username: result.username,
+        password: result.password
+      };
+    } catch (e) {
+      return Promise.reject(new Error("No such user"));
+    }
   }
 }
