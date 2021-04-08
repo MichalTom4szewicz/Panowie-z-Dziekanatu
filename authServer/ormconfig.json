@@ -5,13 +5,13 @@
   "synchronize": true,
   "logging": false,
   "entities": [
-    "./database/entities/**/*.ts"
+    "./src/database/entities/**/*.ts"
   ],
   "migrations": [
-    "./database/migrations/*.ts"
+    "./src/database/migrations/*.ts"
   ],
   "cli": {
-    "migrationsDir": "./database/migrations"
+    "migrationsDir": "./src/database/migrations"
   }
 }
 

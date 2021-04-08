@@ -1,3 +1,7 @@
 node_modules/
 dist/
 .idea/
+authServer/src/security/*.pem
+coverage/
+test-results/
+.nyc_output/
