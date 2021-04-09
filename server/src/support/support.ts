@@ -46,11 +46,11 @@ export function compareCollisions(c1: any, c2: any): number{
 export function alterKeys(x: any, className: string): any {
     let new_x = []
     for(let item of x) {
-        let new_item = {}
+        let new_item: {[key: string]: any} = {}
         for(let it of Object.keys(item)) {
             let copy = it.slice();
             let key = copy.replace(className+"_", "");
-            eval(`new_item[key] = item[copy]`);
+            new_item[key] = item[copy];
         }
         new_x.push(new_item);
     }
