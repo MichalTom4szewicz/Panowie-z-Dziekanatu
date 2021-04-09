@@ -26,15 +26,19 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     if(c1End >= c2Start && c1End <= c2End) {
         return true
     }
-
-    // console.log("false")
-
     return false
 }
 
 export function compareClasses(c1: any, c2: any): number{
     const sTime1 = parseInt(c1.startTime.replace(":", ""), 10);
     const sTime2 = parseInt(c2.startTime.replace(":", ""), 10);
+
+    return sTime1 - sTime2
+}
+
+export function compareCollisions(c1: any, c2: any): number{
+    const sTime1 = parseInt(c1[1].startTime.replace(":", ""), 10);
+    const sTime2 = parseInt(c2[1].startTime.replace(":", ""), 10);
 
     return sTime1 - sTime2
 }
@@ -56,29 +60,60 @@ export function alterKeys(x: any, className: string): any {
 
 export function processCollisions(newItems: Class[]):Array<Class[]> {
     let nonColliding: Array<Class[]>  = []
-    let wstawiono = false
-    let koliduje = false
+    let inserted = false
+    let isColliding = false
 
     nonColliding.push([newItems[0]])
     for(let i=1; i<newItems.length; i++) {
         for(let j=0; j<nonColliding.length; j++) {
             for(let k=0; k<nonColliding[j].length; k++) {
                 if(classesCollide(newItems[i], nonColliding[j][k])) {
-                koliduje = true;
+                isColliding = true;
                 }
             }
-            if(!koliduje) {
+            if(!isColliding) {
                 nonColliding[j].push(newItems[i]);
-                wstawiono = true;
-                koliduje = false;
+                inserted = true;
+                isColliding = false;
                 break;
             }
-            koliduje = false;
+            isColliding = false;
         }
-        if(!wstawiono) {
+        if(!inserted) {
             nonColliding.push([newItems[i]]);
         }
-        wstawiono = false;
+        inserted = false;
     }
     return nonColliding
+}
+
+export function listCollisions(newItems: any): object {
+    const processedItems = processCollisions(newItems);
+
+    // array of map items
+    let tmpMap = [];
+    for(let i=0; i< processedItems.length; i++) {
+        for(let j=0; j< processedItems[i].length; j++) {
+            const item = processedItems[i][j];
+            let newMapValue = []
+            for(let k=0; k< processedItems.length; k++) {
+                for(let l=0; l< processedItems[k].length; l++) {
+                    if(i !== k) {
+                        newMapValue.push([k, l]);
+                    }
+                }
+            }
+            tmpMap.push({1: item, 2:newMapValue});
+        }
+    }
+    tmpMap.sort(compareCollisions);
+
+    let map: {
+        [key: string]: number[][]
+    } = {}
+
+    for(let i=0; i < tmpMap.length; i++) {
+        map[tmpMap[i][1].groupKey] = tmpMap[i][2];
+    }
+    return map
 }
