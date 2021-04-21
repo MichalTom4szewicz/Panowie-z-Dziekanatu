@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import {compare} from 'bcrypt';
 import {Request, Response, Router} from "express";
 import {UsersRepository} from "../repositories/UsersRepository";
@@ -42,13 +41,23 @@ export class AuthenticationController extends BaseController {
   public async verifyToken(request: Request, response: Response): Promise<Response> {
     const token = request.header('token');
     if (token) {
-      const x = jwt.decode(token, {
-        json: true
-      });
-      return response.status(200).json(x);
+      try {
+        const decodedToken = JwtHelper.decodeToken(token);
+        return response.status(200).json({
+          success: true,
+          token: decodedToken
+        });
+      }
+      catch (e) {
+        return response.status(200).json({
+          success: false,
+          token: null
+        })
+      }
     }
     return response.status(200).json({
-      success: false
+      success: false,
+      token: null
     });
   }
 

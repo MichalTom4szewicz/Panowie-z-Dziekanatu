@@ -4,11 +4,10 @@ import { UserRole } from "../entities/UserRole";
 import {RolePermissionMapping} from "../../dataModel/RolePermissionMapping";
 import {UserPermission} from "../entities/UserPermission";
 import {Permission} from "../../dataModel/Permission";
-import {User} from "../entities/User";
 
 export class InsertRoles1617733023847 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
-        const entities = Role.values.map((userRole) => {
+        const entities = Role.values.map((userRole: Role) => {
             return new UserRole(
               userRole.id,
               userRole.name,
@@ -23,8 +22,11 @@ export class InsertRoles1617733023847 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.manager.delete(User, 1);
-        await queryRunner.manager.delete(User, 2);
+        const userRoleDeletes = Role.values
+          .map((role: Role) => queryRunner.manager.delete(UserRole, role.id));
+        const permissionDeletes = Permission.values
+          .map((permission: Permission) => queryRunner.manager.delete(UserPermission, permission.id));
 
+        await Promise.all([...userRoleDeletes, ...permissionDeletes]);
     }
 }

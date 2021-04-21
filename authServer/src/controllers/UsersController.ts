@@ -3,6 +3,9 @@ import {Request, Response, Router} from "express";
 import {EncryptionHelper} from "../helpers/EncryptionHelper";
 import {SqliteConnection} from "../database/SqliteConnection";
 import {BaseController} from "./BaseController";
+import {User} from "../database/entities/User";
+import {PermissionAccessHelper} from "../helpers/PermissionAccessHelper";
+import {Permission} from "../dataModel/Permission";
 
 export class UsersController extends BaseController {
   constructor(private usersRepository: UsersRepository) {
@@ -25,11 +28,17 @@ export class UsersController extends BaseController {
 
   public async getUsers(request: Request, response: Response): Promise<Response> {
     try {
-      const users = await this.usersRepository.getUsers();
+      const users = await this.usersRepository.getUsers()
+      const result = users.map((user: User) => {
+        return {
+          username: user.username,
+          userRole: user.userRole
+        };
+      });
       return response.status(200).json({
         success: true,
-        result: users
-      })
+        result
+      });
     } catch (e) {
       return response.status(500).json({
         success: false,
@@ -43,10 +52,14 @@ export class UsersController extends BaseController {
       const userId = request.params.id as string;
       if (userId) {
         const user = await this.usersRepository.getUserById(userId);
+        const result = {
+          username: user.username,
+          role: user.role
+        };
         return response.status(200).json({
           success: true,
-          result: user
-        })
+          result
+        });
       } else {
         return response.status(200).json({
           success: false,
@@ -67,7 +80,7 @@ export class UsersController extends BaseController {
       return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).addUser(req, res);
     });
     router.get('/user/:id', async (req: Request, res: Response) => {
-      return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).getUserById(req, res);
+        return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).getUserById(req, res);
     });
     router.get('/users', async (req: Request, res: Response) => {
       return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).getUsers(req, res);

@@ -1,9 +1,11 @@
 import {Connection, Repository} from "typeorm";
 import {User} from "../database/entities/User";
+import {UserRole} from "../database/entities/UserRole";
 
 export class TokenContent {
   username: string;
   password: string;
+  role: UserRole
 }
 
 export class UsersRepository {
@@ -14,12 +16,17 @@ export class UsersRepository {
   }
 
   public async getUsers(): Promise<User[]> {
-    return this._repository.find();
+    return this._repository.find({ relations: ['userRole'] });
   }
 
   public async addUser(user: TokenContent): Promise<void> {
     try {
-      await this._repository.save(user as User);
+      const savedUser = {
+        username: user.username,
+        password: user.password,
+        userRole: user.role
+      };
+      await this._repository.save(savedUser as User);
     } catch (e) {
       return Promise.reject(new Error("Cannot save user"));
     }
@@ -27,10 +34,11 @@ export class UsersRepository {
 
   public async getUserById(id: string): Promise<TokenContent> {
     try {
-      const result = await this._repository.findOneOrFail(id);
+      const result = await this._repository.findOneOrFail(id, { relations: ['userRole'] });
       return {
         username: result.username,
-        password: result.password
+        password: result.password,
+        role: result.userRole
       };
     } catch (e) {
       return Promise.reject(new Error("No such user"));
