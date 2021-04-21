@@ -4,7 +4,7 @@ import { AuthenticationService } from '../../services/auth/authentication.servic
 import { Router } from '@angular/router';
 
 @Component({
-	selector: 'app-login',
+	selector: 'pzd-login',
 	templateUrl: './login.component.html',
 	styleUrls: ['./login.component.sass'],
 })
