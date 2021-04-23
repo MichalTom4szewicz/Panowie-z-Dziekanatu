@@ -1,4 +1,8 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
+
+import {Course} from "./Course"
+import {HostingRequest} from "./HostingRequest"
+import {Class} from "./Class"
 
 @Entity()
 export class User {
@@ -14,5 +18,14 @@ export class User {
 
     @Column()
     age!: number;
+
+    @OneToMany(() => Course, course => course.user)
+    courses!: Course[];
+
+    @OneToMany(() => HostingRequest, hr => hr.user)
+    hostingRequests!: HostingRequest[];
+
+    @OneToMany(() => Class, cls => cls.host)
+    classes!: Class[];
 
 }

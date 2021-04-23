@@ -1,4 +1,8 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
+
+import {HostingRequest} from "./HostingRequest"
+import {Course} from "./Course"
+import {User} from "./User"
 
 @Entity()
 export class Class {
@@ -18,8 +22,8 @@ export class Class {
     @Column()
     endTime!:      string;
 
-    @Column()
-    host!:         string;
+    // @Column()
+    // host!:         string;
 
     @Column()
     building!:     string;
@@ -32,5 +36,14 @@ export class Class {
 
     @Column()
     typ!:          string;
+
+    @ManyToOne(() => User, user => user.classes)
+    host!: User;
+
+    @ManyToOne(() => Course, course => course.classes)
+    course!: Course;
+
+    @OneToMany(() => HostingRequest, hr => hr.class)
+    hostingRequests!: HostingRequest[];
 
 }
