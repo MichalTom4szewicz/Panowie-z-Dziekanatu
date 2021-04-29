@@ -1,10 +1,11 @@
-import express, {Express, Handler, Router} from "express";
+import express, {Express, Handler, Request, Response, Router} from "express";
 import {BaseController} from "../controllers/BaseController";
 import morgan, {FormatFn, TokenIndexer} from "morgan";
 import {createServer} from "https";
 import {readFileSync} from "fs";
 import {AuthServer} from "../AuthServerBuilder";
 import {IncomingMessage, ServerResponse} from "http";
+import cors, { CorsOptions } from 'cors';
 
 function colorOutput(statusCode: string) {
   if (statusCode) {
@@ -112,6 +113,25 @@ export class AuthServerBuilder {
 
   private prepareRouterForApp(app: Express) {
     const router = Router();
+    const options: CorsOptions = {
+      allowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept',
+        'X-Access-Token',
+        'Cache-Control',
+      ],
+      credentials: false,
+      methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+      origin: '*',
+      optionsSuccessStatus: 200,
+      preflightContinue: true,
+    };
+    router.use(cors(options));
+    router.options('*', cors(options), (req: Request, res: Response) => {
+      res.send('OK');
+    });
     this._controllers.forEach((controller) => {
       controller.addRouterPaths(router);
     })

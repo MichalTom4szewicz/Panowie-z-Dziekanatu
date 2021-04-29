@@ -21,9 +21,13 @@ import { ClassGridDayComponent } from './components/enrollment-for-classes/class
 import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
 import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
+import { HttpClientModule } from "@angular/common/http";
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -31,13 +35,15 @@ import { ReplaceClassesDialogComponent } from './components/enrollment-for-class
 		MatCardModule,
 		MatFormFieldModule,
 		FlexLayoutModule,
-		ReactiveFormsModule,
-		FormsModule,
+    FormsModule,
+    ReactiveFormsModule,
 		MatInputModule,
 		MatButtonModule,
 		MatIconModule,
 		MatGridListModule,
-		MatDialogModule
+		MatDialogModule,
+    HttpClientModule,
+    MatToolbarModule
 	],
 	providers: [],
 	bootstrap: [AppComponent],

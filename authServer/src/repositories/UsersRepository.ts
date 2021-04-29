@@ -5,7 +5,8 @@ import {UserRole} from "../database/entities/UserRole";
 export class TokenContent {
   username: string;
   password: string;
-  role: UserRole
+  role: UserRole;
+  exp?: number;
 }
 
 export class UsersRepository {
@@ -21,12 +22,15 @@ export class UsersRepository {
 
   public async addUser(user: TokenContent): Promise<void> {
     try {
-      const savedUser = {
-        username: user.username,
-        password: user.password,
-        userRole: user.role
-      };
-      await this._repository.save(savedUser as User);
+      const existingUser = await this.getUserById(user.username);
+      if (!existingUser) {
+        const savedUser = {
+          username: user.username,
+          password: user.password,
+          userRole: user.role
+        };
+        await this._repository.save(savedUser as User);
+      }
     } catch (e) {
       return Promise.reject(new Error("Cannot save user"));
     }
@@ -34,12 +38,14 @@ export class UsersRepository {
 
   public async getUserById(id: string): Promise<TokenContent> {
     try {
-      const result = await this._repository.findOneOrFail(id, { relations: ['userRole'] });
-      return {
-        username: result.username,
-        password: result.password,
-        role: result.userRole
-      };
+      const result = await this._repository.findOne(id, { relations: ['userRole'] });
+      if (result) {
+        return {
+          username: result.username,
+          password: result.password,
+          role: result.userRole
+        };
+      }
     } catch (e) {
       return Promise.reject(new Error("No such user"));
     }

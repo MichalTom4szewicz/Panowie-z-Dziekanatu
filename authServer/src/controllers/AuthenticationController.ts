@@ -4,6 +4,7 @@ import {UsersRepository} from "../repositories/UsersRepository";
 import {JwtHelper} from "../helpers/JwtHelper";
 import {SqliteConnection} from "../database/SqliteConnection";
 import {BaseController} from "./BaseController";
+import {isBefore} from 'date-fns';
 
 export class AuthenticationController extends BaseController {
   constructor(private usersRepository: UsersRepository) {
@@ -40,20 +41,20 @@ export class AuthenticationController extends BaseController {
 
   public async verifyToken(request: Request, response: Response): Promise<Response> {
     const token = request.header('token');
-    if (token) {
-      try {
-        const decodedToken = JwtHelper.decodeToken(token);
+    try {
+      const decodedToken = JwtHelper.decodeToken(token);
+      if (decodedToken && decodedToken.exp && isBefore(Date.now(), decodedToken.exp)) {
         return response.status(200).json({
           success: true,
           token: decodedToken
         });
       }
-      catch (e) {
-        return response.status(200).json({
-          success: false,
-          token: null
-        })
-      }
+    }
+    catch (e) {
+      return response.status(200).json({
+        success: false,
+        token: null
+      })
     }
     return response.status(200).json({
       success: false,
