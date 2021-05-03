@@ -34,13 +34,13 @@ export class Class {
     @Column()
     typ!:          string;
 
-    @ManyToOne(() => User, user => user.classes)
-    host!: User;
+    // @ManyToOne(() => User, user => user.classes)
+    // host!: User;
 
-    @ManyToOne(() => Course, course => course.classes)
-    course!: Course;
+    // // @ManyToOne(() => Course, course => course.classes)
+    // // course!: Course;
 
-    @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update'] })
-    hostingRequests!: HostingRequest[];
+    // @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update'] })
+    // hostingRequests!: HostingRequest[];
 
 }

@@ -9,10 +9,10 @@ export class HostingRequest {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @ManyToOne(() => User, user => user.hostingRequests)
-    user!: User;
+    // @ManyToOne(() => User, user => user.hostingRequests)
+    // user!: User;
 
-    @ManyToOne(() => Class, cls => cls.hostingRequests)
-    class!: Class;
+    // @ManyToOne(() => Class, cls => cls.hostingRequests)
+    // class!: Class;
 
 }

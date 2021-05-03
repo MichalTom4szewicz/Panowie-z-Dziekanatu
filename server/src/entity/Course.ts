@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany} from "typeorm";
 
 import {User} from "./User"
 import {Class} from "./Class"
@@ -12,9 +12,10 @@ export class Course {
     @Column()
     name!: string;
 
-    @ManyToOne(() => User, user => user.courses)
+    @ManyToOne(type => User)
+    @JoinColumn({ referencedColumnName: "id" })
     user!: User;
 
-    @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update'] })
-    classes!: Class[];
+    // @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update'] })
+    // classes!: Class[];
 }
