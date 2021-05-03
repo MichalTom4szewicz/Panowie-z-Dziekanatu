@@ -19,13 +19,13 @@ export class User {
     @Column()
     age!: number;
 
-    @OneToMany(() => Course, course => course.user)
+    @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update'] })
     courses!: Course[];
 
-    @OneToMany(() => HostingRequest, hr => hr.user)
+    @OneToMany(() => HostingRequest, hr => hr.user, { cascade: ['insert', 'update'] })
     hostingRequests!: HostingRequest[];
 
-    @OneToMany(() => Class, cls => cls.host)
+    @OneToMany(() => Class, cls => cls.host, { cascade: ['insert', 'update'] })
     classes!: Class[];
 
 }

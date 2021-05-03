@@ -3,6 +3,7 @@ require('express-async-errors');
 import express from 'express';
 import usersRouter from './controllers/users'
 import classesRouter from './controllers/classes'
+import coursesRouter from './controllers/courses'
 
 const app = express();
 const cors = require('cors');
@@ -17,6 +18,7 @@ app.use(middleware.requestLogger);
 app.get('/', (req: express.Request, res: express.Response) => res.send('Hola amigo!!!'));
 app.use('/users', usersRouter);
 app.use('/classes', classesRouter);
+app.use('/courses', coursesRouter);
 
 app.use(middleware.unknownEndpoint);
 

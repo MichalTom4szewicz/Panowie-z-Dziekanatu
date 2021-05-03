@@ -22,9 +22,6 @@ export class Class {
     @Column()
     endTime!:      string;
 
-    // @Column()
-    // host!:         string;
-
     @Column()
     building!:     string;
 
@@ -43,7 +40,7 @@ export class Class {
     @ManyToOne(() => Course, course => course.classes)
     course!: Course;
 
-    @OneToMany(() => HostingRequest, hr => hr.class)
+    @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update'] })
     hostingRequests!: HostingRequest[];
 
 }
