@@ -24,12 +24,8 @@ coursesRouter.delete('/deleteDummy', async (request: Request, response: Response
 coursesRouter.post('/addDummy', async (request: Request, response: Response) => {
     const connection = await getConnection();
     const userRepository = connection.getRepository(User)
-    const coursesRepository = connection.getRepository(Course)
 
-    const usr = await userRepository.findOne({id: 4});
-
-    console.log(usr)
-
+    const usr = await userRepository.findOne({id: 2});
     const css = [
         {
             name: "Zastosowania informatyki w gospodarce",
@@ -47,15 +43,14 @@ coursesRouter.post('/addDummy', async (request: Request, response: Response) => 
     .into(Course)
     .values(css)
     .execute()
-    .then( val => {
-        console.log(val)
-      return response.json(val)
+    .then(() => {
+      return response.json(css)
     })
     .catch(error => logger.error(error));
 })
 
-coursesRouter.get('/', async (request: Request, response: Response) => {
-
+// courses of user id=2
+coursesRouter.get('/2', async (request: Request, response: Response) => {
     const connection = await getConnection();
     const userRepository = connection.getRepository(User)
     const coursesRepository = connection.getRepository(Course)
@@ -64,19 +59,19 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
     const courses = await coursesRepository.find({user});
 
     return response.json(courses)
-
-    // await getConnection()
-    // .createQueryBuilder()
-    // .delete()
-    // .from(Course)
-    // .execute()
-    // .then(items => {
-    //     console.log(items)
-    //     return response.json(items)
-    //     })
-    // .catch(error => logger.error(error));
-
 })
+
+//all courses
+coursesRouter.get('/', async (request: Request, response: Response) => {
+    const connection = await getConnection();
+    const coursesRepository = connection.getRepository(Course)
+
+    const courses = await coursesRepository.find();
+
+    return response.json(courses)
+})
+
+
 
 
 export default coursesRouter;

@@ -4,6 +4,7 @@ import express from 'express';
 import usersRouter from './controllers/users'
 import classesRouter from './controllers/classes'
 import coursesRouter from './controllers/courses'
+import hostingRequestRouter from './controllers/hostingRequests'
 
 const app = express();
 const cors = require('cors');
@@ -19,6 +20,7 @@ app.get('/', (req: express.Request, res: express.Response) => res.send('Hola ami
 app.use('/users', usersRouter);
 app.use('/classes', classesRouter);
 app.use('/courses', coursesRouter);
+app.use('/hrequests', hostingRequestRouter);
 
 app.use(middleware.unknownEndpoint);
 

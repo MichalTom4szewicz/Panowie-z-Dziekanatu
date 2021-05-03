@@ -30,6 +30,18 @@ classesRouter.get('/conflicts', async (request: Request, response: Response) => 
     });
 })
 
+classesRouter.get('/all', async (request: Request, response: Response) => {
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .execute()
+    .then(items => {
+      return response.json(alterKeys(items, "class"))
+    })
+    .catch(error => logger.error(error));
+})
+
 // example: localhost:8000/classes?weekDay=wDay
 classesRouter.get('/', async (request: Request, response: Response) => {
   await getConnection()
@@ -54,17 +66,7 @@ classesRouter.get('/', async (request: Request, response: Response) => {
     });
 })
 
-// classesRouter.get('/', async (request: Request, response: Response) => {
-//   await getConnection()
-//     .createQueryBuilder()
-//     .select("class")
-//     .from(Class, "class")
-//     .execute()
-//     .then(items => {
-//       return response.json(items)
-//     })
-//     .catch(error => logger.error(error));
-// })
+
 
 // classesRouter.get('/:id', async (request: Request, response: Response) => {
 //   await getConnection()

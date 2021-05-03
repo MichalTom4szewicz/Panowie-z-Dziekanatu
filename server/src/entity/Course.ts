@@ -12,10 +12,9 @@ export class Course {
     @Column()
     name!: string;
 
-    @ManyToOne(type => User)
-    @JoinColumn({ referencedColumnName: "id" })
+    @ManyToOne(() => User, user => user.courses)
     user!: User;
 
-    // @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update'] })
-    // classes!: Class[];
+    @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update'] })
+    classes!: Class[];
 }
