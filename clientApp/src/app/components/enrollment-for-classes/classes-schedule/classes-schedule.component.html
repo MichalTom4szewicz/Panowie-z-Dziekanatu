@@ -35,9 +35,8 @@
                 *ngFor="let classes of scheduleForOneDay"
                 [colspan]="1"
                 [rowspan]="classes.rows">
-                <pzd-classes *ngIf="classes.isNotEmpty" [classes]="classes.classes"></pzd-classes>
+                <pzd-classes class="classes-block" *ngIf="classes.isNotEmpty" [scheduleView]="true" [classes]="classes.classes"></pzd-classes>
             </mat-grid-tile>
         </mat-grid-list>
     </mat-grid-tile>
-  </mat-grid-list>
-  
+</mat-grid-list>

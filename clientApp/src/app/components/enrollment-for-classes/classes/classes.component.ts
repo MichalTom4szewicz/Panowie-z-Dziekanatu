@@ -13,6 +13,9 @@ export class ClassesComponent implements OnInit {
 
   @Input() classes: Classes;
   @Input() status?: ClassesStatusEnum;
+  @Input() scheduleView: boolean = false;
+
+  private static readonly STANDARD_CLASSES_DURATION: number = 105;
 
   constructor() { }
 
@@ -23,6 +26,30 @@ export class ClassesComponent implements OnInit {
   }
 
   getClass() {
+    if (this.scheduleView) {
+      return this.getClassForScheduleView();
+    } else {
+      return this.getClassForGridView();
+    }
+  }
+
+  private getClassForScheduleView() {
+    return {
+      'project': this.classes.typ === 'P',
+      'exercise': this.classes.typ === 'C',
+      'seminar': this.classes.typ === 'S',
+      'laboratories': this.classes.typ === 'L',
+      'lecture': this.classes.typ === 'W',
+      'schedule': this.duration() > ClassesComponent.STANDARD_CLASSES_DURATION,
+      'schedule-small': this.duration() <= ClassesComponent.STANDARD_CLASSES_DURATION
+    };
+  }
+
+  private duration(): number {
+    return CalendarUtils.getTimeInMinutes(this.classes.endTime) - CalendarUtils.getTimeInMinutes(this.classes.startTime);
+  }
+
+  private getClassForGridView() {
     if (this.status === ClassesStatusEnum.SELECTED) {
       return {
         'project-selected': this.classes.typ === 'P',
