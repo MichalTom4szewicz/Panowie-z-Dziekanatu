@@ -3,6 +3,7 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
+import {compareClasses, alterKeys, processCollisions, listCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
 
@@ -47,6 +48,27 @@ coursesRouter.post('/addDummy', async (request: Request, response: Response) => 
       return response.json(css)
     })
     .catch(error => logger.error(error));
+})
+
+// PZD-10
+// getNazwyKursow() -> String[]
+// localhost:8000/courses/names
+coursesRouter.get('/names', async (request: Request, response: Response) => {
+    await getConnection()
+    .createQueryBuilder()
+    .select("course")
+    .from(Course, "course")
+    .execute()
+    .then(items => {
+      return response.status(200).json(alterKeys(items, "course").map((i: { name: any; }) => i.name))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+          success: false,
+          status: "nk rzutnik"
+      })
+    });
 })
 
 // courses of user id=2
