@@ -6,6 +6,7 @@ import {compareClasses, alterKeys, processCollisions, listCollisions} from "../s
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
 
+//PZD-5
 // example: localhost:8000/classes/conflicts?weekDay=wDay
 classesRouter.get('/conflicts', async (request: Request, response: Response) => {
   await getConnection()
@@ -19,11 +20,11 @@ classesRouter.get('/conflicts', async (request: Request, response: Response) => 
       newItems.sort(compareClasses);
       const map = listCollisions(newItems);
 
-      return response.json(map)
+      return response.status(200).json(map)
     })
     .catch(error => {
       logger.error(error);
-      return response.json({
+      return response.status(500).json({
         success: false,
         status: "nk rzutnik"
       })
@@ -37,11 +38,51 @@ classesRouter.get('/all', async (request: Request, response: Response) => {
     .from(Class, "class")
     .execute()
     .then(items => {
-      return response.json(alterKeys(items, "class"))
+      return response.status(200).json(alterKeys(items, "class"))
     })
-    .catch(error => logger.error(error));
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+          success: false,
+          status: "nk rzutnik"
+      })
+    });
 })
 
+// PZD-16
+// example: localhost:8000/classes/map?weekDay=wDay
+classesRouter.get('/map', async (request: Request, response: Response) => {
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
+    .execute()
+    .then(items => {
+      let newItems = alterKeys(items, "class");
+      newItems.sort(compareClasses);
+      newItems = processCollisions(newItems);
+
+      let map: {
+        [key: string]: [number, number]
+      } = {}
+      for(let i=0; i<newItems.length; i++) {
+        for(let j=0; j<newItems[i].length; j++) {
+          map[newItems[i][j].groupKey] = [i, j]
+        }
+      }
+      return response.status(200).json(map)
+    })
+    .catch(error => {
+      logger.error(error);
+      return response.status(500).json({
+        success: false,
+        status: "nk rzutnik"
+      })
+    });
+})
+
+// PZD-5
 // example: localhost:8000/classes?weekDay=wDay
 classesRouter.get('/', async (request: Request, response: Response) => {
   await getConnection()
@@ -55,11 +96,11 @@ classesRouter.get('/', async (request: Request, response: Response) => {
       newItems.sort(compareClasses);
       newItems = processCollisions(newItems);
 
-      return response.json(newItems)
+      return response.status(200).json(newItems)
     })
     .catch(error => {
       logger.error(error);
-      return response.json({
+      return response.status(500).json({
         success: false,
         status: "nk rzutnik"
       })
