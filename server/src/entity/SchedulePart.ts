@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, OneToMany, ManyToOne, OneToOne, JoinColumn} from "typeorm";
+import {Entity, PrimaryColumn,PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, OneToOne, JoinColumn} from "typeorm";
 
 import {Class} from "./Class"
 import {User} from "./User"
@@ -6,10 +6,13 @@ import {User} from "./User"
 @Entity()
 export class SchedulePart {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
+    id!: number;
+
+    @Column()
     name!:         string;
 
-    @ManyToOne(() => User, user => user.classes)
+    @ManyToOne(() => User, user => user.myclasses)
     owner!: User;
 
     @OneToOne(() => Class)

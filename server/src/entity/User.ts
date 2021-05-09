@@ -3,6 +3,7 @@ import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "type
 import {Course} from "./Course"
 import {HostingRequest} from "./HostingRequest"
 import {Class} from "./Class"
+import {SchedulePart} from "./SchedulePart"
 
 @Entity()
 export class User {
@@ -27,5 +28,8 @@ export class User {
 
     @OneToMany(() => Class, cls => cls.host, { cascade: ['insert', 'update'] })
     classes!: Class[];
+
+    @OneToMany(() => SchedulePart, sp => sp.owner, { cascade: ['insert', 'update'] })
+    myclasses!: SchedulePart[];
 
 }

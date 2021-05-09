@@ -12,7 +12,7 @@ export class Course {
     @Column()
     name!: string;
 
-    @ManyToOne(() => User, user => user.courses)
+    @ManyToOne(() => User, usr => usr.courses)
     user!: User;
 
     @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update'] })

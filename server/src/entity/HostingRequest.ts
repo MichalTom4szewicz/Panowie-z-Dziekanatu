@@ -9,6 +9,9 @@ export class HostingRequest {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Column()
+    status!: string;
+
     @ManyToOne(() => User, user => user.hostingRequests)
     user!: User;
 
