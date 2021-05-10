@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Nadpisz istniejący plan lub zapisz pod nową nazwą</h1>
+<div mat-dialog-content>
+  <button mat-button *ngFor="let name of schedules" (click)="save(name)">{{name}}</button>
+  <mat-form-field>
+    <mat-label>Nowy plan</mat-label>
+    <input matInput [(ngModel)]="newName">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doNothing()">Cofnij</button>
+  <button mat-button (click)="save(newName)">Zapisz nowy</button>
+</div>

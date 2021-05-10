@@ -1,7 +1,6 @@
 import { Time, WeekDay } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { element } from 'protractor';
 import { range } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { Classes } from 'src/app/domain/classes';
@@ -23,6 +22,7 @@ export class ClassGridDayComponent implements OnInit {
   sortedClasses: [Classes, ClassesStatusEnum][][];
   selectedClasses: Set<Classes> = new Set();
   conflicts: Map<string, [number, number][]>;
+  classesMap: Map<string, [number, number]>;
   hours: number[] = [];
 
   constructor(public dialog: MatDialog, private classesService: ClassesService, private classGridService: ClassGridService) { }
@@ -37,6 +37,25 @@ export class ClassGridDayComponent implements OnInit {
       )
     );
     this.classesService.getClassesConflicts(this.weekDay).subscribe(value => this.conflicts = value);
+    this.classesService.getClassesMap(this.weekDay).subscribe(value => this.classesMap = value);
+    this.classGridService.scheduleLoadedChange.subscribe(() => this.updateSelectedAfterLoad());
+  }
+
+  private updateSelectedAfterLoad(): void {
+    this.sortedClasses.forEach(row => row.forEach(element => element[1] = ClassesStatusEnum.UNSELECTED));
+    this.classGridService.classGridChange.subscribe(grid => {
+      let weekDayClasses = grid[CalendarConstants.WEEK_DAYS_ORDER.get(this.weekDay)!];
+      this.selectedClasses = new Set(weekDayClasses);
+      weekDayClasses.forEach(classes => {
+        this.findClassesAndMarkAsSelected(classes.groupKey);
+        this.addConflicts(classes.groupKey);
+      });
+    });
+  }
+
+  private findClassesAndMarkAsSelected(groupKey: string): void {
+    let cordinate: [number, number] = this.classesMap.get(groupKey)!;
+    this.sortedClasses[cordinate[0]][cordinate[1]][1] = ClassesStatusEnum.SELECTED;
   }
 
   public getHour(hour: number): string {

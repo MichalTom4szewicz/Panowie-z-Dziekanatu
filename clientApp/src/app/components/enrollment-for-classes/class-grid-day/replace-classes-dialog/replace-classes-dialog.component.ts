@@ -11,7 +11,8 @@ export class ReplaceClassesDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ReplaceClassesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public classes: Classes[]) {}
+    @Inject(MAT_DIALOG_DATA) public classes: Classes[]
+  ) {}
 
   ngOnInit(): void {
   }

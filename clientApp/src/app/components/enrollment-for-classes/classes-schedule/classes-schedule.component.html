@@ -35,9 +35,13 @@
                 *ngFor="let classes of scheduleForOneDay"
                 [colspan]="1"
                 [rowspan]="classes.rows">
-                <pzd-classes *ngIf="classes.isNotEmpty" [classes]="classes.classes"></pzd-classes>
+                <pzd-classes class="classes-block" *ngIf="classes.isNotEmpty" [scheduleView]="true" [classes]="classes.classes"></pzd-classes>
             </mat-grid-tile>
         </mat-grid-list>
     </mat-grid-tile>
-  </mat-grid-list>
-  
+</mat-grid-list>
+<div fxLayout="row" fxLayoutAlign="space-around center" class="buttons">
+    <button mat-raised-button color="primary" (click)="registerForClasses()">Zapisz na zajęcia</button>
+    <button mat-raised-button color="primary" (click)="saveSchedule()">Zapisz plan</button>
+    <button mat-raised-button color="primary" (click)="openSavedSchedulesComponent()">Wczytaj plan</button>
+</div>

@@ -1,0 +1,5 @@
+<mat-nav-list>
+    <a *ngFor="let schedule of data.schedules" href="" mat-list-item (click)="select($event, schedule)">
+        <span mat-line>{{schedule}}</span>
+    </a>
+</mat-nav-list>
