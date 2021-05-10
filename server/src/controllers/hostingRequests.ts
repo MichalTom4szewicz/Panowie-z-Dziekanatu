@@ -27,9 +27,9 @@ hostingRequestRouter.post('/addDummy', async (request: Request, response: Respon
     const userRepository = connection.getRepository(User)
     const classesRepository = connection.getRepository(Class)
 
-    const usr1 = await userRepository.findOne({id: 2});
-    const usr2 = await userRepository.findOne({id: 4});
-    const cls = await classesRepository.findOne({id: 15});
+    const usr1 = await userRepository.findOne({pesel: "1"});
+    const usr2 = await userRepository.findOne({pesel: "2"});
+    const cls = await classesRepository.findOne({groupKey: "k1g1"});
 
     const css = [
         {
@@ -110,7 +110,7 @@ hostingRequestRouter.put('/:id', async (request: Request, response: Response) =>
         .createQueryBuilder()
         .update(Class)
         .set({host: host})
-        .where("id = :id", { id: hr[0].class.id })
+        .where("groupKey = :groupKey", { groupKey: hr[0].class.groupKey })
         .execute()
         .then(() => {
           return response.status(200).json({

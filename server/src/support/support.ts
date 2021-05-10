@@ -10,6 +10,9 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     const c2End = parseInt(c2.endTime.replace(":", ""), 10)
 
     // console.log(c1Start, c1End, c2Start, c2End)
+
+    // gdy parity1 xor parity2 == 1 mamy gwarancje ze nie koliduja
+    // kiedy indziej moze wystapic kolizja
     if((c1.parity == 'p' && c2.parity == 'n') || (c1.parity == 'n' && c2.parity == 'p')) {
         return false
     }

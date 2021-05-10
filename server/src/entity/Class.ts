@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
 
 import {HostingRequest} from "./HostingRequest"
 import {Course} from "./Course"
@@ -7,8 +7,8 @@ import {User} from "./User"
 @Entity()
 export class Class {
 
-    @PrimaryGeneratedColumn()
-    id!:           number;
+    @PrimaryColumn()
+    groupKey!:     string;
 
     @Column()
     name!:         string;
@@ -30,9 +30,6 @@ export class Class {
 
     @Column()
     room!:         string;
-
-    @Column()
-    groupKey!:     string;
 
     @Column()
     typ!:          string;

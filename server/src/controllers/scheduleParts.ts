@@ -35,13 +35,13 @@ schedulePart.post('/addDummy', async (request: Request, response: Response) => {
 
     console.log('1')
 
-    const usr1 = await userRepository.findOne({id: 2});
-    const usr2 = await userRepository.findOne({id: 4});
+    const usr1 = await userRepository.findOne({pesel: "1"});
+    const usr2 = await userRepository.findOne({pesel: "2"});
 
     console.log('1')
 
-    const cls1 = await classRepository.findOne({id: 15})
-    const cls2 = await classRepository.findOne({id: 16})
+    const cls1 = await classRepository.findOne({groupKey: "k1g1"})
+    const cls2 = await classRepository.findOne({groupKey: "k1g1"})
 
     console.log('1')
 

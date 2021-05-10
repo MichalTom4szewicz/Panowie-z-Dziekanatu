@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
 
 import {Course} from "./Course"
 import {HostingRequest} from "./HostingRequest"
@@ -8,17 +8,14 @@ import {SchedulePart} from "./SchedulePart"
 @Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryColumn()
+    pesel!: string;
 
     @Column()
     firstName!: string;
 
     @Column()
     lastName!: string;
-
-    @Column()
-    age!: number;
 
     @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update'] })
     courses!: Course[];
