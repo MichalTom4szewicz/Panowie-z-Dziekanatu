@@ -35,8 +35,8 @@ schedulePart.post('/addDummy', async (request: Request, response: Response) => {
 
     console.log('1')
 
-    const usr1 = await userRepository.findOne({pesel: "1"});
-    const usr2 = await userRepository.findOne({pesel: "2"});
+    const usr1 = await userRepository.findOne({username: "1"});
+    const usr2 = await userRepository.findOne({username: "2"});
 
     console.log('1')
 

@@ -27,8 +27,8 @@ hostingRequestRouter.post('/addDummy', async (request: Request, response: Respon
     const userRepository = connection.getRepository(User)
     const classesRepository = connection.getRepository(Class)
 
-    const usr1 = await userRepository.findOne({pesel: "1"});
-    const usr2 = await userRepository.findOne({pesel: "2"});
+    const usr1 = await userRepository.findOne({username: "1"});
+    const usr2 = await userRepository.findOne({username: "2"});
     const cls = await classesRepository.findOne({groupKey: "k1g1"});
 
     const css = [

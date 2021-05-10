@@ -25,7 +25,7 @@ coursesRouter.post('/addDummy', async (request: Request, response: Response) => 
     const connection = await getConnection();
     const userRepository = connection.getRepository(User)
 
-    const usr = await userRepository.findOne({pesel: "2"});
+    const usr = await userRepository.findOne({username: "2"});
     const css = [
         {
             name: "Zastosowania informatyki w gospodarce",
@@ -76,7 +76,7 @@ coursesRouter.get('/2', async (request: Request, response: Response) => {
     const userRepository = connection.getRepository(User)
     const coursesRepository = connection.getRepository(Course)
 
-    const user = await userRepository.findOne({pesel: "2"})
+    const user = await userRepository.findOne({username: "2"})
     const courses = await coursesRepository.find({user});
 
     return response.json(courses)

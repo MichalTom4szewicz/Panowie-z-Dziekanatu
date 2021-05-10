@@ -8,8 +8,8 @@ import {SchedulePart} from "./SchedulePart"
 @Entity()
 export class User {
 
-    @PrimaryColumn()
-    pesel!: string;
+    // @PrimaryColumn()
+    // pesel!: string;
 
     @Column()
     firstName!: string;
@@ -17,7 +17,7 @@ export class User {
     @Column()
     lastName!: string;
 
-    @Column({
+    @PrimaryColumn({
     type: "varchar"
     })
     username!: string;
