@@ -1,3 +1,4 @@
+import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
 
 export function classesCollide (c1: Class, c2: Class): boolean {
@@ -9,6 +10,9 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     const c2End = parseInt(c2.endTime.replace(":", ""), 10)
 
     // console.log(c1Start, c1End, c2Start, c2End)
+    if((c1.parity == 'p' && c2.parity == 'n') || (c1.parity == 'n' && c2.parity == 'p')) {
+        return false
+    }
 
     //c2 zaczyna sie w trakcie c1
     if(c2Start >= c1Start && c2Start <= c1End) {
@@ -26,6 +30,7 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     if(c1End >= c2Start && c1End <= c2End) {
         return true
     }
+
     return false
 }
 

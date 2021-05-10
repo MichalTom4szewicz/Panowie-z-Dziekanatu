@@ -17,6 +17,9 @@ export class Class {
     weekDay!:      string;
 
     @Column()
+    parity!:       string;
+
+    @Column()
     startTime!:    string;
 
     @Column()
