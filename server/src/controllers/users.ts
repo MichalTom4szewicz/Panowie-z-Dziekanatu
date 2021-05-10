@@ -65,7 +65,7 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     .set({
         firstName: body.firstName,
         lastName: body.lastName,
-        // username: body.username,
+        // username: body.username, // can't update username
         password,
     })
     .where("username = :username", { username: username })
@@ -155,7 +155,7 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
     .createQueryBuilder()
     .select("user")
     .from(User, "user")
-    .where("user.username = :username", {username: request.params.username})
+    .where("user.username = :username", {username: username})
     .execute()
     .then(items => {
       return response.status(200).json(alterKeys(items, "user"))
