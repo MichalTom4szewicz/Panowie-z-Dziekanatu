@@ -12,31 +12,31 @@ export class User {
     // pesel!: string;
 
     @Column()
-    firstName!: string;
+    public firstName!: string;
 
     @Column()
-    lastName!: string;
+    public lastName!: string;
 
     @PrimaryColumn({
     type: "varchar"
     })
-    username!: string;
+    public username!: string;
 
     @Column({
     type: "varchar"
     })
-    password!: string;
+    public password!: string;
 
-    @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update'] })
-    courses!: Course[];
+    @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update', 'remove'] })
+    public courses!: Course[];
 
-    @OneToMany(() => HostingRequest, hr => hr.user, { cascade: ['insert', 'update'] })
-    hostingRequests!: HostingRequest[];
+    @OneToMany(() => HostingRequest, hr => hr.user, { cascade: ['insert', 'update', 'remove'] })
+    public hostingRequests!: HostingRequest[];
 
-    @OneToMany(() => Class, cls => cls.host, { cascade: ['insert', 'update'] })
-    classes!: Class[];
+    @OneToMany(() => Class, cls => cls.host, { cascade: ['insert', 'update', 'remove'] })
+    public classes!: Class[];
 
-    @OneToMany(() => SchedulePart, sp => sp.owner, { cascade: ['insert', 'update'] })
-    myclasses!: SchedulePart[];
+    @OneToMany(() => SchedulePart, sp => sp.owner, { cascade: ['insert', 'update', 'remove'] })
+    public myclasses!: SchedulePart[];
 
 }
