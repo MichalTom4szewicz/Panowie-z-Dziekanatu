@@ -7,10 +7,11 @@ import {EnrollmentForClassesComponent} from './components/enrollment-for-classes
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {ToolbarComponent} from './components/toolbar/toolbar.component';
 import { SupervisorComponent } from './components/supervisor/supervisor.component';
+import {CreateUserComponent} from './components/create-user/create-user.component';
 
 const routes: Routes = [
-	{
-		path: '',
+  {
+    path: '',
     children: [
       {
         path: '',
@@ -33,19 +34,23 @@ const routes: Routes = [
         ]
       },
     ]
-	},
+  },
   {
     path: 'login',
     component: LoginComponent
   },
-	{
-		path: '**',
-		component: PageNotFoundComponent
-	},
+  {
+    path: 'register',
+    component: CreateUserComponent
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent
+  },
 ];
 
 @NgModule({
-	imports: [RouterModule.forRoot(routes)],
-	exports: [RouterModule],
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

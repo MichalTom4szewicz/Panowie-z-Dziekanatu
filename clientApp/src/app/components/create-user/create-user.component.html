@@ -1,0 +1,44 @@
+<div fxLayout="row"
+    fxLayout.xs="column"
+    fxFlexFill
+    fxLayoutAlign="center center">
+  <form [formGroup]="createUserForm" (ngSubmit)="onSubmit()" fxFlex="40">
+    <mat-card fxLayout="column">
+      <mat-card-header fxFlex="80">
+        <mat-card-title> Tworzenie użytkownika </mat-card-title>
+        <mat-card-subtitle>
+          Podaj swoje dane aby stworzyć konto
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center">
+        <div fxLayout="column" fxFlex="80">
+          <mat-form-field>
+            <mat-label>Nazwa użytkownika</mat-label>
+            <input matInput type="text" formControlName="username">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Hasło</mat-label>
+            <input matInput type="password" formControlName="password">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Potwierdź hasło</mat-label>
+            <input matInput type="password" formControlName="confirmPassword">
+          </mat-form-field>
+          <div *ngIf="username.invalid && username.touched" class="mat-error">
+            Wpisz poprawną nazwę użytkownika
+          </div>
+          <div *ngIf="password.invalid && password.touched" class="mat-error">
+            Wpisz poprawne hasło
+          </div>
+          <div *ngIf="createUserForm.hasError('notIdentical') && confirmPassword.touched" class="mat-error">
+            Hasła nie zgadzają sie
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="warn" type="reset" (click)="onClear()">Wyczyść</button>
+        <button mat-raised-button color="primary" type="submit" (submit)="onSubmit()">Dalej</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

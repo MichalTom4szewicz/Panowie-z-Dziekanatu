@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AuthenticationService } from '../../services/auth/authentication.service';
 import { Router } from '@angular/router';
 
@@ -19,39 +19,49 @@ export class LoginComponent implements OnInit {
 		});
 	}
 
-	get loginForm() {
+	get loginForm(): FormGroup {
 		return this._loginForm;
 	}
 
-	get username() {
-    return this.loginForm.get('username')?.value;
+	get username(): AbstractControl {
+    return this.loginForm.get('username') as AbstractControl;
   }
 
-  get password() {
-    return this.loginForm.get('password')?.value;
+  get password(): AbstractControl {
+    return this.loginForm.get('password') as AbstractControl;
   }
 
 	get isPasswordVisible(): boolean {
 		return this._isPasswordVisible;
 	}
 
-	togglePasswordVisibility() {
+	togglePasswordVisibility(): void {
 		this._isPasswordVisible = !this._isPasswordVisible;
 	}
 
-	clearFormFields() {
+	clearFormFields(): void {
 		this.loginForm.reset();
 	}
 
-	onSubmit() {
-		console.log(this.loginForm.value);
-		this.authService.logIn(this.username, this.password)
+	shouldShowLoginDataError(): boolean {
+    return (this.username.invalid
+      && this.password.invalid
+      && this.username.touched
+      && this.password.touched) || this._loginForm.hasError('incorrectLoginData');
+  }
+
+	onSubmit(): void {
+		this.authService.logIn(this.username.value, this.password.value)
       .subscribe(async (value) => {
         if (value) {
           this.authService.setToken(value);
           await this.router.navigate(['']);
+        } else {
+          this.loginForm.setErrors({ incorrectLoginData: true });
         }
-		  });
+      }, () => {
+        this.loginForm.setErrors({ incorrectLoginData: true });
+      });
 	}
 
 	async ngOnInit(): Promise<void> {

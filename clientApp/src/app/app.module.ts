@@ -28,9 +28,9 @@ import { EnrollmentForClassesComponent } from './components/enrollment-for-class
 import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
 
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SavedSchedulesComponent } from './components/enrollment-for-classes/classes-schedule/saved-schedules/saved-schedules.component';
 import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
@@ -39,8 +39,9 @@ import { SupervisorClassesListComponent } from './components/supervisor/supervis
 import { ManageCoursesDialogComponent } from './components/supervisor/manage-courses-dialog/manage-courses-dialog.component';
 import { ManageClassesDialogComponent } from './components/supervisor/supervisor-classes-list/manage-classes-dialog/manage-classes-dialog.component';
 import { HostingRequestsDialogComponent } from './components/supervisor/supervisor-classes-list/hosting-requests-dialog/hosting-requests-dialog.component';
+import { CreateUserComponent } from './components/create-user/create-user.component';
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent, CreateUserComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
