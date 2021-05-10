@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AuthenticationService } from '../../services/auth/authentication.service';
 import { Router } from '@angular/router';
 
@@ -23,6 +23,14 @@ export class LoginComponent implements OnInit {
 		return this._loginForm;
 	}
 
+	get username() {
+    return this.loginForm.get('username')?.value;
+  }
+
+  get password() {
+    return this.loginForm.get('password')?.value;
+  }
+
 	get isPasswordVisible(): boolean {
 		return this._isPasswordVisible;
 	}
@@ -37,12 +45,18 @@ export class LoginComponent implements OnInit {
 
 	onSubmit() {
 		console.log(this.loginForm.value);
-		this.authService.logIn('12', '42').subscribe(async (value) => {
-			if (value) {
-				await this.router.navigate(['']);
-			}
-		});
+		this.authService.logIn(this.username, this.password)
+      .subscribe(async (value) => {
+        if (value) {
+          this.authService.setToken(value);
+          await this.router.navigate(['']);
+        }
+		  });
 	}
 
-	ngOnInit(): void {}
+	async ngOnInit(): Promise<void> {
+	  if (this.authService.isAuthenticated()) {
+	    await this.router.navigate(['']);
+    }
+  }
 }

@@ -1,0 +1,36 @@
+version: "3"
+services:
+    server:
+        container_name: "dataServer"
+        build:
+            context: ./server
+        ports:
+            - "8000:8000"
+        depends_on:
+            - "data_db"
+    auth:
+        container_name: "authServer"
+        build:
+            context: ./authServer
+        ports:
+            - "4848:4848"
+        depends_on:
+            - "auth_db"
+    client:
+        container_name: "clientApp"
+        build:
+            context: ./clientApp
+        ports:
+            - "4200:80"
+    auth_db:
+        container_name: "authDB"
+        build:
+            context: ./database
+        ports:
+            - "5432:5432"
+    data_db:
+        container_name: "dataDB"
+        build:
+            context: ./database
+        ports:
+            - "5433:5432"

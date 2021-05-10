@@ -1,35 +1,52 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { LocalStorageService } from '../local-storage.service';
+import { HttpClient } from '@angular/common/http';
+import {map} from 'rxjs/operators';
+import jwtDecode from 'jwt-decode';
+import { fromUnixTime, isBefore } from 'date-fns';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AuthenticationService {
-	private tokenBehaviorSubject: BehaviorSubject<string>;
+	constructor(private readonly http: HttpClient) {}
 
-	constructor() {
-		this.tokenBehaviorSubject = new BehaviorSubject<string>('');
-	}
+	private static decodeToken(): any {
+	  const token = LocalStorageService.getToken();
+	  if (token) {
+      return jwtDecode(token);
+    }
+	  return '';
+  }
 
 	public isAuthenticated(): boolean {
-		return this.tokenBehaviorSubject.getValue() !== '';
+    const decodedToken = AuthenticationService.decodeToken();
+    if (decodedToken) {
+      const expirationDate = fromUnixTime(decodedToken.exp);
+      if (isBefore(Date.now(), expirationDate)) {
+        return true;
+      }
+    }
+    this.logOut();
+    return false;
 	}
 
-	public setToken(token: string) {
+	public setToken(token: string): void {
 		LocalStorageService.setToken(token);
-		this.tokenBehaviorSubject.next(token);
 	}
 
-	public logOut() {
-		this.tokenBehaviorSubject.next('');
+	public logOut(): void {
 		LocalStorageService.removeToken();
 	}
 
-	public logIn(username: string, password: string): Observable<any> {
-		console.log('Logging in as', username);
-		this.tokenBehaviorSubject.next('token');
-		LocalStorageService.setToken('token');
-		return of('token');
+	public logIn(username: string, password: string): Observable<string | null> {
+		return this.http.post('https://127.0.0.1:4848/authenticate', {
+        username, password
+      }).pipe(map((tokenResponse: any) => {
+        return tokenResponse.success && tokenResponse.token
+          ? tokenResponse.token
+          : null;
+      }));
 	}
 }

@@ -24,11 +24,15 @@ import { ClassGridDayComponent } from './components/enrollment-for-classes/class
 import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
 import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
+
+import { HttpClientModule } from "@angular/common/http";
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SavedSchedulesComponent } from './components/enrollment-for-classes/classes-schedule/saved-schedules/saved-schedules.component';
 import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
-
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, SavedSchedulesComponent, SaveScheduleDialogComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -36,13 +40,15 @@ import { SaveScheduleDialogComponent } from './components/enrollment-for-classes
 		MatCardModule,
 		MatFormFieldModule,
 		FlexLayoutModule,
-		ReactiveFormsModule,
 		FormsModule,
+		ReactiveFormsModule,
 		MatInputModule,
 		MatButtonModule,
 		MatIconModule,
 		MatGridListModule,
 		MatDialogModule,
+		HttpClientModule,
+		MatToolbarModule,
 		MatBottomSheetModule,
 		MatListModule,
 		MatSnackBarModule

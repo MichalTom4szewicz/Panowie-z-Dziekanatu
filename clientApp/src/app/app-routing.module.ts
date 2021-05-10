@@ -3,20 +3,39 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
+import {EnrollmentForClassesComponent} from './components/enrollment-for-classes/enrollment-for-classes.component';
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import {ToolbarComponent} from './components/toolbar/toolbar.component';
 
 const routes: Routes = [
 	{
 		path: '',
-		component: HomeComponent,
-		canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        canActivate: [AuthGuard],
+        component: HomeComponent
+      },
+      {
+        path: 'plan',
+        canActivate: [AuthGuard],
+        component: ToolbarComponent,
+        children: [
+          {
+            path: '',
+            component: EnrollmentForClassesComponent
+          }
+        ]
+      },
+    ]
 	},
-	{
-		path: 'login',
-		component: LoginComponent,
-	},
+  {
+    path: 'login',
+    component: LoginComponent
+  },
 	{
 		path: '**',
-		redirectTo: '',
+		component: PageNotFoundComponent
 	},
 ];
 

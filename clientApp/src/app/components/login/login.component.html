@@ -2,29 +2,32 @@
      fxLayout.xs="column"
      fxFlexFill
      fxLayoutAlign="center center">
-  <mat-card fxFlex="40" fxLayout="column">
-    <mat-card-header>
-        <mat-card-title>Log in</mat-card-title>
-        <mat-card-subtitle>Please provide your credentials to log in</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content  fxLayoutAlign="center center">
-      <ng-form [formGroup]="loginForm" fxLayout="column" fxFlex="80" (ngSubmit)="onSubmit()">
-        <mat-form-field>
-          <mat-label>Login</mat-label>
-          <input matInput formControlName="username">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Password</mat-label>
-          <input [type]="isPasswordVisible ? 'text' : 'password' " matInput formControlName="password">
-          <mat-icon matSuffix (click)="togglePasswordVisibility()">
-            {{isPasswordVisible ? 'visibility' : 'visibility_off'}}
-          </mat-icon>
-        </mat-form-field>
-      </ng-form>
-    </mat-card-content>
-    <mat-card-actions align="end">
-      <button mat-raised-button color="warn" (click)="clearFormFields()">CLEAR</button>
-      <button mat-raised-button color="primary" (click)="onSubmit()">SUBMIT</button>
-    </mat-card-actions>
-  </mat-card>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()"  fxFlex="40" >
+    <mat-card fxLayout="column">
+      <mat-card-header fxFlex="80">
+          <mat-card-title>Log in</mat-card-title>
+          <mat-card-subtitle>Please provide your credentials to log in</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center" >
+        <div fxLayout="column" fxFlex="80">
+          <mat-form-field>
+            <mat-label>Login</mat-label>
+            <input matInput formControlName="username">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input [type]="isPasswordVisible ? 'text' : 'password' " matInput formControlName="password">
+            <mat-icon matSuffix (click)="togglePasswordVisibility()">
+              {{isPasswordVisible ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="primary" type="submit">SUBMIT</button>
+        <button mat-raised-button color="warn" (click)="clearFormFields()" type="reset">CLEAR</button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+
 </div>
