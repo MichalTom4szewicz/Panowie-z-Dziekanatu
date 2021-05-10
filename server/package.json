@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "dev": "nodemon ./src/index.ts",
+    "migration:run": "npx ts-node typeorm migration:run",
     "build": "tsc --project ./",
     "test": "jest"
   },

@@ -6,7 +6,6 @@ import {Request, Response} from "express"
 import {compareClasses, alterKeys, processCollisions, listCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
-
 const coursesRouter = require('express').Router()
 
 coursesRouter.delete('/deleteDummy', async (request: Request, response: Response) => {

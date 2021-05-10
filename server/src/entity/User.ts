@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
+import {Entity, BaseEntity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
 
 import {Course} from "./Course"
 import {HostingRequest} from "./HostingRequest"
@@ -16,6 +16,16 @@ export class User {
 
     @Column()
     lastName!: string;
+
+    @Column({
+    type: "varchar"
+    })
+    username!: string;
+
+    @Column({
+    type: "varchar"
+    })
+    password!: string;
 
     @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update'] })
     courses!: Course[];
