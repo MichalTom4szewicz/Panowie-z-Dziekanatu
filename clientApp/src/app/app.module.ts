@@ -15,15 +15,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ClassesComponent } from './components/enrollment-for-classes/classes/classes.component';
 import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
 import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
 import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
+import { SavedSchedulesComponent } from './components/enrollment-for-classes/classes-schedule/saved-schedules/saved-schedules.component';
+import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, SavedSchedulesComponent, SaveScheduleDialogComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -37,7 +42,10 @@ import { ReplaceClassesDialogComponent } from './components/enrollment-for-class
 		MatButtonModule,
 		MatIconModule,
 		MatGridListModule,
-		MatDialogModule
+		MatDialogModule,
+		MatBottomSheetModule,
+		MatListModule,
+		MatSnackBarModule
 	],
 	providers: [],
 	bootstrap: [AppComponent],

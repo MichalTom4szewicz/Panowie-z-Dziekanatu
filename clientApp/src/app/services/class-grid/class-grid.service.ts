@@ -9,7 +9,9 @@ import { Classes } from 'src/app/domain/classes';
 export class ClassGridService {
 
   private classGrid: BehaviorSubject<Classes[][]> = new BehaviorSubject<Classes[][]>([[],[],[],[],[],[],[]]);
+  private scheduleLoaded: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
   classGridChange: Observable<Classes[][]> = this.classGrid.asObservable();
+  scheduleLoadedChange: Observable<void> = this.scheduleLoaded.asObservable();
 
   constructor() { }
 
@@ -18,6 +20,17 @@ export class ClassGridService {
     let classGridCopy: Classes[][] = this.classGrid.value;
     classGridCopy[index] = [...this.classGrid.value[index], element].sort(this.compareClasses);
     this.classGrid.next(classGridCopy);
+  }
+
+  public addSchedule(schedule: Classes[]): void {
+    let newClassGrid: Classes[][] = [[],[],[],[],[],[],[]];
+    schedule.forEach(element => {
+      let index: number = CalendarConstants.WEEK_DAYS_ORDER.get(element.weekDay)!;
+      newClassGrid[index] = [...newClassGrid[index], element];
+    });
+    newClassGrid.forEach(weekDay => weekDay.sort(this.compareClasses));
+    this.classGrid.next(newClassGrid);
+    this.scheduleLoaded.next();
   }
 
   private compareClasses(c1: Classes, c2: Classes): number {
