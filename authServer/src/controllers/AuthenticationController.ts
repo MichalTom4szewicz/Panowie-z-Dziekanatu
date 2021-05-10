@@ -43,7 +43,8 @@ export class AuthenticationController extends BaseController {
     const token = request.header('token');
     try {
       const decodedToken = JwtHelper.decodeToken(token);
-      if (decodedToken && decodedToken.exp && isBefore(Date.now(), decodedToken.exp)) {
+      const now = Date.now() / 1000;
+      if (decodedToken && decodedToken.exp && isBefore(now, decodedToken.exp)) {
         return response.status(200).json({
           success: true,
           token: decodedToken
