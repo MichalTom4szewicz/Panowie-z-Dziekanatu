@@ -46,7 +46,7 @@ export class ClassesService {
             building: 'C-1',
             room: '104',
             groupKey: 'Z05-20b',
-            typ: 'P'
+            typ: 'C'
           }
         ],
         [
@@ -77,6 +77,15 @@ export class ClassesService {
       ['Z05-20a', [[1,0]]],
       ['Z05-20b', [[1,0]]],
       ['Z05-20c', [[0,0], [0,1]]]
+    ]);
+    return of(map);
+  }
+
+  public getClassesMap(weekDay: WeekDay): Observable<Map<string, [number, number]>> {
+    let map: Map<string, [number, number]> = new Map([
+      ['Z05-20a', [0,0]],
+      ['Z05-20b', [0,1]],
+      ['Z05-20c', [1,0]]
     ]);
     return of(map);
   }
