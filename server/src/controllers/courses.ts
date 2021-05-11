@@ -209,6 +209,4 @@ coursesRouter.put('/:courseKey', async (request: Request, response: Response) =>
     });
 })
 
-
-
 export default coursesRouter;

@@ -1,10 +1,102 @@
 import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
+import {Course} from "../entity/Course";
+import {User} from "../entity/User";
 import {Request, Response} from "express"
 import {compareClasses, alterKeys, processCollisions, listCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
+
+classesRouter.post('/', async (request: Request, response: Response) => {
+  const body = request.body
+  const connection = await getConnection();
+
+  const courseRepository = connection.getRepository(Course)
+  const course = await courseRepository.findOne({courseKey: body.course.courseKey});
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username: body.user.username});
+
+  if (course == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "course not found"
+    })
+  }
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "user not found"
+    })
+  }
+
+  const newClass: Class = {
+    groupKey: body.groupKey,
+    weekDay: body.weekDay,
+    startTime: body.startTime,
+    endTime: body.endTime,
+    parity: body.parity,
+    building: body.building,
+    room: body.room,
+    typ: body.typ,
+    host: user,
+    course,
+    hostingRequests: []
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(Class)
+    .values(newClass)
+    .execute()
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+classesRouter.delete('/:groupKey', async (request: Request, response: Response) => {
+  const groupKey = request.params.groupKey
+
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class)
+  const clas = await classRepository.findOne({groupKey: groupKey});
+
+  if (clas == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "class not found"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Class)
+    .where("groupKey = :groupKey", {groupKey})
+    .execute()
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
 
 //PZD-5
 // example: localhost:8000/classes/conflicts?weekDay=wDay
@@ -121,92 +213,5 @@ classesRouter.get('/', async (request: Request, response: Response) => {
 //     })
 //     .catch(error => logger.error(error));
 // })
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// classesRouter.delete('/deleteDummy', async (request: Request, response: Response) => {
-//   await getConnection()
-//     .createQueryBuilder()
-//     .delete()
-//     .from(Class)
-//     .where("class.id > :id", { id: 0 })
-//     .execute()
-//     .then(() => {
-//       return response.json({status: "jest w pyte"})
-//     })
-//     .catch(error => logger.error(error));
-// })
-
-// classesRouter.post('/addDummy', async (request: Request, response: Response) => {
-//   const css = [
-//     {
-//       name: "Zastosowania informatyki w gospodarce",
-//       weekDay: "wDay",
-//       startTime: "17:05",
-//       endTime: "18:35",
-//       host: "Mgr inż. Tomasz Szandala",
-//       building: "C-1",
-//       room: "104",
-//       groupKey: "Z05-20a",
-//       typ: 'p'
-//     },
-//     {
-//       name: "Zastosowania informatyki w gospodarce",
-//       weekDay: "wDay",
-//       startTime: "18:55",
-//       endTime: "20:35",
-//       host: "Mgr inż. Tomasz Szandala",
-//       building: "C-1",
-//       room: "104",
-//       groupKey: "Z05-20b",
-//       typ: 'p'
-//     },
-//     {
-//       name: "Zastosowania informatyki w gospodarce",
-//       weekDay: "wDay",
-//       startTime: "18:00",
-//       endTime: "20:35",
-//       host: "Mgr inż. Tomasz Szandala",
-//       building: "C-1",
-//       room: "104",
-//       groupKey: "Z05-20c",
-//       typ: 'W'
-//     },
-//     {
-//       name: "Zastosowania informatyki w gospodarce",
-//       weekDay: "wDay",
-//       startTime: "18:05",
-//       endTime: "19:00",
-//       host: "Mgr inż. Tomasz Szandala",
-//       building: "C-1",
-//       room: "104",
-//       groupKey: "Z05-20d",
-//       typ: 'W'
-//     },
-//     {
-//       name: "Zastosowania informatyki w gospodarce",
-//       weekDay: "wDay",
-//       startTime: "20:40",
-//       endTime: "21:35",
-//       host: "Mgr inż. Tomasz Szandala",
-//       building: "C-1",
-//       room: "104",
-//       groupKey: "Z05-20e",
-//       typ: 'W'
-//     }
-//   ]
-
-//   await getConnection()
-//     .createQueryBuilder()
-//     .insert()
-//     .into(Class)
-//     .values(css)
-//     .execute()
-//     .then(() => {
-//       return response.json(css)
-//     })
-//     .catch(error => logger.error(error));
-// })
-
 
 export default classesRouter;

@@ -8,39 +8,36 @@ import {User} from "./User"
 export class Class {
 
     @PrimaryColumn()
-    groupKey!:     string;
+    public groupKey!:string;
 
     @Column()
-    name!:         string;
+    public weekDay!:      string;
 
     @Column()
-    weekDay!:      string;
+    public parity!:       string;
 
     @Column()
-    parity!:       string;
+    public startTime!:    string;
 
     @Column()
-    startTime!:    string;
+    public endTime!:      string;
 
     @Column()
-    endTime!:      string;
+    public building!:     string;
 
     @Column()
-    building!:     string;
+    public room!:         string;
 
     @Column()
-    room!:         string;
-
-    @Column()
-    typ!:          string;
+    public typ!:          string;
 
     @ManyToOne(() => User, user => user.classes)
-    host!: User;
+    public host!: User;
 
     @ManyToOne(() => Course, course => course.classes)
-    course!: Course;
+    public course!: Course;
 
-    @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update'] })
-    hostingRequests!: HostingRequest[];
+    @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })
+    public hostingRequests!: HostingRequest[];
 
 }
