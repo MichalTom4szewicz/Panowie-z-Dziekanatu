@@ -1,7 +1,7 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {alterKeys} from "../support/support"
+import {alterKeys, insertObjectIntoTable} from "../support/support"
 
 const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
@@ -23,24 +23,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
     myclasses: []
   }
 
-  await getConnection()
-  .createQueryBuilder()
-  .insert()
-  .into(User)
-  .values(newUser)
-  .execute()
-  .then(() => {
-    return response.status(200).json({
-      status: "success"
-    })
-  })
-  .catch(error => {
-    logger.error(error)
-    return response.status(500).json({
-      status: "failure",
-      message: error.message
-    })
-  });
+  insertObjectIntoTable(newUser, User, response);
 })
 
 usersRouter.put('/:username', async (request: Request, response: Response) => {

@@ -1,5 +1,8 @@
 import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
+import {getConnection} from "typeorm";
+import {Request, Response} from "express"
+const logger = require('../utils/logger')
 
 export function classesCollide (c1: Class, c2: Class): boolean {
 
@@ -124,4 +127,25 @@ export function listCollisions(newItems: any): object {
         map[tmpMap[i][1].groupKey] = tmpMap[i][2];
     }
     return map
+}
+
+export async function insertObjectIntoTable(object: any, table: any, response: Response) {
+    await getConnection()
+  .createQueryBuilder()
+  .insert()
+  .into(table)
+  .values(object)
+  .execute()
+  .then(() => {
+    return response.status(200).json({
+      status: "success"
+    })
+  })
+  .catch(error => {
+    logger.error(error)
+    return response.status(500).json({
+      status: "failure",
+      message: error.message
+    })
+  });
 }

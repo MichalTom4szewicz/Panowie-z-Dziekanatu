@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {compareClasses, alterKeys, processCollisions, listCollisions} from "../support/support"
+import {insertObjectIntoTable, alterKeys, processCollisions, listCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
 const coursesRouter = require('express').Router()
@@ -11,30 +11,25 @@ const coursesRouter = require('express').Router()
 coursesRouter.post('/', async (request: Request, response: Response) => {
   const body = request.body
 
+  const connection = await getConnection();
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username: body.user.username});
+
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "user not found"
+    })
+  }
+
   const newCourse: Course = {
     courseKey: body.courseKey,
     name: body.name,
+    user,
     classes: []
   }
 
-  await getConnection()
-  .createQueryBuilder()
-  .insert()
-  .into(Course)
-  .values(newCourse)
-  .execute()
-  .then(() => {
-    return response.status(200).json({
-      status: "success"
-    })
-  })
-  .catch(error => {
-    logger.error(error)
-    return response.status(500).json({
-      status: "failure",
-      message: error.message
-    })
-  });
+  insertObjectIntoTable(newCourse, Course, response)
 })
 
 coursesRouter.delete('/:courseKey', async (request: Request, response: Response) => {

@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {compareClasses, alterKeys, processCollisions, listCollisions} from "../support/support"
+import {compareClasses, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
@@ -44,24 +44,7 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     hostingRequests: []
   }
 
-  await getConnection()
-    .createQueryBuilder()
-    .insert()
-    .into(Class)
-    .values(newClass)
-    .execute()
-    .then(() => {
-      return response.status(200).json({
-        status: "success"
-      })
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  insertObjectIntoTable(newClass, Class, response)
 })
 
 classesRouter.delete('/:groupKey', async (request: Request, response: Response) => {
