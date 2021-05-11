@@ -7,15 +7,15 @@ import {Class} from "./Class"
 export class HostingRequest {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    public id!: number;
 
     @Column()
-    status!: string;
+    public status!: string;
 
     @ManyToOne(() => User, user => user.hostingRequests)
-    user!: User;
+    public user!: User;
 
     @ManyToOne(() => Class, cls => cls.hostingRequests)
-    class!: Class;
+    public class!: Class;
 
 }
