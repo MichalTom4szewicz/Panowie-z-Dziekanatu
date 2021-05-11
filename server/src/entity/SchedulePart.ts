@@ -7,15 +7,15 @@ import {User} from "./User"
 export class SchedulePart {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    public id!: number;
 
     @Column()
-    name!:         string;
+    public name!:         string;
 
     @ManyToOne(() => User, user => user.myclasses)
-    owner!: User;
+    public owner!: User;
 
     @OneToOne(() => Class)
     @JoinColumn()
-    class!: Class;
+    public class!: Class;
 }
