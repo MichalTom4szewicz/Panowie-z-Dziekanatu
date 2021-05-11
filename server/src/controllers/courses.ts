@@ -148,12 +148,12 @@ coursesRouter.get('/:courseKey', async (request: Request, response: Response) =>
 })
 
 coursesRouter.get('/', async (request: Request, response: Response) => {
-    const connection = await getConnection();
-    const coursesRepository = connection.getRepository(Course)
+  const connection = await getConnection();
+  const coursesRepository = connection.getRepository(Course)
 
-    const courses = await coursesRepository.find();
+  const courses = await coursesRepository.find();
 
-    return response.status(200).json(courses)
+  return response.status(200).json(courses)
 })
 
 coursesRouter.put('/:courseKey', async (request: Request, response: Response) => {

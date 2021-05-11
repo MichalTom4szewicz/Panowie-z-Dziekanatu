@@ -15,7 +15,7 @@ classesRouter.post('/', async (request: Request, response: Response) => {
   const courseRepository = connection.getRepository(Course)
   const course = await courseRepository.findOne({courseKey: body.course.courseKey});
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.user.username});
+  const user = await userRepository.findOne({username: body.host.username});
 
   if (course == undefined) {
     return response.status(500).json({
@@ -81,57 +81,102 @@ classesRouter.delete('/:groupKey', async (request: Request, response: Response) 
     });
 })
 
-//PZD-5
-// example: localhost:8000/classes/conflicts?weekDay=wDay
-classesRouter.get('/conflicts', async (request: Request, response: Response) => {
-  await getConnection()
-    .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
-    .execute()
-    .then(items => {
-      let newItems = alterKeys(items, "class");
-      newItems.sort(compareClasses);
-      const map = listCollisions(newItems);
+// changeClass(newClass: Class)
+classesRouter.put('/:groupKey', async (request: Request, response: Response) => {
+  const body = request.body
+  const groupKey = request.params.groupKey
 
-      return response.status(200).json(map)
+  const connection = await getConnection();
+  const classesRepository = connection.getRepository(Class)
+  const clas = await classesRepository.findOne({groupKey});
+
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username: body.host.username});
+
+  const courseRepository = connection.getRepository(Course)
+  const course = await courseRepository.findOne({courseKey: body.course.courseKey});
+
+  if (clas == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "class not found"
     })
-    .catch(error => {
-      logger.error(error);
-      return response.status(500).json({
-        success: false,
-        status: "nk rzutnik"
-      })
-    });
-})
+  }
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified user does not exist"
+    })
+  }
+  if (course == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified course does not exist"
+    })
+  }
 
-classesRouter.get('/all', async (request: Request, response: Response) => {
   await getConnection()
     .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
+    .update(Class)
+    .set({
+      groupKey: body.groupKey,
+      weekDay: body.weekDay,
+      startTime: body.startTime,
+      endTime: body.endTime,
+      parity: body.parity,
+      building: body.building,
+      room: body.room,
+      typ: body.typ,
+      host: user,
+      course,
+    })
+    .where("groupKey = :groupKey", {groupKey})
     .execute()
-    .then(items => {
-      return response.status(200).json(alterKeys(items, "class"))
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
     })
     .catch(error => {
       logger.error(error)
       return response.status(500).json({
-          success: false,
-          status: "nk rzutnik"
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+//PZD-5
+// example: localhost:8000/classes/conflicts/Monday
+classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Response) => {
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
+    .execute()
+    .then(items => {
+      let newItems = alterKeys(items, "class");
+      newItems.sort(compareClasses);
+      return response.status(200).json(listCollisions(newItems))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
       })
     });
 })
 
 // PZD-16
-// example: localhost:8000/classes/map?weekDay=wDay
+// example: localhost:8000/classes/map/Monday
 classesRouter.get('/map', async (request: Request, response: Response) => {
   await getConnection()
     .createQueryBuilder()
     .select("class")
     .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
+    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
     .execute()
     .then(items => {
       let newItems = alterKeys(items, "class");
@@ -149,52 +194,76 @@ classesRouter.get('/map', async (request: Request, response: Response) => {
       return response.status(200).json(map)
     })
     .catch(error => {
-      logger.error(error);
+      logger.error(error)
       return response.status(500).json({
-        success: false,
-        status: "nk rzutnik"
+        status: "failure",
+        message: error.message
       })
     });
 })
 
 // PZD-5
-// example: localhost:8000/classes?weekDay=wDay
-classesRouter.get('/', async (request: Request, response: Response) => {
+// example: localhost:8000/classes/weekDay/Monday
+classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Response) => {
   await getConnection()
     .createQueryBuilder()
     .select("class")
     .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.query.weekDay})
+    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
     .execute()
     .then(items => {
       let newItems = alterKeys(items, "class");
       newItems.sort(compareClasses);
-      newItems = processCollisions(newItems);
-
-      return response.status(200).json(newItems)
+      return response.status(200).json(processCollisions(newItems))
     })
     .catch(error => {
-      logger.error(error);
+      logger.error(error)
       return response.status(500).json({
-        success: false,
-        status: "nk rzutnik"
+        status: "failure",
+        message: error.message
       })
     });
 })
 
+classesRouter.get('/:groupKey', async (request: Request, response: Response) => {
+  const groupKey = request.params.groupKey
 
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class)
+  const clas = await classRepository.findOne({groupKey: groupKey});
 
-// classesRouter.get('/:id', async (request: Request, response: Response) => {
-//   await getConnection()
-//     .createQueryBuilder()
-//     .select("class")
-//     .from(Class, "class")
-//     .where("class.id = :id", {id: request.params.id})
-//     .execute()
-//     .then(item => {
-//       return response.json(item)
-//     })
-//     .catch(error => logger.error(error));
-// })
+  if (clas == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "class not found"
+    })
+  }
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.groupKey = :groupKey", {groupKey})
+    .execute()
+    .then(item => {
+      return response.status(200).json(alterKeys(item, "class"))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+// getAllClasses() -> Classes[]
+classesRouter.get('/', async (request: Request, response: Response) => {
+  const connection = await getConnection();
+  const classesRepository = connection.getRepository(Class)
+
+  const classes = await classesRepository.find();
+
+  return response.status(200).json(classes)
+})
 
 export default classesRouter;
