@@ -225,6 +225,70 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
     });
 })
 
+// getClassesHostedByUser(username)
+classesRouter.get('/host/:username', async (request: Request, response: Response) => {
+  const connection = await getConnection();
+  const username = request.params.username
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username});
+
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified user does not exist"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.hostUsername = :username", {username})
+    .execute()
+    .then(items => {
+      return response.status(200).json(alterKeys(items, "classes"))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+// getClassesofCourse(courseKey)
+classesRouter.get('/course/:courseKey', async (request: Request, response: Response) => {
+  const connection = await getConnection();
+  const courseKey = request.params.courseKey
+  const courseRepository = connection.getRepository(Course)
+  const course = await courseRepository.findOne({courseKey});
+
+  if (course == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified course does not exist"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .select("class")
+    .from(Class, "class")
+    .where("class.courseCourseKey = :courseKey", {courseKey})
+    .execute()
+    .then(items => {
+      return response.status(200).json(alterKeys(items, "classes"))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
 classesRouter.get('/:groupKey', async (request: Request, response: Response) => {
   const groupKey = request.params.groupKey
 
