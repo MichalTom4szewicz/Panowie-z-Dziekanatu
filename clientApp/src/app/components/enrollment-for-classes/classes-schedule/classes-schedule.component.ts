@@ -6,6 +6,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of, range } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Classes } from 'src/app/domain/classes';
+import { Degree } from 'src/app/enums/degree';
+import { Parity } from 'src/app/enums/parity';
+import { Typ } from 'src/app/enums/typ';
 import { ClassGridService } from 'src/app/services/class-grid/class-grid.service';
 import { ScheduleRegisterService } from 'src/app/services/schedule-register/schedule-register.service';
 import { SchedulesMenagerService } from 'src/app/services/schedules-menager/schedules-menager.service';
@@ -126,7 +129,6 @@ export class ClassesScheduleComponent implements OnInit {
 
   private getEmptyClass(): Classes {
     return {
-      name: '',
       weekDay: WeekDay.Monday,
       startTime: {
         hours: 0,
@@ -136,11 +138,22 @@ export class ClassesScheduleComponent implements OnInit {
         hours: 0,
         minutes: 0
       },
-      host: '',
+      host: undefined,
       building: '',
       room: '',
       groupKey: '',
-      typ: ''
+      course: {
+        name: '',
+        courseKey: '',
+        supervisor: {
+          firstName: '',
+          lastName: '',
+          degree: Degree.ENG,
+          username: ''
+        }
+      },
+      typ: Typ.LECTURE,
+      parity: Parity.NONE
     }
   }
 }

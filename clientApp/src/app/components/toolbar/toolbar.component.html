@@ -1,4 +1,6 @@
-<mat-toolbar>
-  <span>My Application</span>
+<mat-toolbar color="primary">
+  <span>Panowie z Dziekanatu</span>
+  <button mat-button [routerLink]="['/plan']">Stwórz plan</button>
+  <button mat-button [routerLink]="['/supervisor']">Opiekun</button>
 </mat-toolbar>
 <router-outlet></router-outlet>

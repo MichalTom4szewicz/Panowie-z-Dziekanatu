@@ -8,7 +8,7 @@ import { ClassGridService } from 'src/app/services/class-grid/class-grid.service
 import { ClassesService } from 'src/app/services/classes/classes.service';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
 import { CalendarConstants } from '../../constants/calendar-constants';
-import { ClassesStatusEnum } from '../../enums/classes-status-enum';
+import { ClassesStatusEnum } from '../../../enums/classes-status-enum';
 import { ReplaceClassesDialogComponent } from './replace-classes-dialog/replace-classes-dialog.component';
 
 @Component({
