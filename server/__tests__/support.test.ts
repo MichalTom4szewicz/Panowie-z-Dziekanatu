@@ -24,3 +24,18 @@ for(let row of tab) {
         expect(fs.classesCollide(c1, c2)).toBe(row.e);
     });
 }
+
+describe('createTime', () => {
+    test('1', () => {
+      expect(fs.createTime(1,5)).toBe("01:05");
+    });
+    test('2', () => {
+        expect(fs.createTime(10,5)).toBe("10:05");
+    });
+    test('3', () => {
+        expect(fs.createTime(10,15)).toBe("10:15");
+    });
+    test('4', () => {
+        expect(fs.createTime(1,15)).toBe("01:15");
+    });
+});

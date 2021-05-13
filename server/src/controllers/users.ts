@@ -17,6 +17,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
     lastName: body.lastName,
     username: body.username,
     password,
+    degree: body.degree,
     courses: [],
     hostingRequests: [],
     classes: [],

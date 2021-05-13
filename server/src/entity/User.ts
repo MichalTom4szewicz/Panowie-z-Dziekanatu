@@ -15,6 +15,9 @@ export class User {
     public firstName!: string;
 
     @Column()
+    public degree!: string;
+
+    @Column()
     public lastName!: string;
 
     @PrimaryColumn({

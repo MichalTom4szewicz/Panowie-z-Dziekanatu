@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {compareClasses, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
+import {compareClasses, createTime, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
@@ -30,11 +30,14 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     })
   }
 
+  const startTime = createTime(body.startTime.hours, body.startTime.minutes)
+  const endTime = createTime(body.endTime.hours, body.endTime.minutes)
+
   const newClass: Class = {
     groupKey: body.groupKey,
     weekDay: body.weekDay,
-    startTime: body.startTime,
-    endTime: body.endTime,
+    startTime,
+    endTime,
     parity: body.parity,
     building: body.building,
     room: body.room,
@@ -83,7 +86,7 @@ classesRouter.delete('/:groupKey', async (request: Request, response: Response) 
 
 // changeClass(newClass: Class)
 classesRouter.put('/:groupKey', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const groupKey = request.params.groupKey
 
   const connection = await getConnection();
@@ -115,14 +118,17 @@ classesRouter.put('/:groupKey', async (request: Request, response: Response) => 
     })
   }
 
+  const startTime = createTime(body.startTime.hours, body.startTime.minutes)
+  const endTime = createTime(body.endTime.hours, body.endTime.minutes)
+
   await getConnection()
     .createQueryBuilder()
     .update(Class)
     .set({
       groupKey: body.groupKey,
       weekDay: body.weekDay,
-      startTime: body.startTime,
-      endTime: body.endTime,
+      startTime,
+      endTime,
       parity: body.parity,
       building: body.building,
       room: body.room,

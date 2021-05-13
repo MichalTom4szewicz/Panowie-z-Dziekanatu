@@ -2,6 +2,7 @@ import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
 import {getConnection} from "typeorm";
 import {Request, Response} from "express"
+import { createPostfixIncrement } from "typescript";
 const logger = require('../utils/logger')
 
 export function classesCollide (c1: Class, c2: Class): boolean {
@@ -148,4 +149,22 @@ export async function insertObjectIntoTable(object: any, table: any, response: R
       message: error.message
     })
   });
+}
+
+export function createTime(h: number, m: number) {
+    let hString
+    if(h.toString().length == 1) {
+        hString = `0${h}`
+    } else {
+        hString = `${h}`
+    }
+
+    let mString
+    if(m.toString().length == 1) {
+        mString = `0${m}`
+    } else {
+        mString = `${m}`
+    }
+
+    return `${hString}:${mString}`
 }
