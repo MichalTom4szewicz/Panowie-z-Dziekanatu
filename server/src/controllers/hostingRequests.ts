@@ -43,7 +43,7 @@ hostingRequestRouter.delete('/:id', async (request: Request, response: Response)
 })
 
 hostingRequestRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const classesRepository = connection.getRepository(Class)
@@ -158,8 +158,8 @@ hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Resp
   const status = request.body.status
 
   const connection = await getConnection();
-  const classRepository = await getRepository(Class)
-  const hRequestRepository = await getRepository(HostingRequest)
+  const classRepository = await connection.getRepository(Class)
+  const hRequestRepository = await connection.getRepository(HostingRequest)
 
   if(!(status == "accepted" || status == "rejected")) {
     return response.status(500).json({
@@ -216,10 +216,10 @@ hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Resp
 })
 
 // PZD-10
-// zapiszMnieNaKursy(plan: Classes[]): void
+// zapiszMnieNaKursy(objects: Classes[]): void
 // localhost:8000/hrequests
 hostingRequestRouter.post('/plan', async (request: Request, response: Response) => {
-  const plan = request.body.plan
+  const plan = request.body.objects
   const username = request.body.username
 
   const connection = await getConnection();
@@ -244,7 +244,7 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
 })
 
 hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const id = parseInt(request.params.id)
 
   const connection = await getConnection();

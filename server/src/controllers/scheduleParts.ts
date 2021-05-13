@@ -5,14 +5,13 @@ import {User} from '../entity/User'
 import {Request, Response} from "express"
 import {insertObjectIntoTable, alterKeys} from "../support/support"
 
-
 const logger = require('../utils/logger')
 const schedulePartRouter = require('express').Router()
 
 // PZD-10
-// zapiszPlan(plan: Classes[], name: string, user)
+// zapiszPlan(objects: Classes[], name: string, user)
 schedulePartRouter.post('/schedule', async (request: Request, response: Response) => {
-  const classes = request.body.classes
+  const classes = request.body.objects
   const name = request.body.name
   const username = request.body.owner.username
 
@@ -46,7 +45,7 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
 
 // addSingleItemOfSchedule(scheduleName, Class)
 schedulePartRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -149,7 +148,7 @@ schedulePartRouter.delete('/:id', async (request: Request, response: Response) =
 
 // changeSchedulePart(id)
 schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const id = parseInt(request.params.id)
 
   const connection = await getConnection();

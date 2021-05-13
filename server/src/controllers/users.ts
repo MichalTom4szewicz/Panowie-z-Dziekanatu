@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const password = await bcrypt.hash(body.password, 10)
 
   const newUser: User = {
@@ -27,7 +27,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
 })
 
 usersRouter.put('/:username', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const password = await bcrypt.hash(body.password, 10)
   const username = request.params.username
 

@@ -27,7 +27,7 @@ export class User {
     })
     public password!: string;
 
-    @OneToMany(() => Course, course => course.user, { cascade: ['insert', 'update', 'remove'] })
+    @OneToMany(() => Course, course => course.supervisor, { cascade: ['insert', 'update', 'remove'] })
     public courses!: Course[];
 
     @OneToMany(() => HostingRequest, hr => hr.user, { cascade: ['insert', 'update', 'remove'] })

@@ -9,7 +9,7 @@ const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
 
 classesRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body
+  const body = request.body.object
   const connection = await getConnection();
 
   const courseRepository = connection.getRepository(Course)

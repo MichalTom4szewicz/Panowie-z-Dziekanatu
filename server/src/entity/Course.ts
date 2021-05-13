@@ -13,7 +13,7 @@ export class Course {
     public name!: string;
 
     @ManyToOne(() => User, usr => usr.courses)
-    public user!: User;
+    public supervisor!: User;
 
     @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update', 'remove'] })
     public classes!: Class[];
