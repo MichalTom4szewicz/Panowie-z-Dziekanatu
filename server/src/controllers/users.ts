@@ -2,6 +2,7 @@ import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
 import {alterKeys, insertObjectIntoTable} from "../support/support"
+import {Degree} from "../enums/degree"
 
 const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
@@ -9,15 +10,23 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body.object
-  const password = await bcrypt.hash(body.password, 10)
+  const object = request.body.object
+  const password = await bcrypt.hash(object.password, 10)
+
+  const degreeKeys = new Set(Object.keys(Degree))
+  if(!degreeKeys.has(object.degree)) {
+    return response.status(500).json({
+      status: "failure",
+      message: `invalid degree: ${object.degree}`
+    })
+  }
 
   const newUser: User = {
-    firstName: body.firstName,
-    lastName: body.lastName,
-    username: body.username,
+    firstName: object.firstName,
+    lastName: object.lastName,
+    username: object.username,
     password,
-    degree: body.degree,
+    degree: object.degree,
     courses: [],
     hostingRequests: [],
     classes: [],
@@ -28,8 +37,8 @@ usersRouter.post('/', async (request: Request, response: Response) => {
 })
 
 usersRouter.put('/:username', async (request: Request, response: Response) => {
-  const body = request.body.object
-  const password = await bcrypt.hash(body.password, 10)
+  const object = request.body.object
+  const password = await bcrypt.hash(object.password, 10)
   const username = request.params.username
 
   const connection = await getConnection();
@@ -47,8 +56,8 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     .createQueryBuilder()
     .update(User)
     .set({
-        firstName: body.firstName,
-        lastName: body.lastName,
+        firstName: object.firstName,
+        lastName: object.lastName,
         // username: body.username, // can't update username
         password,
     })
