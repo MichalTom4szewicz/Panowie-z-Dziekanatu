@@ -13,8 +13,8 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
 
-  const degreeKeys = new Set(Object.keys(Degree))
-  if(!degreeKeys.has(object.degree)) {
+  const degreeValues = new Set(Object.values(Degree))
+  if(!degreeValues.has(object.degree)) {
     return response.status(500).json({
       status: "failure",
       message: `invalid degree: ${object.degree}`
