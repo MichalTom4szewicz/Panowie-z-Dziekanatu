@@ -7,7 +7,7 @@ import { Classes } from 'src/app/domain/classes';
 import { ClassGridService } from 'src/app/services/class-grid/class-grid.service';
 import { ClassesService } from 'src/app/services/classes/classes.service';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
-import { CalendarConstants } from '../../constants/calendar-constants';
+import { CalendarConstants } from '../../../constants/calendar-constants';
 import { ClassesStatusEnum } from '../../../enums/classes-status-enum';
 import { ReplaceClassesDialogComponent } from './replace-classes-dialog/replace-classes-dialog.component';
 
@@ -29,7 +29,7 @@ export class ClassGridDayComponent implements OnInit {
 
   ngOnInit(): void {
     range(7, 15).subscribe(hour => this.hours.push(hour));
-    this.classesService.getClasses(this.weekDay).subscribe(value =>
+    this.classesService.getClassesByWeekDay(this.weekDay).subscribe(value =>
       this.sortedClasses = value.map(row =>
         row.map(element =>
           [element, ClassesStatusEnum.UNSELECTED]

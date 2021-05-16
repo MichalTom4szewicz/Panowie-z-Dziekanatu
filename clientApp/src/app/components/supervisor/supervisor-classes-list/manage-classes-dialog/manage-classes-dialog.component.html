@@ -1,0 +1,66 @@
+<h1 mat-dialog-title *ngIf="!data.edit">Dodaj nowe zajęcia</h1>
+<h1 mat-dialog-title *ngIf="data.edit">Edytuj zajęcia</h1>
+<div mat-dialog-content>
+    <form [formGroup]="classesForm">
+        <mat-form-field>
+            <mat-label>Dzień tygodnia</mat-label>
+            <mat-select formControlName="weekDay" required="true">
+                <mat-option *ngFor="let day of weekDays" [value]="day[0]">
+                    {{day[1]}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div formGroupName="startTime" [ngClass]="{'text-color': isStartTimeValid(), 'invalid-text-color': !isStartTimeValid()}"> 
+            Czas rozpoczęcia zajęć *
+            <mat-form-field class="small-input">
+                <input matInput formControlName="hours">
+            </mat-form-field>
+            :
+            <mat-form-field class="small-input">
+                <input matInput formControlName="minutes">
+            </mat-form-field>
+        </div>
+        <div formGroupName="endTime"  [ngClass]="{'text-color': isEndTimeValid(), 'invalid-text-color': !isEndTimeValid()}"> 
+            Czas rozpoczęcia zajęć *
+            <mat-form-field class="small-input">
+                <input matInput formControlName="hours">
+            </mat-form-field>
+            :
+            <mat-form-field class="small-input">
+                <input matInput formControlName="minutes">
+            </mat-form-field>
+        </div>
+        <mat-form-field>
+            <mat-label>Parzystość</mat-label>
+            <mat-select formControlName="parity" required="true">
+                <mat-option *ngFor="let parity of classesParity" [value]="parity[0]">
+                    {{parity[1]}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Budynek</mat-label>
+            <input matInput formControlName="building" required="true">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Sala</mat-label>
+            <input matInput formControlName="room" required="true">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Nr grupy</mat-label>
+            <input matInput formControlName="groupKey" required="true">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Typ zajęć</mat-label>
+            <mat-select formControlName="typ" required="true">
+                <mat-option *ngFor="let typ of classesTyp" [value]="typ[0]">
+                    {{typ[1]}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doNothing()">Cofnij</button>
+    <button mat-button (click)="save()" [disabled]="validForm()">Zapisz</button>
+</div>

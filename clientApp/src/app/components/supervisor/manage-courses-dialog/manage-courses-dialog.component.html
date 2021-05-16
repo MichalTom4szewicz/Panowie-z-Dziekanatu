@@ -1,0 +1,18 @@
+<h1 mat-dialog-title *ngIf="!data.edit">Dodaj nowy kurs</h1>
+<h1 mat-dialog-title *ngIf="data.edit">Edytuj kurs</h1>
+<div mat-dialog-content>
+    <form [formGroup]="courseForm">
+        <mat-form-field>
+            <mat-label>Nazwa kursu</mat-label>
+            <input matInput formControlName="name" required="true">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Kod kursu</mat-label>
+            <input matInput formControlName="courseKey" required="true">
+        </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doNothing()">Cofnij</button>
+    <button mat-button (click)="save()" [disabled]="validForm()">Zapisz</button>
+</div>

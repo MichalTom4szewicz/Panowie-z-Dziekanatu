@@ -1,1 +1,24 @@
-<p>supervisor works!</p>
+<mat-accordion class="example-headers-align">
+    <mat-expansion-panel *ngFor="let item of coursesList" hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{item[0].name}}
+            </mat-panel-title>
+            <mat-panel-description>
+                {{item[0].courseKey}}
+                <div>{{item[0].supervisor.degree}} {{item[0].supervisor.firstName}} {{item[0].supervisor.lastName}}</div>
+                <div>
+                    <mat-icon color="primary" class="pointer" *ngIf="item[1]" (mouseover)="mouseover(item, 1)">mode_edit_outline</mat-icon>
+                    <mat-icon color="primary" class="pointer" *ngIf="!item[1]" (mouseleave)="mouseleave(item, 1)" (click)="edit(item[0])">border_color</mat-icon>
+                    <mat-icon color="primary" class="pointer" *ngIf="item[2]" (mouseover)="mouseover(item, 2)">remove_circle_outline</mat-icon>
+                    <mat-icon color="primary" class="pointer" *ngIf="!item[2]" (mouseleave)="mouseleave(item, 2)" (click)="delete(item[0])">remove_circle</mat-icon>
+                </div>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <pzd-supervisor-classes-list [course]="item[0]"></pzd-supervisor-classes-list>
+    </mat-expansion-panel>
+</mat-accordion>
+<div fxLayout="row" fxLayoutAlign="center start" class="add-button">
+    <mat-icon color="primary" class="pointer" *ngIf="addButton" (mouseover)="mouseoverAddButton()">add_circle_outline</mat-icon>
+    <mat-icon color="primary" class="pointer" *ngIf="!addButton" (mouseleave)="mouseleaveAddButton()" (click)="add()">add_circle</mat-icon>
+</div>

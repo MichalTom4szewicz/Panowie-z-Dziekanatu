@@ -1,4 +1,5 @@
 export enum Degree {
+    NONE = '',
     ENG = 'inż.',
     MA = 'mgr',
     MA_ENG = 'mgr inż.',

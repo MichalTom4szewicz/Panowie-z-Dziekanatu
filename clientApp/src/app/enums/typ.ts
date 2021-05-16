@@ -1,4 +1,5 @@
 export enum Typ {
+    NONE = '',
     PROJECT = 'P',
     EXERCISE = 'C',
     SEMINAR = 'S',

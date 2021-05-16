@@ -18,6 +18,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
 
 import { ClassesComponent } from './components/classes/classes.component';
 import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
@@ -32,8 +35,12 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SavedSchedulesComponent } from './components/enrollment-for-classes/classes-schedule/saved-schedules/saved-schedules.component';
 import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
 import { SupervisorComponent } from './components/supervisor/supervisor.component';
+import { SupervisorClassesListComponent } from './components/supervisor/supervisor-classes-list/supervisor-classes-list.component';
+import { ManageCoursesDialogComponent } from './components/supervisor/manage-courses-dialog/manage-courses-dialog.component';
+import { ManageClassesDialogComponent } from './components/supervisor/supervisor-classes-list/manage-classes-dialog/manage-classes-dialog.component';
+import { HostingRequestsDialogComponent } from './components/supervisor/supervisor-classes-list/hosting-requests-dialog/hosting-requests-dialog.component';
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -52,7 +59,10 @@ import { SupervisorComponent } from './components/supervisor/supervisor.componen
 		MatToolbarModule,
 		MatBottomSheetModule,
 		MatListModule,
-		MatSnackBarModule
+		MatSnackBarModule,
+		MatExpansionModule,
+		MatTableModule,
+		MatSelectModule
 	],
 	providers: [],
 	bootstrap: [AppComponent],

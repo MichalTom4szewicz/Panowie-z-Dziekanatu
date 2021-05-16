@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Zapytanie o prowadzenie zajęć</h1>
+<div mat-dialog-content>
+    <div *ngIf="!isListEmpty()" >
+        <div *ngFor="let item of requstList" fxLayout="row" fxLayoutAlign="space-between center">
+            <p>{{item[0].user.degree}} {{item[0].user.firstName}} {{item[0].user.lastName}}</p>
+            <div>
+                <mat-icon *ngIf="item[1]" class="pointer" (mouseover)="mouseover(item, 1)">check</mat-icon>
+                <mat-icon *ngIf="!item[1]" class="pointer accept" (mouseleave)="mouseleave(item, 1)" (click)="accept(item[0])">check</mat-icon>
+                <mat-icon *ngIf="item[2]" class="pointer" (mouseover)="mouseover(item, 2)">close</mat-icon>
+                <mat-icon *ngIf="!item[2]" class="pointer reject" (mouseleave)="mouseleave(item, 2)" (click)="reject(item[0])">close</mat-icon>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isListEmpty()">
+        <p>Aktualnie nie posiadasz żadnych zapytań o prowadzenie tych zajęć</p>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doNothing()">Zamknij</button>
+</div>
