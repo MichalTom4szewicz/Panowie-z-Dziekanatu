@@ -1,7 +1,7 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {alterKeys, insertObjectIntoTable} from "../support/support"
+import {alterKeys, validateValues, insertObjectIntoTable} from "../support/support"
 import {Degree} from "../enums/degree"
 
 const logger = require('../utils/logger')
@@ -13,13 +13,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
 
-  const degreeValues = new Set(Object.values(Degree))
-  if(!degreeValues.has(object.degree)) {
-    return response.status(500).json({
-      status: "failure",
-      message: `invalid degree: ${object.degree}`
-    })
-  }
+  if(!validateValues(object.degree, Degree, response)) return
 
   const newUser: User = {
     firstName: object.firstName,

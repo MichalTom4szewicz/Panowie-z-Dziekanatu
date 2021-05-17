@@ -9,11 +9,11 @@ const logger = require('../utils/logger')
 const coursesRouter = require('express').Router()
 
 coursesRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.supervisor.username});
+  const user = await userRepository.findOne({username: object.supervisor.username});
 
   if (user == undefined) {
     return response.status(500).json({
@@ -23,8 +23,8 @@ coursesRouter.post('/', async (request: Request, response: Response) => {
   }
 
   const newCourse: Course = {
-    courseKey: body.courseKey,
-    name: body.name,
+    courseKey: object.courseKey,
+    name: object.name,
     supervisor: user,
     classes: []
   }
@@ -157,7 +157,7 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
 })
 
 coursesRouter.put('/:courseKey', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const courseKey = request.params.courseKey
 
   const connection = await getConnection();
@@ -165,7 +165,7 @@ coursesRouter.put('/:courseKey', async (request: Request, response: Response) =>
   const course = await courseRepository.findOne({courseKey});
 
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.supervisor.username});
+  const user = await userRepository.findOne({username: object.supervisor.username});
 
   if (course == undefined) {
     return response.status(500).json({
@@ -184,8 +184,8 @@ coursesRouter.put('/:courseKey', async (request: Request, response: Response) =>
     .createQueryBuilder()
     .update(Course)
     .set({
-        name: body.name,
-        courseKey: body.courseKey,
+        name: object.name,
+        courseKey: object.courseKey,
         supervisor: user
     })
     .where("courseKey = :courseKey", {courseKey})

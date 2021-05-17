@@ -3,19 +3,22 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {compareClasses, createTime, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
+import {compareClasses, isTime, validateValues, createTime, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
+import {Parity} from "../enums/parity"
+import {WeekDay} from "../enums/weekDay"
+import {Typ} from "../enums/typ"
 
 const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
 
 classesRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const connection = await getConnection();
 
   const courseRepository = connection.getRepository(Course)
-  const course = await courseRepository.findOne({courseKey: body.course.courseKey});
+  const course = await courseRepository.findOne({courseKey: object.course.courseKey});
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.host.username});
+  const user = await userRepository.findOne({username: object.host.username});
 
   if (course == undefined) {
     return response.status(500).json({
@@ -30,18 +33,25 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     })
   }
 
-  const startTime = createTime(body.startTime.hours, body.startTime.minutes)
-  const endTime = createTime(body.endTime.hours, body.endTime.minutes)
+  if(!validateValues(object.parity, Parity, response)) return
+  if(!validateValues(object.typ, Typ, response)) return
+  if(!validateValues(object.weekDay, WeekDay, response)) return
+
+  if(!isTime(object.startTime.hours, object.startTime.minutes, response)) return
+  if(!isTime(object.endTime.hours, object.endTime.minutes, response)) return
+
+  const startTime = createTime(object.startTime.hours, object.startTime.minutes)
+  const endTime = createTime(object.endTime.hours, object.endTime.minutes)
 
   const newClass: Class = {
-    groupKey: body.groupKey,
-    weekDay: body.weekDay,
+    groupKey: object.groupKey,
+    weekDay: object.weekDay,
     startTime,
     endTime,
-    parity: body.parity,
-    building: body.building,
-    room: body.room,
-    typ: body.typ,
+    parity: object.parity,
+    building: object.building,
+    room: object.room,
+    typ: object.typ,
     host: user,
     course,
     hostingRequests: []
@@ -86,7 +96,7 @@ classesRouter.delete('/:groupKey', async (request: Request, response: Response) 
 
 // changeClass(newClass: Class)
 classesRouter.put('/:groupKey', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const groupKey = request.params.groupKey
 
   const connection = await getConnection();
@@ -94,10 +104,10 @@ classesRouter.put('/:groupKey', async (request: Request, response: Response) => 
   const clas = await classesRepository.findOne({groupKey});
 
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.host.username});
+  const user = await userRepository.findOne({username: object.host.username});
 
   const courseRepository = connection.getRepository(Course)
-  const course = await courseRepository.findOne({courseKey: body.course.courseKey});
+  const course = await courseRepository.findOne({courseKey: object.course.courseKey});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -118,21 +128,28 @@ classesRouter.put('/:groupKey', async (request: Request, response: Response) => 
     })
   }
 
-  const startTime = createTime(body.startTime.hours, body.startTime.minutes)
-  const endTime = createTime(body.endTime.hours, body.endTime.minutes)
+  if(!validateValues(object.parity, Parity, response)) return
+  if(!validateValues(object.typ, Typ, response)) return
+  if(!validateValues(object.weekDay, WeekDay, response)) return
+
+  if(!isTime(object.startTime.hours, object.startTime.minutes, response)) return
+  if(!isTime(object.endTime.hours, object.endTime.minutes, response)) return
+
+  const startTime = createTime(object.startTime.hours, object.startTime.minutes)
+  const endTime = createTime(object.endTime.hours, object.endTime.minutes)
 
   await getConnection()
     .createQueryBuilder()
     .update(Class)
     .set({
-      groupKey: body.groupKey,
-      weekDay: body.weekDay,
+      groupKey: object.groupKey,
+      weekDay: object.weekDay,
       startTime,
       endTime,
-      parity: body.parity,
-      building: body.building,
-      room: body.room,
-      typ: body.typ,
+      parity: object.parity,
+      building: object.building,
+      room: object.room,
+      typ: object.typ,
       host: user,
       course,
     })

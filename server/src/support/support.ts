@@ -1,6 +1,6 @@
 import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
-import {getConnection} from "typeorm";
+import {getConnection, Repository} from "typeorm";
 import {Request, Response} from "express"
 import { createPostfixIncrement } from "typescript";
 const logger = require('../utils/logger')
@@ -138,13 +138,13 @@ export async function insertObjectIntoTable(object: any, table: any, response: R
   .values(object)
   .execute()
   .then(() => {
-    return response.status(200).json({
+    response.status(200).json({
       status: "success"
     })
   })
   .catch(error => {
     logger.error(error)
-    return response.status(500).json({
+    response.status(500).json({
       status: "failure",
       message: error.message
     })
@@ -167,4 +167,34 @@ export function createTime(h: number, m: number) {
     }
 
     return `${hString}:${mString}`
+}
+
+export function validateValues(val: any, enm: any, response: Response) {
+    const enumValues = new Set(Object.values(enm))
+    if(!enumValues.has(val)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid value: ${val}`
+        })
+        return false
+    }
+    return true
+}
+
+export function isTime(hours: any, minutes: any, response: Response) {
+    if(!(hours >= 0 && hours <= 24)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid hour: ${hours}`
+        })
+        return false
+    }
+    if(!(minutes >= 0 && minutes <= 60)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid minutes: ${minutes}`
+        })
+        return false
+    }
+    return true
 }
