@@ -1,4 +1,4 @@
-import {getConnection} from "typeorm";
+import {getConnection, createQueryBuilder} from "typeorm";
 import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
@@ -347,10 +347,37 @@ classesRouter.get('/:groupKey', async (request: Request, response: Response) => 
 classesRouter.get('/', async (request: Request, response: Response) => {
   const connection = await getConnection();
   const classesRepository = connection.getRepository(Class)
+  const coursesRepository = connection.getRepository(Course)
+  const usersRepository = connection.getRepository(User)
 
-  const classes = await classesRepository.find();
+  const classes = await classesRepository.find({relations: ['host', 'course']});
 
-  return response.status(200).json(classes)
+  let newClasses = []
+  for (const c of classes) {
+    let newC: any = c
+    newC.host = {
+      firstName: c.host.firstName,
+      lastName: c.host.lastName,
+      degree: c.host.degree
+    }
+    let courses = await coursesRepository.find({relations: ['supervisor']})
+    // console.log(courses)
+    if (courses !== undefined) {
+      const course = courses.filter(cc => {
+        return cc.courseKey === c.course.courseKey
+      })[0]
+      // console.log(course, "gfdgfdg")
+      newC.supervisor = {
+        firstName: courses[0].supervisor.firstName,
+        lastName: courses[0].supervisor.lastName,
+        degree: courses[0].supervisor.degree
+      }
+      delete newC.course
+      newClasses.push(newC)
+    }
+  }
+
+  return response.status(200).json(newClasses)
 })
 
 export default classesRouter;
