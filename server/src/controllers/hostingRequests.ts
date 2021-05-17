@@ -3,8 +3,9 @@ import {Class} from "../entity/Class";
 import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import { Course } from "../entity/Course";
-import {insertObjectIntoTable, alterKeys} from "../support/support"
+import { Status } from "../enums/status";
+import {insertObjectIntoTable, alterKeys, isTime, validateValues} from "../support/support"
+import { report } from "node:process";
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
@@ -43,13 +44,13 @@ hostingRequestRouter.delete('/:id', async (request: Request, response: Response)
 })
 
 hostingRequestRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const classesRepository = connection.getRepository(Class)
 
-  const user = await userRepository.findOne({username: body.user.username});
-  const clas = await classesRepository.findOne({groupKey: body.class.groupKey});
+  const user = await userRepository.findOne({username: object.user.username});
+  const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -155,18 +156,12 @@ hostingRequestRouter.get('/', async (request: Request, response: Response) => {
 // localhost:8000/hrequests/resolve/blabla
 hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Response) => {
   const id = parseInt(request.params.id)
-  const status = request.body.status
+  const status = request.body.object.status
+
+  if(!validateValues(status, Status, response)) return
 
   const connection = await getConnection();
-  const classRepository = await connection.getRepository(Class)
   const hRequestRepository = await connection.getRepository(HostingRequest)
-
-  if(!(status == "accepted" || status == "rejected")) {
-    return response.status(500).json({
-      status: "failure",
-      message: "specified new status is forbidden"
-    })
-  }
 
   await getConnection()
     .createQueryBuilder()
@@ -219,7 +214,7 @@ hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Resp
 // zapiszMnieNaKursy(objects: Classes[]): void
 // localhost:8000/hrequests
 hostingRequestRouter.post('/plan', async (request: Request, response: Response) => {
-  const plan = request.body.objects
+  const objects = request.body.objects
   const username = request.body.username
 
   const connection = await getConnection();
@@ -227,7 +222,7 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
   const userRepository = connection.getRepository(User)
 
   let newhostingRequests = []
-  for (let groupKey of plan.map((c: { groupKey: string; }) => c.groupKey)) {
+  for (let groupKey of objects.map((c: { groupKey: string; }) => c.groupKey)) {
     const clas = await classRepository.findOne({groupKey});
     const user = await userRepository.findOne({username});
 
@@ -244,15 +239,15 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
 })
 
 hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const id = parseInt(request.params.id)
 
   const connection = await getConnection();
   const classesRepository = connection.getRepository(Class)
-  const clas = await classesRepository.findOne({groupKey: body.class.groupKey});
+  const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.user.username});
+  const user = await userRepository.findOne({username: object.user.username});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -267,11 +262,13 @@ hostingRequestRouter.put('/:id', async (request: Request, response: Response) =>
     })
   }
 
+  if(!validateValues(object.status, Status, response)) return
+
   await getConnection()
     .createQueryBuilder()
     .update(HostingRequest)
     .set({
-      status: body.status,
+      status: object.status,
       user,
       class: clas
     })

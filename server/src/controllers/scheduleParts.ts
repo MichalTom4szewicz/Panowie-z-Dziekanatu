@@ -11,9 +11,9 @@ const schedulePartRouter = require('express').Router()
 // PZD-10
 // zapiszPlan(objects: Classes[], name: string, user)
 schedulePartRouter.post('/schedule', async (request: Request, response: Response) => {
-  const classes = request.body.objects
+  const objects = request.body.objects
   const name = request.body.name
-  const username = request.body.owner.username
+  const username = request.body.username
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -29,7 +29,7 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
   const classRepository = connection.getRepository(Class)
 
   let newScheduleParts = []
-  for (let groupKey of classes.map((c: { groupKey: string; }) => c.groupKey)) {
+  for (let groupKey of objects.map((c: { groupKey: string; }) => c.groupKey)) {
     const clas = await classRepository.findOne({groupKey});
     if (clas != undefined) {
       newScheduleParts.push({
@@ -45,14 +45,14 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
 
 // addSingleItemOfSchedule(scheduleName, Class)
 schedulePartRouter.post('/', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.owner.username});
+  const user = await userRepository.findOne({username: object.owner.username});
 
   const classRepository = connection.getRepository(Class)
-  const clas = await classRepository.findOne({groupKey: body.class.groupKey});
+  const clas = await classRepository.findOne({groupKey: object.class.groupKey});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -68,7 +68,7 @@ schedulePartRouter.post('/', async (request: Request, response: Response) => {
   }
 
   const newSchedulePart = {
-    name: body.name,
+    name: object.name,
     owner: user,
     class: clas
   }
@@ -148,15 +148,15 @@ schedulePartRouter.delete('/:id', async (request: Request, response: Response) =
 
 // changeSchedulePart(id)
 schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
-  const body = request.body.object
+  const object = request.body.object
   const id = parseInt(request.params.id)
 
   const connection = await getConnection();
   const classesRepository = connection.getRepository(Class)
-  const clas = await classesRepository.findOne({groupKey: body.class.groupKey});
+  const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: body.owner.username});
+  const user = await userRepository.findOne({username: object.owner.username});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -175,7 +175,7 @@ schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
     .createQueryBuilder()
     .update(SchedulePart)
     .set({
-      name: body.name,
+      name: object.name,
       owner: user,
       class: clas
     })
