@@ -1,7 +1,7 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {alterKeys, validateValues, insertObjectIntoTable} from "../support/support"
+import {alterKeys, verify, validateValues, insertObjectIntoTable} from "../support/support"
 import {Degree} from "../enums/degree"
 
 const logger = require('../utils/logger')
@@ -10,6 +10,9 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
 
@@ -31,6 +34,10 @@ usersRouter.post('/', async (request: Request, response: Response) => {
 })
 
 usersRouter.put('/:username', async (request: Request, response: Response) => {
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
+
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
   const username = request.params.username
@@ -73,7 +80,9 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
 
 usersRouter.delete('/:username', async (request: Request, response: Response) => {
   const username = request.params.username
-
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const usr = await userRepository.findOne({username: username});
@@ -105,6 +114,9 @@ usersRouter.delete('/:username', async (request: Request, response: Response) =>
 })
 
 usersRouter.get('/usernames', async (request: Request, response: Response) => {
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
   await getConnection()
     .createQueryBuilder()
     .select("user.username")
@@ -126,6 +138,10 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
 
 usersRouter.get('/:username', async (request: Request, response: Response) => {
   const username = request.params.username
+
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -157,6 +173,11 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
 })
 
 usersRouter.get('/', async (request: Request, response: Response) => {
+  //dej_tokena_mikiconst token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2kiLCJwYXNzd29yZCI6IiQyYiQwNCRXTU40RmZtei5xLktkL0ZaTGJlYkplY3pHWWxNY1ZVa1BTT1hVOWpxV3lLdEUzaHovbFZmNiIsInJvbGUiOm51bGwsImlhdCI6MTYyMTM0Nzg5NCwiZXhwIjoxNjIxMzkxMDk0fQ.ybQe5coBXQikTWTIH0rv23UsK7M1wNs-7AAtluaNRK0"
+  //dej_tokena_bodyconst token = request.body.token
+  //dej_tokena_mikiif(!(await verify(token, response))) return
+
+
   await getConnection()
     .createQueryBuilder()
     .select("user")

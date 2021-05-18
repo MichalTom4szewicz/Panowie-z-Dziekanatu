@@ -2,7 +2,8 @@ import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
 import {getConnection, Repository} from "typeorm";
 import {Request, Response} from "express"
-import { createPostfixIncrement } from "typescript";
+import axios from 'axios'
+
 const logger = require('../utils/logger')
 
 export function classesCollide (c1: Class, c2: Class): boolean {
@@ -193,6 +194,20 @@ export function isTime(hours: any, minutes: any, response: Response) {
         response.status(500).json({
             status: "failure",
             message: `invalid minutes: ${minutes}`
+        })
+        return false
+    }
+    return true
+}
+
+export async function verify(token: any, response: Response) {
+    const auth = await axios.get("https://localhost:4848/verify",
+    {headers: {'token': token}});
+
+    if(!auth.data.success) {
+        response.status(401).json({
+            status: "failure",
+            message: "invalid token"
         })
         return false
     }
