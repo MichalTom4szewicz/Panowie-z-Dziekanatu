@@ -276,7 +276,7 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
 
 //PZD27
 //rejectHostingRequests
-hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('/reject', async (request: Request, response: Response) => {
   const objects = request.body.objects
   let ids = objects.map((o: { id: any; }) => o.id)
 
