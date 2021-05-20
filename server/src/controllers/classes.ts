@@ -361,12 +361,10 @@ classesRouter.get('/', async (request: Request, response: Response) => {
       degree: c.host.degree
     }
     let courses = await coursesRepository.find({relations: ['supervisor']})
-    // console.log(courses)
     if (courses !== undefined) {
       const course = courses.filter(cc => {
         return cc.courseKey === c.course.courseKey
       })[0]
-      // console.log(course, "gfdgfdg")
       newC.supervisor = {
         firstName: courses[0].supervisor.firstName,
         lastName: courses[0].supervisor.lastName,

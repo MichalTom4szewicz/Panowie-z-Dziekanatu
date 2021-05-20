@@ -109,6 +109,42 @@ hostingRequestRouter.get('/user/:username/status/:status', async (request: Reque
     });
 })
 
+// PZD-27
+// getHostingRequests by class
+// accepted/rejected/pending
+hostingRequestRouter.get('/class:id/status/:status', async (request: Request, response: Response) => {
+  const status = request.params.status
+  const classId = request.params.class
+
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class)
+  const cls = await classRepository.findOne({groupKey: classId})
+
+  if (cls == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified class does not exist"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .select("hostingRequest")
+    .from(HostingRequest, "hostingRequest")
+    .where("hostingRequest.classGroupKey = :groupKey AND hostingRequest.status = :status", {groupKey: cls.groupKey, status})
+    .execute()
+    .then(items => {
+      return response.status(200).json(alterKeys(items, "hostingRequests"))
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
 hostingRequestRouter.get('/user/:username', async (request: Request, response: Response) => {
   const username = request.params.username
 
@@ -236,6 +272,34 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
   }
 
   insertObjectIntoTable(newhostingRequests, HostingRequest, response);
+})
+
+//PZD27
+//rejectHostingRequests
+hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
+  const objects = request.body.objects
+  let ids = objects.map((o: { id: any; }) => o.id)
+
+  const connection = await getConnection();
+  const hrRepository = connection.getRepository(HostingRequest)
+
+  ids.array.forEach(async (id: any) => {
+    const tmpHr = await hrRepository.findOne({id});
+    if(tmpHr !== undefined) {
+      await getConnection()
+      .createQueryBuilder()
+      .update(HostingRequest)
+      .set({
+        status: "rejected"
+      })
+      .where("id = :id", {id: tmpHr.id})
+      .execute()
+    }
+  });
+
+  return response.status(200).json({
+    status: "success"
+  })
 })
 
 hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {

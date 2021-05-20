@@ -127,31 +127,45 @@ coursesRouter.get('/user/:username', async (request: Request, response: Response
 coursesRouter.get('/:courseKey', async (request: Request, response: Response) => {
   const courseKey = request.params.courseKey
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("course")
-    .from(Course, "course")
-    .where("courseKey = :courseKey", {courseKey})
-    .execute()
-    .then(items => {
-      return response
-      .status(200)
-      .json(alterKeys(items, "course"))
+  const connection = await getConnection();
+  const coursesRepository = connection.getRepository(Course)
+
+  const course = await coursesRepository.findOne({relations: ['supervisor'], where: {courseKey: courseKey}});
+
+  if(course !== undefined) {
+    let newC: any = course
+    newC.supervisor = {
+      firstName: course.supervisor.firstName,
+      lastName: course.supervisor.lastName,
+      degree: course.supervisor.degree
+    }
+    return response
+    .status(200)
+    .json(course)
+  } else {
+    return response.status(500).json({
+      status: "failure",
+      message: "course not found"
     })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-          status: "failure",
-          message: error.message
-      })
-    });
+  }
 })
 
 coursesRouter.get('/', async (request: Request, response: Response) => {
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
 
-  const courses = await coursesRepository.find();
+  const courses = await coursesRepository.find({relations: ['supervisor']});
+
+  let newCourses = []
+  for (const c of courses) {
+    let newC: any = c
+    newC.supervisor = {
+      firstName: c.supervisor.firstName,
+      lastName: c.supervisor.lastName,
+      degree: c.supervisor.degree
+    }
+    newCourses.push(newC)
+  }
 
   return response.status(200).json(courses)
 })
