@@ -43,7 +43,7 @@ export class ClassGridService {
   public removeElement(element: Classes): void {
     let index: number = CalendarConstants.WEEK_DAYS_ORDER.get(element.weekDay)!;
     let classGridCopy: Classes[][] = this.classGrid.value;
-    classGridCopy[index] = classGridCopy[index].filter(i => i !== element);
+    classGridCopy[index] = classGridCopy[index].filter(i => i.groupKey !== element.groupKey);
     this.classGrid.next(classGridCopy);
   }
 }

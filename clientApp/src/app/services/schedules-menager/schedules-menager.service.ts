@@ -1,7 +1,6 @@
 import { WeekDay } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Classes } from 'src/app/domain/classes';
 
 @Injectable({
