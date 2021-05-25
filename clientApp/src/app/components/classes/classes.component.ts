@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Classes } from 'src/app/domain/classes';
 import { Typ } from 'src/app/enums/typ';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
+import { UserUtils } from 'src/app/utils/user-utils';
 import { ClassesStatusEnum } from '../../enums/classes-status-enum';
 
 @Component({
@@ -26,12 +27,16 @@ export class ClassesComponent implements OnInit {
     return CalendarUtils.getTime(time);
   }
 
-  getClass() {
+  public getClass() {
     if (this.scheduleView) {
       return this.getClassForScheduleView();
     } else {
       return this.getClassForGridView();
     }
+  }
+
+  public displayUser(): string {
+    return UserUtils.displayUser(this.classes.course.supervisor);
   }
 
   private getClassForScheduleView() {

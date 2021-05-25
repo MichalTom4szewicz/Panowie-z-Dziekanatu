@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Course } from 'src/app/domain/course';
 import { CourseService } from 'src/app/services/course/course.service';
 import { CourseUtils } from 'src/app/utils/course-utils';
+import { UserUtils } from 'src/app/utils/user-utils';
 import { ManageCoursesDialogComponent } from './manage-courses-dialog/manage-courses-dialog.component';
 
 @Component({
@@ -12,21 +13,33 @@ import { ManageCoursesDialogComponent } from './manage-courses-dialog/manage-cou
 })
 export class SupervisorComponent implements OnInit {
   panelOpenState = false;
-  coursesList: [Course, boolean, boolean][] = [];
+  coursesList: CourseDisplay[] = [];
   addButton: boolean = true;
 
   constructor(public dialog: MatDialog, private courseService: CourseService) { }
 
   ngOnInit(): void {
-    this.courseService.getCourses().subscribe(list => this.coursesList = list.map(element => [element, true, true]));
+    this.courseService.getCourses().subscribe(list => this.coursesList = list.map(element => this.getCourseDisplay(element)));
   }
 
-  public mouseover(element: [Course, boolean, boolean], field: number): void {
-    element[field] = false;
+  public displayUser(course: Course): string {
+    return UserUtils.displayUser(course.supervisor);
   }
 
-  public mouseleave(element: [Course, boolean, boolean], field: number): void {
-    element[field] = true;
+  public mouseover(courseDisplay: CourseDisplay, edit: boolean): void {
+    if (edit) {
+      courseDisplay.mouseoverEdit = true;
+    } else {
+      courseDisplay.mouseoverDelete = true;
+    }
+  }
+
+  public mouseleave(courseDisplay: CourseDisplay, edit: boolean): void {
+    if (edit) {
+      courseDisplay.mouseoverEdit = false;
+    } else {
+      courseDisplay.mouseoverDelete = false;
+    }
   }
 
   public edit(element: Course): void {
@@ -38,11 +51,11 @@ export class SupervisorComponent implements OnInit {
         edit: true
       }
     }).afterClosed().subscribe(update => {
-      if (update[0]) {
-        this.courseService.updateCourse(update[1]).subscribe(() => {
-          element.name = update[1].name;
-          element.courseKey = update[1].courseKey;
-          element.supervisor = update[1].supervisor;
+      if (update.isSaved) {
+        this.courseService.updateCourse(update.course).subscribe(() => {
+          element.name = update.course.name;
+          element.courseKey = update.course.courseKey;
+          element.supervisor = update.course.supervisor;
         });
       }
     });
@@ -50,22 +63,21 @@ export class SupervisorComponent implements OnInit {
 
   public delete(element: Course): void {
     this.courseService.deleteCourse(element).subscribe(() => 
-      this.coursesList = this.coursesList.filter(i => i[0].courseKey !== element.courseKey)
+      this.coursesList = this.coursesList.filter(i => i.course.courseKey !== element.courseKey)
     );
   }
 
   public add(): void {
-    let course: Course = CourseUtils.getEmptyCourse();
     this.dialog.open(ManageCoursesDialogComponent, {
       width: '300px',
       data: {
-        course: course,
+        course: CourseUtils.getEmptyCourse(),
         edit: false
       }
     }).afterClosed().subscribe(save => {
-      if (save[0]) {
-        this.courseService.addCourse(save[1]).subscribe(() => {
-          this.coursesList = [...this.coursesList, [save[1], true, true]];
+      if (save.isSaved) {
+        this.courseService.addCourse(save.course).subscribe(() => {
+          this.coursesList = [...this.coursesList, this.getCourseDisplay(save.course)];
         });
       }
     });
@@ -78,4 +90,18 @@ export class SupervisorComponent implements OnInit {
   public mouseleaveAddButton(): void {
     this.addButton = true;
   }
+
+  private getCourseDisplay(course: Course): CourseDisplay {
+    return {
+      course: course,
+      mouseoverEdit: false,
+      mouseoverDelete: false
+    }
+  }
+}
+
+interface CourseDisplay {
+  course: Course,
+  mouseoverEdit: boolean,
+  mouseoverDelete: boolean
 }

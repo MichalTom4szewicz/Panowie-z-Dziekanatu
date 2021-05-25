@@ -14,27 +14,27 @@ import { Typ } from 'src/app/enums/typ';
 export class ManageClassesDialogComponent implements OnInit {
 
   classesForm: FormGroup;
-  weekDays: [WeekDay, string][] = [
-    [WeekDay.Monday, 'Poniedziałek'],
-    [WeekDay.Tuesday, 'Wtorek'],
-    [WeekDay.Wednesday, 'Środa'],
-    [WeekDay.Thursday, 'Czwartek'],
-    [WeekDay.Friday, 'Piątek'],
-    [WeekDay.Saturday, 'Sobota'],
-    [WeekDay.Sunday, 'Niedziela']
+  weekDays: Pair[] = [
+    {key: WeekDay.Monday, value: 'Poniedziałek'},
+    {key: WeekDay.Tuesday, value: 'Wtorek'},
+    {key: WeekDay.Wednesday, value: 'Środa'},
+    {key: WeekDay.Thursday, value: 'Czwartek'},
+    {key: WeekDay.Friday, value: 'Piątek'},
+    {key: WeekDay.Saturday, value: 'Sobota'},
+    {key: WeekDay.Sunday, value: 'Niedziela'}
   ];
-  classesTyp: [Typ, string][] = [
-    [Typ.NONE, ''],
-    [Typ.EXERCISE, 'Ćwiczenia'],
-    [Typ.LABORATORIES, 'Laboratoria'],
-    [Typ.PROJECT, 'Projekt'],
-    [Typ.SEMINAR, 'Seminarium'],
-    [Typ.LECTURE, 'Wykład']
+  classesTyp: Pair[] = [
+    {key: Typ.NONE, value: ''},
+    {key: Typ.EXERCISE, value: 'Ćwiczenia'},
+    {key: Typ.LABORATORIES, value: 'Laboratoria'},
+    {key: Typ.PROJECT, value: 'Projekt'},
+    {key: Typ.SEMINAR, value: 'Seminarium'},
+    {key: Typ.LECTURE, value: 'Wykład'}
   ];
-  classesParity: [Parity, string][] = [
-    [Parity.NONE, 'Co tydzień'],
-    [Parity.EVEN, 'Parzyste'],
-    [Parity.ODD, 'Nieparzyste']
+  classesParity: Pair[] = [
+    {key: Parity.NONE, value: 'Co tydzień'},
+    {key: Parity.EVEN, value: 'Parzyste'},
+    {key: Parity.ODD, value: 'Nieparzyste'}
   ];
 
   constructor(
@@ -74,14 +74,28 @@ export class ManageClassesDialogComponent implements OnInit {
   }
 
   public doNothing(): void {
-    this.dialogRef.close([false, undefined]);
+    this.closeDialog({isSaved: false, classes: undefined});
   }
 
   public save(): void {
-    this.dialogRef.close([true, this.classesForm.value]);
+    this.closeDialog({isSaved: true, classes: this.classesForm.value});
+  }
+
+  private closeDialog(result: ManageClassesDialogResult): void {
+    this.dialogRef.close(result);
   }
 
   public validForm(): boolean {
     return !this.classesForm.valid;
   }
+}
+
+interface ManageClassesDialogResult {
+  isSaved: boolean,
+  classes?: Classes
+}
+
+interface Pair {
+  key: any,
+  value: string
 }

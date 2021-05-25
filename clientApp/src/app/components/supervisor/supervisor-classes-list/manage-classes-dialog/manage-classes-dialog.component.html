@@ -1,12 +1,12 @@
-<h1 mat-dialog-title *ngIf="!data.edit">Dodaj nowe zajęcia</h1>
-<h1 mat-dialog-title *ngIf="data.edit">Edytuj zajęcia</h1>
+<h1 mat-dialog-title *ngIf="data.edit; else elseBlock">Edytuj zajęcia</h1>
+<ng-template #elseBlock><h1 mat-dialog-title>Dodaj nowe zajęcia</h1></ng-template>
 <div mat-dialog-content>
-    <form [formGroup]="classesForm">
+    <form [formGroup]="classesForm" (ngSubmit)="save()">
         <mat-form-field>
             <mat-label>Dzień tygodnia</mat-label>
             <mat-select formControlName="weekDay" required="true">
-                <mat-option *ngFor="let day of weekDays" [value]="day[0]">
-                    {{day[1]}}
+                <mat-option *ngFor="let day of weekDays" [value]="day.key">
+                    {{day.value}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -33,8 +33,8 @@
         <mat-form-field>
             <mat-label>Parzystość</mat-label>
             <mat-select formControlName="parity" required="true">
-                <mat-option *ngFor="let parity of classesParity" [value]="parity[0]">
-                    {{parity[1]}}
+                <mat-option *ngFor="let parity of classesParity" [value]="parity.key">
+                    {{parity.value}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -53,14 +53,14 @@
         <mat-form-field>
             <mat-label>Typ zajęć</mat-label>
             <mat-select formControlName="typ" required="true">
-                <mat-option *ngFor="let typ of classesTyp" [value]="typ[0]">
-                    {{typ[1]}}
+                <mat-option *ngFor="let typ of classesTyp" [value]="typ.key">
+                    {{typ.value}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <div>
+            <button mat-button (click)="doNothing()">Cofnij</button>
+            <button mat-button type="submit" [disabled]="validForm()">Zapisz</button>
+        </div>
     </form>
-</div>
-<div mat-dialog-actions>
-    <button mat-button (click)="doNothing()">Cofnij</button>
-    <button mat-button (click)="save()" [disabled]="validForm()">Zapisz</button>
 </div>

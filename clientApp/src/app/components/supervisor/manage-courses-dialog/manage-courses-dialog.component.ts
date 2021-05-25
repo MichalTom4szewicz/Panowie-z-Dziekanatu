@@ -31,14 +31,23 @@ export class ManageCoursesDialogComponent implements OnInit {
   }
 
   public doNothing(): void {
-    this.dialogRef.close([false, undefined]);
+    this.closeDialog({isSaved: false, course: undefined});
   }
 
   public save(): void {
-    this.dialogRef.close([true, this.courseForm.value]);
+    this.closeDialog({isSaved: true, course: this.courseForm.value}); 
+  }
+
+  private closeDialog(result: ManageCoursesDialogResult): void {
+    this.dialogRef.close(result);
   }
 
   public validForm(): boolean {
     return !this.courseForm.valid;
   }
+}
+
+interface ManageCoursesDialogResult {
+  isSaved: boolean,
+  course?: Course
 }

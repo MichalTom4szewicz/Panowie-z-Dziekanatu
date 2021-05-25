@@ -1,7 +1,7 @@
-<h1 mat-dialog-title *ngIf="!data.edit">Dodaj nowy kurs</h1>
-<h1 mat-dialog-title *ngIf="data.edit">Edytuj kurs</h1>
+<h1 mat-dialog-title *ngIf="data.edit; else elseBlock">Edytuj kurs</h1>
+<ng-template #elseBlock><h1 mat-dialog-title>Dodaj nowy kurs</h1></ng-template>
 <div mat-dialog-content>
-    <form [formGroup]="courseForm">
+    <form [formGroup]="courseForm" (ngSubmit)="save()">
         <mat-form-field>
             <mat-label>Nazwa kursu</mat-label>
             <input matInput formControlName="name" required="true">
@@ -10,9 +10,10 @@
             <mat-label>Kod kursu</mat-label>
             <input matInput formControlName="courseKey" required="true">
         </mat-form-field>
+        
+        <div>
+            <button mat-button (click)="doNothing()">Cofnij</button>
+            <button mat-button type="submit" [disabled]="validForm()">Zapisz</button>
+        </div>
     </form>
-</div>
-<div mat-dialog-actions>
-    <button mat-button (click)="doNothing()">Cofnij</button>
-    <button mat-button (click)="save()" [disabled]="validForm()">Zapisz</button>
 </div>

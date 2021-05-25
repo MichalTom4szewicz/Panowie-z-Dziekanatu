@@ -2,12 +2,12 @@
 <div mat-dialog-content>
     <div *ngIf="!isListEmpty()" >
         <div *ngFor="let item of requstList" fxLayout="row" fxLayoutAlign="space-between center">
-            <p>{{item[0].user.degree}} {{item[0].user.firstName}} {{item[0].user.lastName}}</p>
+            <p>{{displayUser(item.hostingRequest)}}</p>
             <div>
-                <mat-icon *ngIf="item[1]" class="pointer" (mouseover)="mouseover(item, 1)">check</mat-icon>
-                <mat-icon *ngIf="!item[1]" class="pointer accept" (mouseleave)="mouseleave(item, 1)" (click)="accept(item[0])">check</mat-icon>
-                <mat-icon *ngIf="item[2]" class="pointer" (mouseover)="mouseover(item, 2)">close</mat-icon>
-                <mat-icon *ngIf="!item[2]" class="pointer reject" (mouseleave)="mouseleave(item, 2)" (click)="reject(item[0])">close</mat-icon>
+                <mat-icon *ngIf="item.mouseoverAccept; else elseAcceptBlock" class="pointer accept" (mouseleave)="mouseleave(item, true)" (click)="accept(item.hostingRequest)">check</mat-icon>
+                <ng-template #elseAcceptBlock><mat-icon class="pointer" (mouseover)="mouseover(item, true)">check</mat-icon></ng-template>
+                <mat-icon *ngIf="item.mouseoverReject; else elseRejectBlock" class="pointer reject" (mouseleave)="mouseleave(item, false)" (click)="reject(item.hostingRequest)">close</mat-icon>
+                <ng-template #elseRejectBlock><mat-icon class="pointer" (mouseover)="mouseover(item, false)">close</mat-icon></ng-template>
             </div>
         </div>
     </div>
