@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CalendarConstants } from 'src/app/components/constants/calendar-constants';
+import { CalendarConstants } from 'src/app/constants/calendar-constants';
 import { Classes } from 'src/app/domain/classes';
 
 @Injectable({

@@ -1,7 +1,9 @@
 import { Time } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Classes } from 'src/app/domain/classes';
+import { Typ } from 'src/app/enums/typ';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
+import { UserUtils } from 'src/app/utils/user-utils';
 import { ClassesStatusEnum } from '../../enums/classes-status-enum';
 
 @Component({
@@ -25,7 +27,7 @@ export class ClassesComponent implements OnInit {
     return CalendarUtils.getTime(time);
   }
 
-  getClass() {
+  public getClass() {
     if (this.scheduleView) {
       return this.getClassForScheduleView();
     } else {
@@ -33,13 +35,17 @@ export class ClassesComponent implements OnInit {
     }
   }
 
+  public displayUser(): string {
+    return UserUtils.displayUser(this.classes.course.supervisor);
+  }
+
   private getClassForScheduleView() {
     return {
-      'project': this.classes.typ === 'P',
-      'exercise': this.classes.typ === 'C',
-      'seminar': this.classes.typ === 'S',
-      'laboratories': this.classes.typ === 'L',
-      'lecture': this.classes.typ === 'W',
+      'project': this.classes.typ === Typ.PROJECT,
+      'exercise': this.classes.typ === Typ.EXERCISE,
+      'seminar': this.classes.typ === Typ.SEMINAR,
+      'laboratories': this.classes.typ === Typ.LABORATORIES,
+      'lecture': this.classes.typ === Typ.LECTURE,
       'schedule': this.duration() > ClassesComponent.STANDARD_CLASSES_DURATION,
       'schedule-small': this.duration() <= ClassesComponent.STANDARD_CLASSES_DURATION
     };
@@ -52,27 +58,27 @@ export class ClassesComponent implements OnInit {
   private getClassForGridView() {
     if (this.status === ClassesStatusEnum.SELECTED) {
       return {
-        'project-selected': this.classes.typ === 'P',
-        'exercise-selected': this.classes.typ === 'C',
-        'seminar-selected': this.classes.typ === 'S',
-        'laboratories-selected': this.classes.typ === 'L',
-        'lecture-selected': this.classes.typ === 'W'
+        'project-selected': this.classes.typ === Typ.PROJECT,
+        'exercise-selected': this.classes.typ === Typ.EXERCISE,
+        'seminar-selected': this.classes.typ === Typ.SEMINAR,
+        'laboratories-selected': this.classes.typ === Typ.LABORATORIES,
+        'lecture-selected': this.classes.typ === Typ.LECTURE
       };
     } else if (this.status === ClassesStatusEnum.CONFLICT) {
       return {
-        'project-conflict': this.classes.typ === 'P',
-        'exercise-conflict': this.classes.typ === 'C',
-        'seminar-conflict': this.classes.typ === 'S',
-        'laboratories-conflict': this.classes.typ === 'L',
-        'lecture-conflict': this.classes.typ === 'W'
+        'project-conflict': this.classes.typ === Typ.PROJECT,
+        'exercise-conflict': this.classes.typ === Typ.EXERCISE,
+        'seminar-conflict': this.classes.typ === Typ.SEMINAR,
+        'laboratories-conflict': this.classes.typ === Typ.LABORATORIES,
+        'lecture-conflict': this.classes.typ === Typ.LECTURE
       };
     } else {
       return {
-        'project': this.classes.typ === 'P',
-        'exercise': this.classes.typ === 'C',
-        'seminar': this.classes.typ === 'S',
-        'laboratories': this.classes.typ === 'L',
-        'lecture': this.classes.typ === 'W'
+        'project': this.classes.typ === Typ.PROJECT,
+        'exercise': this.classes.typ === Typ.EXERCISE,
+        'seminar': this.classes.typ === Typ.SEMINAR,
+        'laboratories': this.classes.typ === Typ.LABORATORIES,
+        'lecture': this.classes.typ === Typ.LECTURE
       };
     }
   }

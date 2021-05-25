@@ -1,13 +1,18 @@
 import { Time, WeekDay } from "@angular/common";
+import { Parity } from "../enums/parity";
+import { Typ } from "../enums/typ";
+import { Course } from "./course";
+import { User } from "./user";
 
 export interface Classes {
-    name: string,
     weekDay: WeekDay,
     startTime: Time,
     endTime: Time,
-    host: string,
+    host?: User,
     building: string,
     room: string,
     groupKey: string,
-    typ: string
+    course: Course,
+    typ: Typ,
+    parity: Parity
 }

@@ -1,8 +1,7 @@
 import { Time } from "@angular/common";
-import { CalendarConstants } from "../components/constants/calendar-constants";
+import { CalendarConstants } from "../constants/calendar-constants";
 
 export class CalendarUtils {
-
     public static getTimeInMinutes(time: Time): number {
         return time.hours * CalendarConstants.MINUTES_IN_HOUR + time.minutes;
     }

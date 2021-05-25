@@ -2,6 +2,9 @@ import { WeekDay } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Classes } from 'src/app/domain/classes';
+import { Degree } from 'src/app/enums/degree';
+import { Parity } from 'src/app/enums/parity';
+import { Typ } from 'src/app/enums/typ';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +30,6 @@ export class SchedulesMenagerService {
     if (this.scheduleBoolean) {
       return of([
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Monday,
           startTime: {
             hours: 18,
@@ -37,14 +39,24 @@ export class SchedulesMenagerService {
             hours: 20,
             minutes: 35
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20c',
-          typ: 'W'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.LECTURE,
+          parity: Parity.NONE
         },
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Thursday,
           startTime: {
             hours: 18,
@@ -54,14 +66,24 @@ export class SchedulesMenagerService {
             hours: 20,
             minutes: 35
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20b',
-          typ: 'C'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.EXERCISE,
+          parity: Parity.NONE
         },
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Thursday,
           startTime: {
             hours: 17,
@@ -71,17 +93,27 @@ export class SchedulesMenagerService {
             hours: 18,
             minutes: 45
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20a',
-          typ: 'P'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.PROJECT,
+          parity: Parity.NONE
         }
       ]);
     } else {
       return of([
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Friday,
           startTime: {
             hours: 18,
@@ -91,14 +123,24 @@ export class SchedulesMenagerService {
             hours: 20,
             minutes: 35
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20c',
-          typ: 'W'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.LECTURE,
+          parity: Parity.NONE
         },
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Tuesday,
           startTime: {
             hours: 18,
@@ -108,14 +150,24 @@ export class SchedulesMenagerService {
             hours: 20,
             minutes: 35
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20b',
-          typ: 'C'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.EXERCISE,
+          parity: Parity.NONE
         },
         {
-          name: 'Zastosowania inform. w gospod.',
           weekDay: WeekDay.Tuesday,
           startTime: {
             hours: 17,
@@ -125,17 +177,31 @@ export class SchedulesMenagerService {
             hours: 18,
             minutes: 45
           },
-          host: 'Mgr inż. Tomasz Szandała',
+          host: undefined,
           building: 'C-1',
           room: '104',
           groupKey: 'Z05-20a',
-          typ: 'P'
+          course: {
+            name: 'Zastosowania inform. w gospod.',
+            courseKey: 'INZ000011',
+            supervisor: {
+              firstName: 'Tomasz',
+              lastName: 'Szandała',
+              degree: Degree.DR_ENG,
+              username: 'tszandala'
+            }
+          },
+          typ: Typ.PROJECT,
+          parity: Parity.NONE
         }
       ]);
     }
   }
 
   public saveSchedule(schedule: Classes[], name: string): void {
-
+    // return http.post("url", {
+    //   objects: schedule,
+    //   name: name
+    // })
   }
 }

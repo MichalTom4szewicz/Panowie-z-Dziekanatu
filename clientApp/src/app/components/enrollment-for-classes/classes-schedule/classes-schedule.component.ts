@@ -1,16 +1,15 @@
-import { WeekDay } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, of, range } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, range } from 'rxjs';
 import { Classes } from 'src/app/domain/classes';
 import { ClassGridService } from 'src/app/services/class-grid/class-grid.service';
 import { ScheduleRegisterService } from 'src/app/services/schedule-register/schedule-register.service';
 import { SchedulesMenagerService } from 'src/app/services/schedules-menager/schedules-menager.service';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
-import { CalendarConstants } from '../../constants/calendar-constants';
+import { ClassesUtils } from 'src/app/utils/classes-utils';
+import { CalendarConstants } from '../../../constants/calendar-constants';
 import { SaveScheduleDialogComponent } from './save-schedule-dialog/save-schedule-dialog.component';
 import { SavedSchedulesComponent } from './saved-schedules/saved-schedules.component';
 
@@ -106,7 +105,7 @@ export class ClassesScheduleComponent implements OnInit {
       let emptyGrid: ClassesGrid = {
         rows: CalendarUtils.getTimeInMinutes(element.startTime) - lastIndex - CalendarConstants.CLASS_GRID_BEGINING_IN_MINUTES,
         isNotEmpty: false,
-        classes: this.getEmptyClass()
+        classes: ClassesUtils.getEmptyClasses()
       };
       let classesGrid: ClassesGrid = {
         rows: CalendarUtils.getTimeInMinutes(element.endTime) - CalendarUtils.getTimeInMinutes(element.startTime),
@@ -119,29 +118,9 @@ export class ClassesScheduleComponent implements OnInit {
     let emptyGrid: ClassesGrid = {
       rows: CalendarConstants.MINUTES_CLASS_GRID - lastIndex,
       isNotEmpty: false,
-      classes: this.getEmptyClass()
+      classes: ClassesUtils.getEmptyClasses()
     };
     return [...result, emptyGrid];
-  }
-
-  private getEmptyClass(): Classes {
-    return {
-      name: '',
-      weekDay: WeekDay.Monday,
-      startTime: {
-        hours: 0,
-        minutes: 0
-      },
-      endTime: {
-        hours: 0,
-        minutes: 0
-      },
-      host: '',
-      building: '',
-      room: '',
-      groupKey: '',
-      typ: ''
-    }
   }
 }
 

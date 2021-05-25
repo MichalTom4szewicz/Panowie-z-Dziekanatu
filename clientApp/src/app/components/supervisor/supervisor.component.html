@@ -1,0 +1,24 @@
+<mat-accordion class="example-headers-align">
+    <mat-expansion-panel *ngFor="let item of coursesList" hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{item.course.name}}
+            </mat-panel-title>
+            <mat-panel-description>
+                {{item.course.courseKey}}
+                <div>{{displayUser(item.course)}}</div>
+                <div>
+                    <mat-icon color="primary" class="pointer" *ngIf="item.mouseoverEdit; else elseEditBlock" (mouseleave)="mouseleave(item, true)" (click)="edit(item.course)">border_color</mat-icon>
+                    <ng-template #elseEditBlock><mat-icon color="primary" class="pointer" (mouseover)="mouseover(item, true)">mode_edit_outline</mat-icon></ng-template>
+                    <mat-icon color="primary" class="pointer" *ngIf="item.mouseoverDelete; else elseDeleteBlock" (mouseleave)="mouseleave(item, false)" (click)="delete(item.course)">remove_circle</mat-icon>
+                    <ng-template #elseDeleteBlock><mat-icon color="primary" class="pointer" (mouseover)="mouseover(item, false)">remove_circle_outline</mat-icon></ng-template>
+                </div>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <pzd-supervisor-classes-list [course]="item.course"></pzd-supervisor-classes-list>
+    </mat-expansion-panel>
+</mat-accordion>
+<div fxLayout="row" fxLayoutAlign="center start" class="add-button">
+    <mat-icon color="primary" class="pointer" *ngIf="addButton; else elseAddBlock" (mouseover)="mouseoverAddButton()">add_circle_outline</mat-icon>
+    <ng-template #elseAddBlock><mat-icon color="primary" class="pointer" (mouseleave)="mouseleaveAddButton()" (click)="add()">add_circle</mat-icon></ng-template>
+</div>

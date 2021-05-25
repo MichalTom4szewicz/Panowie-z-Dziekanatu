@@ -1,0 +1,57 @@
+<table mat-table [dataSource]="classesList" class="mat-elevation-z8">
+    <ng-container matColumnDef="weekDay">
+        <th mat-header-cell *matHeaderCellDef> Dzień tygodnia </th>
+        <td mat-cell *matCellDef="let element"> {{getWeekDayName(element.classes.weekDay)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef> Rozpoczęcie zajęć </th>
+        <td mat-cell *matCellDef="let element"> {{getTime(element.classes.startTime)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef> Zakończenie zajęć </th>
+        <td mat-cell *matCellDef="let element"> {{getTime(element.classes.endTime)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="parity">
+        <th mat-header-cell *matHeaderCellDef> Parzystość </th>
+        <td mat-cell *matCellDef="let element"> {{getParity(element.classes.parity)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="building">
+        <th mat-header-cell *matHeaderCellDef> Budynek </th>
+        <td mat-cell *matCellDef="let element"> {{element.classes.building}} </td>
+    </ng-container>
+    <ng-container matColumnDef="room">
+        <th mat-header-cell *matHeaderCellDef> Sala </th>
+        <td mat-cell *matCellDef="let element"> {{element.classes.room}} </td>
+    </ng-container>
+    <ng-container matColumnDef="groupKey">
+        <th mat-header-cell *matHeaderCellDef> Nr grupy </th>
+        <td mat-cell *matCellDef="let element"> {{element.classes.groupKey}} </td>
+    </ng-container>
+    <ng-container matColumnDef="typ">
+        <th mat-header-cell *matHeaderCellDef> Typ zajęć </th>
+        <td mat-cell *matCellDef="let element"> {{element.classes.typ}} </td>
+    </ng-container>
+    <ng-container matColumnDef="host">
+        <th mat-header-cell *matHeaderCellDef> Zapytania/prowadzący </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button color="primary" *ngIf="element.classes.host === undefined" (click)="selectHost(element.classes)">Wybierz prowadzącego</button>
+            <p *ngIf="element.classes.host !== undefined">{{displayUser(element.classes)}}</p>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="buttons">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon color="primary" class="pointer" *ngIf="element.mouseoverEdit; else elseEditBlock" (mouseleave)="mouseleave(element, true)" (click)="edit(element.classes)">border_color</mat-icon>
+            <ng-template #elseEditBlock><mat-icon color="primary" class="pointer" (mouseover)="mouseover(element, true)">mode_edit_outline</mat-icon></ng-template>
+            <mat-icon color="primary" class="pointer" *ngIf="element.mouseoverDelete; else elseDeleteBlock" (mouseleave)="mouseleave(element, false)" (click)="delete(element.classes)">remove_circle</mat-icon>
+            <ng-template #elseDeleteBlock><mat-icon color="primary" class="pointer" (mouseover)="mouseover(element, false)">remove_circle_outline</mat-icon></ng-template>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div fxLayout="row" fxLayoutAlign="center start" class="add-button">
+    <mat-icon color="primary" class="pointer" *ngIf="addButton; else elseAddBlock" (mouseover)="mouseoverAddButton()">add_circle_outline</mat-icon>
+    <ng-template #elseAddBlock><mat-icon color="primary" class="pointer" (mouseleave)="mouseleaveAddButton()" (click)="add()">add_circle</mat-icon></ng-template>
+</div>

@@ -6,6 +6,7 @@ import { AuthGuard } from './guards/auth.guard';
 import {EnrollmentForClassesComponent} from './components/enrollment-for-classes/enrollment-for-classes.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {ToolbarComponent} from './components/toolbar/toolbar.component';
+import { SupervisorComponent } from './components/supervisor/supervisor.component';
 
 const routes: Routes = [
 	{
@@ -17,13 +18,17 @@ const routes: Routes = [
         component: HomeComponent
       },
       {
-        path: 'plan',
+        path: '',
         canActivate: [AuthGuard],
         component: ToolbarComponent,
         children: [
           {
-            path: '',
+            path: 'plan',
             component: EnrollmentForClassesComponent
+          },
+          {
+            path: 'supervisor',
+            component: SupervisorComponent
           }
         ]
       },
