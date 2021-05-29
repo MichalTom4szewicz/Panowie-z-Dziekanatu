@@ -4,13 +4,18 @@ import { LocalStorageService } from '../local-storage.service';
 import { HttpClient } from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import jwtDecode from 'jwt-decode';
-import { fromUnixTime, isBefore } from 'date-fns';
+import { isBefore } from 'date-fns';
+import { UnitsConstants } from '../../constants/units-constants';
+import { CommunicationConstants } from '../../constants/communication-constants';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AuthenticationService {
-	constructor(private readonly http: HttpClient) {}
+  private static readonly CREATE_ACCOUNT_URL = CommunicationConstants.getFullAuthApiAddress('/user');
+  private static readonly AUTHENTICATE_URL = CommunicationConstants.getFullAuthApiAddress('/authenticate');
+
+  constructor(private readonly http: HttpClient) {}
 
 	private static decodeToken(): any {
 	  const token = LocalStorageService.getToken();
@@ -23,7 +28,7 @@ export class AuthenticationService {
 	public isAuthenticated(): boolean {
     const decodedToken = AuthenticationService.decodeToken();
     if (decodedToken) {
-      const expirationDate = fromUnixTime(decodedToken.exp);
+      const expirationDate = decodedToken.exp * UnitsConstants.MILLISECONDS_IN_SECOND;
       if (isBefore(Date.now(), expirationDate)) {
         return true;
       }
@@ -40,8 +45,8 @@ export class AuthenticationService {
 		LocalStorageService.removeToken();
 	}
 
-	public logIn(username: string, password: string): Observable<string | null> {
-		return this.http.post('https://127.0.0.1:4848/authenticate', {
+  public logIn(username: string, password: string): Observable<string | null> {
+		return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
         username, password
       }).pipe(map((tokenResponse: any) => {
         return tokenResponse.success && tokenResponse.token
@@ -49,4 +54,10 @@ export class AuthenticationService {
           : null;
       }));
 	}
+
+  public createAccount(username: string, password: string): Observable<boolean> {
+    return this.http.post(AuthenticationService.CREATE_ACCOUNT_URL, {
+      user: { username, password }
+    }).pipe(map((serviceResponse: any) => !!serviceResponse.success));
+  }
 }
