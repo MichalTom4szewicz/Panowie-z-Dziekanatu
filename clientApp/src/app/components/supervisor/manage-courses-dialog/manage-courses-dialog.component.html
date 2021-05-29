@@ -10,9 +10,8 @@
             <mat-label>Kod kursu</mat-label>
             <input matInput formControlName="courseKey" required="true">
         </mat-form-field>
-        
         <div>
-            <button mat-button (click)="doNothing()">Cofnij</button>
+            <button mat-button type="button" (click)="doNothing()">Cofnij</button>
             <button mat-button type="submit" [disabled]="validForm()">Zapisz</button>
         </div>
     </form>

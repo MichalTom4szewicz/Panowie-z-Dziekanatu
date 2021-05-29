@@ -65,6 +65,7 @@ import { ClassesScheduleComponent } from './components/common/classes-schedule/c
 		ClassesOverviewComponent,
 		ClassesScheduleComponent,
 		CreateUserComponen,
+		CreateUserComponent,
 		HasRoleDirectiv
 	],
 	imports: [
