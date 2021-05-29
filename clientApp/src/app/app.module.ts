@@ -40,8 +40,9 @@ import { ManageCoursesDialogComponent } from './components/supervisor/manage-cou
 import { ManageClassesDialogComponent } from './components/supervisor/supervisor-classes-list/manage-classes-dialog/manage-classes-dialog.component';
 import { HostingRequestsDialogComponent } from './components/supervisor/supervisor-classes-list/hosting-requests-dialog/hosting-requests-dialog.component';
 import { CreateUserComponent } from './components/create-user/create-user.component';
+import { HasRoleDirective } from './directives/has-role.directive';
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent, CreateUserComponent],
+	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent, CreateUserComponent, HasRoleDirective],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -68,4 +69,5 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
 	providers: [],
 	bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}

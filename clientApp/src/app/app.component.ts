@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {UserRole} from './enums/user-role.enum';
 
 @Component({
   selector: 'pzd-root',
@@ -7,8 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'clientApp';
+  userRole = UserRole;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

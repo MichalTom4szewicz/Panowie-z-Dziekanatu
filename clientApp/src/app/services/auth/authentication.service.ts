@@ -7,9 +7,10 @@ import jwtDecode from 'jwt-decode';
 import { isBefore } from 'date-fns';
 import { UnitsConstants } from '../../constants/units-constants';
 import { CommunicationConstants } from '../../constants/communication-constants';
+import { UserRole } from '../../enums/user-role.enum';
 
 @Injectable({
-	providedIn: 'root',
+  providedIn: 'root',
 })
 export class AuthenticationService {
   private static readonly CREATE_ACCOUNT_URL = CommunicationConstants.getFullAuthApiAddress('/user');
@@ -17,15 +18,15 @@ export class AuthenticationService {
 
   constructor(private readonly http: HttpClient) {}
 
-	private static decodeToken(): any {
-	  const token = LocalStorageService.getToken();
-	  if (token) {
+  private static decodeToken(): any {
+    const token = LocalStorageService.getToken();
+    if (token) {
       return jwtDecode(token);
     }
-	  return '';
+    return '';
   }
 
-	public isAuthenticated(): boolean {
+  public isAuthenticated(): boolean {
     const decodedToken = AuthenticationService.decodeToken();
     if (decodedToken) {
       const expirationDate = decodedToken.exp * UnitsConstants.MILLISECONDS_IN_SECOND;
@@ -35,15 +36,21 @@ export class AuthenticationService {
     }
     this.logOut();
     return false;
-	}
+  }
 
-	public setToken(token: string): void {
-		LocalStorageService.setToken(token);
-	}
+  hasRole(role: UserRole): boolean {
+    const decodedToken = AuthenticationService.decodeToken();
+    console.log(decodedToken);
+    return decodedToken && decodedToken.role.name === role;
+  }
 
-	public logOut(): void {
-		LocalStorageService.removeToken();
-	}
+  public setToken(token: string): void {
+    LocalStorageService.setToken(token);
+  }
+
+  public logOut(): void {
+    LocalStorageService.removeToken();
+  }
 
   public logIn(username: string, password: string): Observable<string | null> {
 		return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
