@@ -1,4 +1,7 @@
-<pzd-classes-schedule [schedule]="classes"></pzd-classes-schedule>
+<pzd-classes-schedule [schedule]="classesChange"></pzd-classes-schedule>
+<div fxLayout="row" fxLayoutAlign="center center">
+    <button mat-raised-button color="primary" (click)="delete()">Usuń odrzucone</button>
+</div>
 <p class="block">Legenda:</p>
 <div fxLayout="row" fxLayoutAlign="start stretch">
     <div fxLayout="column" fxLayoutAlign="start stretch">

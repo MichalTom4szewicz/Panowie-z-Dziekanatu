@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { HostingRequest } from 'src/app/domain/hosting-request';
 import { ClassesStatusEnum } from 'src/app/enums/classes-status-enum';
 import { Status } from 'src/app/enums/status';
@@ -14,22 +14,40 @@ import { HostingRequestService } from 'src/app/services/hosting-request/hosting-
 })
 export class ClassesOverviewComponent implements OnInit {
 
-  classes: Observable<ClassesWithStatus[][]>;
+  private classes: BehaviorSubject<ClassesWithStatus[][]> = new BehaviorSubject<ClassesWithStatus[][]>([]);
+  classesChange: Observable<ClassesWithStatus[][]> = this.classes.asObservable();
   legend: string[] = ['Zaakceptowane', 'Oczekujące na akceptacje', 'Odrzucone'];
   courses: LegendDisplay[] = [];
   private status: Map<Status, ClassesStatusEnum>;
+  private hostingRequest: HostingRequest[][];
 
   constructor(private hostingRequestService: HostingRequestService) { }
 
   ngOnInit(): void {
     this.courses = this.initLegend();
     this.status = this.initStatusMap();
-    this.hostingRequestService.getRegisteredClasses().subscribe(
-      schedule => this.classes = of(
-        schedule.map(
-          day => day.map(
-            element => this.getClassesWithStatus(element)
-          )
+    this.hostingRequestService.getRegisteredClasses().subscribe(schedule => {
+      this.hostingRequest = schedule;
+      this.updateClassesList();
+    });
+  }
+
+  public delete(): void {
+    this.hostingRequestService.deleteRejectedHostingRequests().subscribe(() => {
+      this.hostingRequest = this.hostingRequest.map(
+        row => row.filter(
+          hosting => hosting.status !== Status.REJECTED
+        )
+      );
+      this.updateClassesList();
+    });
+  }
+
+  private updateClassesList(): void {
+    this.classes.next(
+      this.hostingRequest.map(
+        day => day.map(
+          element => this.getClassesWithStatus(element)
         )
       )
     );

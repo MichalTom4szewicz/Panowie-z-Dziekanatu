@@ -17,6 +17,10 @@ export class HostingRequestService {
 
   constructor() { }
 
+  public deleteRejectedHostingRequests(): Observable<any> {
+    return of([]);
+  }
+
   public getRegisteredClasses(): Observable<HostingRequest[][]> {
     const class1: Classes = {
       weekDay: WeekDay.Friday,
