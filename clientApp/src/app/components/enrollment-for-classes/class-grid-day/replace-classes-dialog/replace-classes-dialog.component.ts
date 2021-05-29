@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Classes } from 'src/app/domain/classes';
+import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
 
 @Component({
   selector: 'pzd-replace-classes-dialog',
@@ -11,7 +11,7 @@ export class ReplaceClassesDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ReplaceClassesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public classes: Classes[]
+    @Inject(MAT_DIALOG_DATA) public classes: ClassesWithStatus[]
   ) {}
 
   ngOnInit(): void {

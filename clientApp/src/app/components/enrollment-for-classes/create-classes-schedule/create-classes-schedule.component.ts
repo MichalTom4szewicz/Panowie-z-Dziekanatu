@@ -2,27 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, range } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Classes } from 'src/app/domain/classes';
 import { ClassGridService } from 'src/app/services/class-grid/class-grid.service';
 import { ScheduleRegisterService } from 'src/app/services/schedule-register/schedule-register.service';
 import { SchedulesMenagerService } from 'src/app/services/schedules-menager/schedules-menager.service';
-import { CalendarUtils } from 'src/app/utils/calendar-utils';
+import { SaveScheduleDialogComponent } from 'src/app/components/enrollment-for-classes/create-classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
+import { SavedSchedulesComponent } from 'src/app/components/enrollment-for-classes/create-classes-schedule/saved-schedules/saved-schedules.component';
+import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
 import { ClassesUtils } from 'src/app/utils/classes-utils';
-import { CalendarConstants } from '../../../constants/calendar-constants';
-import { SaveScheduleDialogComponent } from './save-schedule-dialog/save-schedule-dialog.component';
-import { SavedSchedulesComponent } from './saved-schedules/saved-schedules.component';
+import { ClassesStatusEnum } from 'src/app/enums/classes-status-enum';
 
 @Component({
-  selector: 'pzd-classes-schedule',
-  templateUrl: './classes-schedule.component.html',
-  styleUrls: ['./classes-schedule.component.sass']
+  selector: 'pzd-create-classes-schedule',
+  templateUrl: './create-classes-schedule.component.html',
+  styleUrls: ['./create-classes-schedule.component.sass']
 })
-export class ClassesScheduleComponent implements OnInit {
+export class CreateClassesScheduleComponent implements OnInit {
   
-  weekDays: string[] = CalendarConstants.WEEK_DAYS;
-  hours: number[] = [];
-  schedule: ClassesGrid[][] = [];
+  private schedule: BehaviorSubject<ClassesWithStatus[][]> = new BehaviorSubject<ClassesWithStatus[][]>([]);
+  scheduleChange: Observable<ClassesWithStatus[][]> = this.schedule.asObservable();
 
   constructor(
     private classGridService: ClassGridService,
@@ -35,11 +34,14 @@ export class ClassesScheduleComponent implements OnInit {
 
   ngOnInit(): void {
     this.classGridService.classGridChange.subscribe(
-      value => this.schedule = value.map(
-        daySchedule => this.prepareGrid(daySchedule)
+      value => this.schedule.next(
+        value.map(
+          row => row.map(
+            classes => ClassesUtils.getClassesWithStatus(classes, ClassesStatusEnum.CREATE_SCHEDULE)
+          )
+        )
       )
     );
-    range(7, 14).subscribe(hour => this.hours.push(hour));
   }
 
   public registerForClasses(): void {
@@ -67,7 +69,7 @@ export class ClassesScheduleComponent implements OnInit {
   }
 
   private getSchedule(): Classes[] {
-    return this.schedule.reduce((acc, val) => acc.concat(val), []).map(element => element.classes);
+    return this.schedule.value.reduce((acc, val) => acc.concat(val), []).map(value => value.classes);
   }
 
   public openSavedSchedulesComponent(): void {
@@ -93,39 +95,4 @@ export class ClassesScheduleComponent implements OnInit {
       });
     });
   }
-  
-  public getHour(hour: number): string {
-    return CalendarUtils.getFullHour(hour);
-  }
-
-  private prepareGrid(schedule: Classes[]): ClassesGrid[] {
-    let lastIndex: number = 0;
-    var result: ClassesGrid[] = [];
-    schedule.forEach(element => {
-      let emptyGrid: ClassesGrid = {
-        rows: CalendarUtils.getTimeInMinutes(element.startTime) - lastIndex - CalendarConstants.CLASS_GRID_BEGINING_IN_MINUTES,
-        isNotEmpty: false,
-        classes: ClassesUtils.getEmptyClasses()
-      };
-      let classesGrid: ClassesGrid = {
-        rows: CalendarUtils.getTimeInMinutes(element.endTime) - CalendarUtils.getTimeInMinutes(element.startTime),
-        isNotEmpty: true,
-        classes: element
-      };
-      lastIndex = CalendarUtils.getTimeInMinutes(element.endTime) - CalendarConstants.CLASS_GRID_BEGINING_IN_MINUTES;
-      result = [...result, emptyGrid, classesGrid];
-    });
-    let emptyGrid: ClassesGrid = {
-      rows: CalendarConstants.MINUTES_CLASS_GRID - lastIndex,
-      isNotEmpty: false,
-      classes: ClassesUtils.getEmptyClasses()
-    };
-    return [...result, emptyGrid];
-  }
-}
-
-interface ClassesGrid {
-  rows: number,
-  isNotEmpty: boolean,
-  classes: Classes
 }

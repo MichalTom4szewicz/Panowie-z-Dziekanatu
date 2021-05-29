@@ -1,0 +1,18 @@
+<pzd-classes-schedule [schedule]="classes"></pzd-classes-schedule>
+<p class="block">Legenda:</p>
+<div fxLayout="row" fxLayoutAlign="start stretch">
+    <div fxLayout="column" fxLayoutAlign="start stretch">
+        <div fxLayout="row" fxLayoutAlign="start stretch" class="text-color">
+            <p *ngFor="let item of courses" [ngClass]="classesAccepted(item)">{{item.name}}</p>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start stretch" class="text-color">
+            <p *ngFor="let item of courses" [ngClass]="classesPending(item)">{{item.name}}</p>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start stretch" class="text-color">
+            <p *ngFor="let item of courses" [ngClass]="classesRejected()">{{item.name}}</p>
+        </div>
+    </div>
+    <div fxLayout="column" fxLayoutAlign="start stretch">
+        <p *ngFor="let item of legend" class="block">{{item}}</p>
+    </div>
+</div>

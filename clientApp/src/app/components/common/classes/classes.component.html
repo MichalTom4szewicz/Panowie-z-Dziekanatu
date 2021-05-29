@@ -1,0 +1,9 @@
+<mat-card [ngClass]="getClass()">
+    <p class="text-color">
+        {{getTime(classes.classes.startTime)}}-{{getTime(classes.classes.endTime)}}<br>
+        <b>{{classes.classes.course.name}}</b><br>
+        {{classes.classes.building}} / {{classes.classes.room}}<br>
+        {{displayUser()}}<br>
+        {{classes.classes.typ}}
+    </p>
+</mat-card>

@@ -4,9 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { range } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { Classes } from 'src/app/domain/classes';
+import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
 import { ClassGridService } from 'src/app/services/class-grid/class-grid.service';
 import { ClassesService } from 'src/app/services/classes/classes.service';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
+import { ClassesUtils } from 'src/app/utils/classes-utils';
 import { CalendarConstants } from '../../../constants/calendar-constants';
 import { ClassesStatusEnum } from '../../../enums/classes-status-enum';
 import { ReplaceClassesDialogComponent } from './replace-classes-dialog/replace-classes-dialog.component';
@@ -19,7 +21,7 @@ import { ReplaceClassesDialogComponent } from './replace-classes-dialog/replace-
 export class ClassGridDayComponent implements OnInit {
   
   @Input() weekDay: WeekDay;
-  sortedClasses: [Classes, ClassesStatusEnum][][];
+  sortedClasses: ClassesWithStatus[][];
   selectedClasses: Set<Classes> = new Set();
   conflicts: Map<string, [number, number][]>;
   classesMap: Map<string, [number, number]>;
@@ -32,7 +34,7 @@ export class ClassGridDayComponent implements OnInit {
     this.classesService.getClassesByWeekDay(this.weekDay).subscribe(value =>
       this.sortedClasses = value.map(row =>
         row.map(element =>
-          [element, ClassesStatusEnum.UNSELECTED]
+          ClassesUtils.getClassesWithStatus(element, ClassesStatusEnum.UNSELECTED)
         )
       )
     );
@@ -42,7 +44,7 @@ export class ClassGridDayComponent implements OnInit {
   }
 
   private updateSelectedAfterLoad(): void {
-    this.sortedClasses.forEach(row => row.forEach(element => element[1] = ClassesStatusEnum.UNSELECTED));
+    this.sortedClasses.forEach(row => row.forEach(element => element.status = ClassesStatusEnum.UNSELECTED));
     this.classGridService.classGridChange.subscribe(grid => {
       let weekDayClasses = grid[CalendarConstants.WEEK_DAYS_ORDER.get(this.weekDay)!];
       this.selectedClasses = new Set(weekDayClasses);
@@ -55,7 +57,7 @@ export class ClassGridDayComponent implements OnInit {
 
   private findClassesAndMarkAsSelected(groupKey: string): void {
     let cordinate: [number, number] = this.classesMap.get(groupKey)!;
-    this.sortedClasses[cordinate[0]][cordinate[1]][1] = ClassesStatusEnum.SELECTED;
+    this.sortedClasses[cordinate[0]][cordinate[1]].status = ClassesStatusEnum.SELECTED;
   }
 
   public getHour(hour: number): string {
@@ -82,37 +84,37 @@ export class ClassGridDayComponent implements OnInit {
     return CalendarConstants.WEEK_DAYS[CalendarConstants.WEEK_DAYS_ORDER.get(this.weekDay)!];
   }
   
-  public select(classes: [Classes, ClassesStatusEnum]) {
-    if (classes[1] === ClassesStatusEnum.SELECTED) {
-      this.classGridService.removeElement(classes[0]);
-      this.selectedClasses.delete(classes[0]);
-      classes[1] = ClassesStatusEnum.UNSELECTED;
-      this.removeConflicts(classes[0].groupKey);
-    } else if (classes[1] === ClassesStatusEnum.CONFLICT) {
-      let conflictClasses: [Classes, ClassesStatusEnum][] = this.getConflictClasses(classes[0]);
-      this.openDialog(conflictClasses.map(v => v[0])).subscribe(add =>{
+  public select(classes: ClassesWithStatus) {
+    if (classes.status === ClassesStatusEnum.SELECTED) {
+      this.classGridService.removeElement(classes.classes);
+      this.selectedClasses.delete(classes.classes);
+      classes.status = ClassesStatusEnum.UNSELECTED;
+      this.removeConflicts(classes.classes.groupKey);
+    } else if (classes.status === ClassesStatusEnum.CONFLICT) {
+      let conflictClasses: ClassesWithStatus[] = this.getConflictClasses(classes.classes);
+      this.openDialog(conflictClasses).subscribe(add =>{
         if (add) {
           conflictClasses.forEach(element => {
-            this.classGridService.removeElement(element[0])
-            this.selectedClasses.delete(element[0]);
-            this.removeConflicts(element[0].groupKey);
-            element[1] = ClassesStatusEnum.UNSELECTED;
+            this.classGridService.removeElement(element.classes)
+            this.selectedClasses.delete(element.classes);
+            this.removeConflicts(element.classes.groupKey);
+            element.status = ClassesStatusEnum.UNSELECTED;
           });
-          this.classGridService.addElement(classes[0]);
-          this.selectedClasses.add(classes[0]);
-          classes[1] = ClassesStatusEnum.SELECTED;
-          this.addConflicts(classes[0].groupKey);
+          this.classGridService.addElement(classes.classes);
+          this.selectedClasses.add(classes.classes);
+          classes.status = ClassesStatusEnum.SELECTED;
+          this.addConflicts(classes.classes.groupKey);
         }
       });
     } else {
-      this.classGridService.addElement(classes[0]);
-      this.selectedClasses.add(classes[0]);
-      classes[1] = ClassesStatusEnum.SELECTED;
-      this.addConflicts(classes[0].groupKey);
+      this.classGridService.addElement(classes.classes);
+      this.selectedClasses.add(classes.classes);
+      classes.status = ClassesStatusEnum.SELECTED;
+      this.addConflicts(classes.classes.groupKey);
     }
   }
 
-  private openDialog(conflictClasses: Classes[]): Observable<boolean> {
+  private openDialog(conflictClasses: ClassesWithStatus[]): Observable<boolean> {
     const dialogRef = this.dialog.open(ReplaceClassesDialogComponent, {
       width: '300px',
       data: conflictClasses
@@ -121,28 +123,28 @@ export class ClassGridDayComponent implements OnInit {
   }
 
   private addConflicts(groupKey: string): void {
-    this.conflicts.get(groupKey)?.forEach(element => this.sortedClasses[element[0]][element[1]][1] = ClassesStatusEnum.CONFLICT);
+    this.conflicts.get(groupKey)?.forEach(element => this.sortedClasses[element[0]][element[1]].status = ClassesStatusEnum.CONFLICT);
   }
 
   private removeConflicts(groupKey: string): void {
     this.conflicts.get(groupKey)?.forEach(element => {
       var conflictToDelete: boolean = true;
-      let connectionsForConflict: [number, number][] = this.conflicts.get(this.sortedClasses[element[0]][element[1]][0].groupKey)!;
+      let connectionsForConflict: [number, number][] = this.conflicts.get(this.sortedClasses[element[0]][element[1]].classes.groupKey)!;
       connectionsForConflict.forEach(connection => {
-        if (this.selectedClasses.has(this.sortedClasses[connection[0]][connection[1]][0])) {
+        if (this.selectedClasses.has(this.sortedClasses[connection[0]][connection[1]].classes)) {
           conflictToDelete = false;
         }
       });
       if (conflictToDelete) {
-        this.sortedClasses[element[0]][element[1]][1] = ClassesStatusEnum.UNSELECTED;
+        this.sortedClasses[element[0]][element[1]].status = ClassesStatusEnum.UNSELECTED;
       }
     });
   }
 
-  private getConflictClasses(classes: Classes): [Classes, ClassesStatusEnum][] {
-    var result: [Classes, ClassesStatusEnum][] = [];
+  private getConflictClasses(classes: Classes): ClassesWithStatus[] {
+    var result: ClassesWithStatus[] = [];
     this.conflicts.get(classes.groupKey)?.forEach(element => {
-      if (this.selectedClasses.has(this.sortedClasses[element[0]][element[1]][0])) {
+      if (this.selectedClasses.has(this.sortedClasses[element[0]][element[1]].classes)) {
         result = [ ...result, this.sortedClasses[element[0]][element[1]]];
       }
     });
