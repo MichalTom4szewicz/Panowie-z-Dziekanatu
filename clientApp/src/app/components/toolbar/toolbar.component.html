@@ -2,5 +2,9 @@
   <span>Panowie z Dziekanatu</span>
   <button mat-button [routerLink]="['/plan']">Stwórz plan</button>
   <button mat-button [routerLink]="['/supervisor']">Opiekun</button>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button (click)="logOut()">
+    <mat-icon>logout</mat-icon>
+  </button>
 </mat-toolbar>
 <router-outlet></router-outlet>
