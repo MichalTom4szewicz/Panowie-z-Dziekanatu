@@ -1,4 +1,10 @@
+import { pbkdf2 } from "node:crypto";
 import {Class} from "../entity/Class"
+import {getConnection, Repository} from "typeorm";
+import {Request, Response} from "express"
+import axios from 'axios'
+
+const logger = require('../utils/logger')
 
 export function classesCollide (c1: Class, c2: Class): boolean {
 
@@ -9,6 +15,12 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     const c2End = parseInt(c2.endTime.replace(":", ""), 10)
 
     // console.log(c1Start, c1End, c2Start, c2End)
+
+    // gdy parity1 xor parity2 == 1 mamy gwarancje ze nie koliduja
+    // kiedy indziej moze wystapic kolizja
+    if((c1.parity == 'p' && c2.parity == 'n') || (c1.parity == 'n' && c2.parity == 'p')) {
+        return false
+    }
 
     //c2 zaczyna sie w trakcie c1
     if(c2Start >= c1Start && c2Start <= c1End) {
@@ -26,6 +38,7 @@ export function classesCollide (c1: Class, c2: Class): boolean {
     if(c1End >= c2Start && c1End <= c2End) {
         return true
     }
+
     return false
 }
 
@@ -116,4 +129,87 @@ export function listCollisions(newItems: any): object {
         map[tmpMap[i][1].groupKey] = tmpMap[i][2];
     }
     return map
+}
+
+export async function insertObjectIntoTable(object: any, table: any, response: Response) {
+    await getConnection()
+  .createQueryBuilder()
+  .insert()
+  .into(table)
+  .values(object)
+  .execute()
+  .then(() => {
+    response.status(200).json({
+      status: "success"
+    })
+  })
+  .catch(error => {
+    logger.error(error)
+    response.status(500).json({
+      status: "failure",
+      message: error.message
+    })
+  });
+}
+
+export function createTime(h: number, m: number) {
+    let hString
+    if(h.toString().length == 1) {
+        hString = `0${h}`
+    } else {
+        hString = `${h}`
+    }
+
+    let mString
+    if(m.toString().length == 1) {
+        mString = `0${m}`
+    } else {
+        mString = `${m}`
+    }
+
+    return `${hString}:${mString}`
+}
+
+export function validateValues(val: any, enm: any, response: Response) {
+    const enumValues = new Set(Object.values(enm))
+    if(!enumValues.has(val)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid value: ${val}`
+        })
+        return false
+    }
+    return true
+}
+
+export function isTime(hours: any, minutes: any, response: Response) {
+    if(!(hours >= 0 && hours <= 24)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid hour: ${hours}`
+        })
+        return false
+    }
+    if(!(minutes >= 0 && minutes <= 60)) {
+        response.status(500).json({
+            status: "failure",
+            message: `invalid minutes: ${minutes}`
+        })
+        return false
+    }
+    return true
+}
+
+export async function verify(token: any, response: Response) {
+    const auth = await axios.get("https://localhost:4848/verify",
+    {headers: {'token': token}});
+
+    if(!auth.data.success) {
+        response.status(401).json({
+            status: "failure",
+            message: "invalid token"
+        })
+        return false
+    }
+    return true
 }

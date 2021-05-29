@@ -1,36 +1,43 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
+
+import {HostingRequest} from "./HostingRequest"
+import {Course} from "./Course"
+import {User} from "./User"
 
 @Entity()
 export class Class {
 
-    @PrimaryGeneratedColumn()
-    id!:           number;
+    @PrimaryColumn()
+    public groupKey!:string;
 
     @Column()
-    name!:         string;
+    public weekDay!:      string;
 
     @Column()
-    weekDay!:      string;
+    public parity!:       string;
 
     @Column()
-    startTime!:    string;
+    public startTime!:    string;
 
     @Column()
-    endTime!:      string;
+    public endTime!:      string;
 
     @Column()
-    host!:         string;
+    public building!:     string;
 
     @Column()
-    building!:     string;
+    public room!:         string;
 
     @Column()
-    room!:         string;
+    public typ!:          string;
 
-    @Column()
-    groupKey!:     string;
+    @ManyToOne(() => User, user => user.classes)
+    public host!: User;
 
-    @Column()
-    typ!:          string;
+    @ManyToOne(() => Course, course => course.classes)
+    public course!: Course;
+
+    @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })
+    public hostingRequests!: HostingRequest[];
 
 }
