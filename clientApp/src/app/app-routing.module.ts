@@ -12,27 +12,22 @@ import {CreateUserComponent} from './components/create-user/create-user.componen
 const routes: Routes = [
   {
     path: '',
+    canActivate: [AuthGuard],
+    component: ToolbarComponent,
     children: [
       {
-        path: '',
+        path: 'home',
         canActivate: [AuthGuard],
         component: HomeComponent
       },
       {
-        path: '',
-        canActivate: [AuthGuard],
-        component: ToolbarComponent,
-        children: [
-          {
-            path: 'plan',
-            component: EnrollmentForClassesComponent
-          },
-          {
-            path: 'supervisor',
-            component: SupervisorComponent
-          }
-        ]
+        path: 'plan',
+        component: EnrollmentForClassesComponent
       },
+      {
+        path: 'supervisor',
+        component: SupervisorComponent
+      }
     ]
   },
   {
