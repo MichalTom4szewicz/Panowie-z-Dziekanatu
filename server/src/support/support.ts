@@ -211,5 +211,5 @@ export async function verify(token: any, response: Response) {
         })
         return false
     }
-    return true
+    return auth.data.token
 }

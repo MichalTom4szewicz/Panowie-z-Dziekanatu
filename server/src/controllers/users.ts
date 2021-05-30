@@ -11,7 +11,8 @@ const bcrypt = require('bcrypt')
 usersRouter.post('/', async (request: Request, response: Response) => {
 
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
@@ -36,7 +37,8 @@ usersRouter.post('/', async (request: Request, response: Response) => {
 usersRouter.put('/:username', async (request: Request, response: Response) => {
 
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const object = request.body.object
   const password = await bcrypt.hash(object.password, 10)
@@ -82,7 +84,8 @@ usersRouter.delete('/:username', async (request: Request, response: Response) =>
   const username = request.params.username
 
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -117,7 +120,8 @@ usersRouter.delete('/:username', async (request: Request, response: Response) =>
 usersRouter.get('/usernames', async (request: Request, response: Response) => {
 
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   await getConnection()
     .createQueryBuilder()
@@ -142,7 +146,8 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
   const username = request.params.username
 
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -175,7 +180,8 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
 
 usersRouter.get('/', async (request: Request, response: Response) => {
   const token = request.header('token');
-  if(!(await verify(token, response))) return
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   await getConnection()
     .createQueryBuilder()

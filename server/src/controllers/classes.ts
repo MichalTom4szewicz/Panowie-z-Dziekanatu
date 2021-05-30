@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
 import {Request, Response} from "express"
-import {compareClasses, isTime, validateValues, createTime, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
+import {compareClasses, verify, isTime, validateValues, createTime, alterKeys, processCollisions, listCollisions, insertObjectIntoTable} from "../support/support"
 import {Parity} from "../enums/parity"
 import {WeekDay} from "../enums/weekDay"
 import {Typ} from "../enums/typ"
@@ -12,6 +12,10 @@ const logger = require('../utils/logger')
 const classesRouter = require('express').Router()
 
 classesRouter.post('/', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const object = request.body.object
   const connection = await getConnection();
 
@@ -61,6 +65,10 @@ classesRouter.post('/', async (request: Request, response: Response) => {
 })
 
 classesRouter.delete('/:groupKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const groupKey = request.params.groupKey
 
   const connection = await getConnection();
@@ -96,6 +104,10 @@ classesRouter.delete('/:groupKey', async (request: Request, response: Response) 
 
 // changeClass(newClass: Class)
 classesRouter.put('/:groupKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const object = request.body.object
   const groupKey = request.params.groupKey
 
@@ -172,6 +184,10 @@ classesRouter.put('/:groupKey', async (request: Request, response: Response) => 
 //PZD-5
 // example: localhost:8000/classes/conflicts/Monday
 classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   await getConnection()
     .createQueryBuilder()
     .select("class")
@@ -195,6 +211,10 @@ classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Resp
 // PZD-16
 // example: localhost:8000/classes/map/Monday
 classesRouter.get('/map', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   await getConnection()
     .createQueryBuilder()
     .select("class")
@@ -228,6 +248,10 @@ classesRouter.get('/map', async (request: Request, response: Response) => {
 // PZD-5
 // example: localhost:8000/classes/weekDay/Monday
 classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   await getConnection()
     .createQueryBuilder()
     .select("class")
@@ -250,6 +274,10 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
 
 // getClassesHostedByUser(username)
 classesRouter.get('/host/:username', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const connection = await getConnection();
   const username = request.params.username
   const userRepository = connection.getRepository(User)
@@ -282,6 +310,10 @@ classesRouter.get('/host/:username', async (request: Request, response: Response
 
 // getClassesofCourse(courseKey)
 classesRouter.get('/course/:courseKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const connection = await getConnection();
   const courseKey = request.params.courseKey
   const courseRepository = connection.getRepository(Course)
@@ -313,6 +345,10 @@ classesRouter.get('/course/:courseKey', async (request: Request, response: Respo
 })
 
 classesRouter.get('/:groupKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const groupKey = request.params.groupKey
 
   const connection = await getConnection();
@@ -345,10 +381,13 @@ classesRouter.get('/:groupKey', async (request: Request, response: Response) => 
 
 // getAllClasses() -> Classes[]
 classesRouter.get('/', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const connection = await getConnection();
   const classesRepository = connection.getRepository(Class)
   const coursesRepository = connection.getRepository(Course)
-  const usersRepository = connection.getRepository(User)
 
   const classes = await classesRepository.find({relations: ['host', 'course']});
 
@@ -366,9 +405,9 @@ classesRouter.get('/', async (request: Request, response: Response) => {
         return cc.courseKey === c.course.courseKey
       })[0]
       newC.supervisor = {
-        firstName: courses[0].supervisor.firstName,
-        lastName: courses[0].supervisor.lastName,
-        degree: courses[0].supervisor.degree
+        firstName: course.supervisor.firstName,
+        lastName: course.supervisor.lastName,
+        degree: course.supervisor.degree
       }
       delete newC.course
       newClasses.push(newC)
