@@ -15,7 +15,6 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   if(!decoded) return
 
   const object = request.body.object
-  const password = await bcrypt.hash(object.password, 10)
 
   if(!validateValues(object.degree, Degree, response)) return
 
@@ -23,7 +22,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
     firstName: object.firstName,
     lastName: object.lastName,
     username: object.username,
-    password,
+    password: "none",
     degree: object.degree,
     courses: [],
     hostingRequests: [],
