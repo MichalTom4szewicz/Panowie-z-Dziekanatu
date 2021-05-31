@@ -22,27 +22,16 @@ const routes: Routes = [
         component: HomeComponent
       },
       {
-        path: '',
-        canActivate: [AuthGuard],
-        component: ToolbarComponent,
-        children: [
-          {
-            path: 'plan',
-            component: EnrollmentForClassesComponent
-          },
-          {
-            path: 'supervisor',
-            component: SupervisorComponent
-          },
-          {
-            path: 'overview',
-            component: ClassesOverviewComponent
-          }
-        ]
+        path: 'plan',
+        component: EnrollmentForClassesComponent
       },
       {
         path: 'supervisor',
         component: SupervisorComponent
+      },
+      {
+        path: 'overview',
+        component: ClassesOverviewComponent
       }
     ]
   },

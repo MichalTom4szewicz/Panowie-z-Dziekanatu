@@ -64,9 +64,9 @@ import { ClassesScheduleComponent } from './components/common/classes-schedule/c
 		HostingRequestsDialogComponent,
 		ClassesOverviewComponent,
 		ClassesScheduleComponent,
-		CreateUserComponen,
 		CreateUserComponent,
-		HasRoleDirectiv
+		CreateUserComponent,
+		HasRoleDirective
 	],
 	imports: [
 		BrowserModule,
