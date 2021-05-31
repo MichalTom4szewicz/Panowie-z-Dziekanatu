@@ -3,17 +3,21 @@ import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {insertObjectIntoTable, alterKeys, processCollisions, listCollisions} from "../support/support"
+import {insertObjectIntoTable, verify, alterKeys, processCollisions, listCollisions} from "../support/support"
 
 const logger = require('../utils/logger')
 const coursesRouter = require('express').Router()
 
 coursesRouter.post('/', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const object = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: object.supervisor.username});
+  const user = await userRepository.findOne({username: decoded.username});
 
   if (user == undefined) {
     return response.status(500).json({
@@ -33,6 +37,10 @@ coursesRouter.post('/', async (request: Request, response: Response) => {
 })
 
 coursesRouter.delete('/:courseKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const courseKey = request.params.courseKey
 
   const connection = await getConnection();
@@ -70,27 +78,35 @@ coursesRouter.delete('/:courseKey', async (request: Request, response: Response)
 // getNazwyKursow() -> String[]
 // localhost:8000/courses/names
 coursesRouter.get('/names', async (request: Request, response: Response) => {
-    await getConnection()
-    .createQueryBuilder()
-    .select("course")
-    .from(Course, "course")
-    .execute()
-    .then(items => {
-      return response
-      .status(200)
-      .json(alterKeys(items, "course").map((item: { name: string; }) => item.name))
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  await getConnection()
+  .createQueryBuilder()
+  .select("course")
+  .from(Course, "course")
+  .execute()
+  .then(items => {
+    return response
+    .status(200)
+    .json(alterKeys(items, "course").map((item: { name: string; }) => item.name))
+  })
+  .catch(error => {
+    logger.error(error)
+    return response.status(500).json({
+      status: "failure",
+      message: error.message
     })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-          status: "failure",
-          message: error.message
-      })
-    });
+  });
 })
 
 // coursesOfUser(username) -> Courses
 coursesRouter.get('/user/:username', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const username = request.params.username
 
   const connection = await getConnection();
@@ -125,6 +141,10 @@ coursesRouter.get('/user/:username', async (request: Request, response: Response
 })
 
 coursesRouter.get('/:courseKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const courseKey = request.params.courseKey
 
   const connection = await getConnection();
@@ -151,6 +171,10 @@ coursesRouter.get('/:courseKey', async (request: Request, response: Response) =>
 })
 
 coursesRouter.get('/', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
 
@@ -171,6 +195,10 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
 })
 
 coursesRouter.put('/:courseKey', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
   const object = request.body.object
   const courseKey = request.params.courseKey
 
