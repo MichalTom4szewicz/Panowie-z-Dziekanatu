@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
-import {EnrollmentForClassesComponent} from './components/enrollment-for-classes/enrollment-for-classes.component';
-import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
-import {ToolbarComponent} from './components/toolbar/toolbar.component';
+import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SupervisorComponent } from './components/supervisor/supervisor.component';
-import {CreateUserComponent} from './components/create-user/create-user.component';
+import { CreateUserComponent } from './components/create-user/create-user.component';
+import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'supervisor',
         component: SupervisorComponent
+      },
+      {
+        path: 'overview',
+        component: ClassesOverviewComponent
       }
     ]
   },

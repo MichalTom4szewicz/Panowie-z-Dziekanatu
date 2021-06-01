@@ -15,6 +15,6 @@ export class ToolbarComponent implements OnInit {
 
   async logOut(): Promise<void> {
     this._authService.logOut();
-    await this._router.navigate(['']);
+    await this._router.navigate(['login']);
   }
 }

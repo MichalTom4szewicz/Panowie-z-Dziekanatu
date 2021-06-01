@@ -22,18 +22,18 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ClassesComponent } from './components/classes/classes.component';
+import { ClassesComponent } from './components/common/classes/classes.component';
 import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
 import { EnrollmentForClassesComponent } from './components/enrollment-for-classes/enrollment-for-classes.component';
-import { ClassesScheduleComponent } from './components/enrollment-for-classes/classes-schedule/classes-schedule.component';
+import { CreateClassesScheduleComponent } from './components/enrollment-for-classes/create-classes-schedule/create-classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
 
 import { HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
-import { SavedSchedulesComponent } from './components/enrollment-for-classes/classes-schedule/saved-schedules/saved-schedules.component';
-import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
+import { SavedSchedulesComponent } from './components/enrollment-for-classes/create-classes-schedule/saved-schedules/saved-schedules.component';
+import { SaveScheduleDialogComponent } from './components/enrollment-for-classes/create-classes-schedule/save-schedule-dialog/save-schedule-dialog.component';
 import { SupervisorComponent } from './components/supervisor/supervisor.component';
 import { SupervisorClassesListComponent } from './components/supervisor/supervisor-classes-list/supervisor-classes-list.component';
 import { ManageCoursesDialogComponent } from './components/supervisor/manage-courses-dialog/manage-courses-dialog.component';
@@ -41,8 +41,33 @@ import { ManageClassesDialogComponent } from './components/supervisor/supervisor
 import { HostingRequestsDialogComponent } from './components/supervisor/supervisor-classes-list/hosting-requests-dialog/hosting-requests-dialog.component';
 import { CreateUserComponent } from './components/create-user/create-user.component';
 import { HasRoleDirective } from './directives/has-role.directive';
+import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
+import { ClassesScheduleComponent } from './components/common/classes-schedule/classes-schedule.component';
 @NgModule({
-	declarations: [AppComponent, HomeComponent, LoginComponent, ClassesComponent, ClassGridDayComponent, EnrollmentForClassesComponent, ClassesScheduleComponent, ReplaceClassesDialogComponent, PageNotFoundComponent, ToolbarComponent, SavedSchedulesComponent, SaveScheduleDialogComponent, SupervisorComponent, SupervisorClassesListComponent, ManageCoursesDialogComponent, ManageClassesDialogComponent, HostingRequestsDialogComponent, CreateUserComponent, HasRoleDirective],
+	declarations: [
+		AppComponent,
+		HomeComponent,
+		LoginComponent,
+		ClassesComponent,
+		ClassGridDayComponent,
+		EnrollmentForClassesComponent,
+		CreateClassesScheduleComponent,
+		ReplaceClassesDialogComponent,
+		PageNotFoundComponent,
+		ToolbarComponent,
+		SavedSchedulesComponent,
+		SaveScheduleDialogComponent,
+		SupervisorComponent,
+		SupervisorClassesListComponent,
+		ManageCoursesDialogComponent,
+		ManageClassesDialogComponent,
+		HostingRequestsDialogComponent,
+		ClassesOverviewComponent,
+		ClassesScheduleComponent,
+		CreateUserComponent,
+		CreateUserComponent,
+		HasRoleDirective
+	],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,

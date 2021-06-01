@@ -1,11 +1,17 @@
 import { WeekDay } from "@angular/common";
 import { Classes } from "../domain/classes";
 import { Course } from "../domain/course";
+import { ClassesStatusEnum } from "../enums/classes-status-enum";
 import { Degree } from "../enums/degree";
 import { Parity } from "../enums/parity";
 import { Typ } from "../enums/typ";
+import { ClassesWithStatus } from "../helpers/classes-with-status";
 
 export class ClassesUtils {
+  public static getClassesWithStatus(classes: Classes, status: ClassesStatusEnum): ClassesWithStatus {
+    return { classes: classes, status: status };
+  }
+
   public static getEmptyClasses(): Classes {
     return this.getEmptyClassesWithCourse({
       name: '',

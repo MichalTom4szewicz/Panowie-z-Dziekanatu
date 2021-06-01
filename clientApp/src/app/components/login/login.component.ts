@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
       .subscribe(async (value) => {
         if (value) {
           this.authService.setToken(value);
-          await this.router.navigate(['']);
+          await this.router.navigate(['home']);
         } else {
           this.loginForm.setErrors({ incorrectLoginData: true });
         }
