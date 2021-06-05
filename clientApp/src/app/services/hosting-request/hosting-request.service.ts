@@ -113,7 +113,34 @@ export class HostingRequestService {
         }
       },
       typ: Typ.SEMINAR,
-      parity: Parity.NONE
+      parity: Parity.EVEN
+    };
+    const class3b: Classes = {
+      weekDay: WeekDay.Friday,
+      startTime: {
+        hours: 13,
+        minutes: 15
+      },
+      endTime: {
+        hours: 15,
+        minutes: 0
+      },
+      host: undefined,
+      building: 'C-1',
+      room: '104',
+      groupKey: 'Z05-20c',
+      course: {
+        name: 'Zastosowania inform. w gospod.',
+        courseKey: 'INZ000011',
+        supervisor: {
+          firstName: 'Zbigniew',
+          lastName: 'Szpunar',
+          degree: Degree.DR_ENG,
+          username: 'zszpunar'
+        }
+      },
+      typ: Typ.EXERCISE,
+      parity: Parity.ODD
     };
     const class4: Classes = {
       weekDay: WeekDay.Friday,
@@ -179,6 +206,17 @@ export class HostingRequestService {
         },
         {
           id: '4',
+          status: Status.PENDING,
+          user: {
+            firstName: 'Paweł',
+            lastName: 'Wichary',
+            degree: Degree.MA_ENG,
+            username: 'pwichary'
+          },
+          class: class3b
+        },
+        {
+          id: '5',
           status: Status.PENDING,
           user: {
             firstName: 'Zbigniew',

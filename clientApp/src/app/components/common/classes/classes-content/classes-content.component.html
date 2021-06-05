@@ -1,0 +1,15 @@
+<div class="text-color">
+    <p>
+        {{getTime(classes.startTime)}}-{{getTime(classes.endTime)}}<br>
+        <b>{{formatClassesName(classes.course.name)}}</b><br>
+        {{classes.building}} / {{classes.room}}<br>
+        {{displayUser()}}<br>
+    </p>
+    <div *ngIf="everySecondWeek(); else elseBlock" fxLayout="row" fxLayoutAlign="space-between center">
+        <p>{{classes.typ}}</p>
+        <p>{{getParity()}}</p>
+    </div>
+    <ng-template #elseBlock>
+        <p>{{classes.typ}}</p>
+    </ng-template>
+</div>

@@ -1,10 +1,10 @@
-import { Time } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Typ } from 'src/app/enums/typ';
 import { CalendarUtils } from 'src/app/utils/calendar-utils';
-import { UserUtils } from 'src/app/utils/user-utils';
 import { ClassesStatusEnum } from 'src/app/enums/classes-status-enum';
 import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
+import { MatDialog } from '@angular/material/dialog';
+import { ClassesDetailsDialogComponent } from './classes-details-dialog/classes-details-dialog.component';
 
 @Component({
   selector: 'pzd-classes',
@@ -14,104 +14,145 @@ import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
 export class ClassesComponent implements OnInit {
 
   @Input() classes: ClassesWithStatus;
-  @Input() scheduleView: boolean = false;
-  private display: Map<ClassesStatusEnum, any>;
+  @Input() classesOddWeek?: ClassesWithStatus = undefined;
+  @Input() clickable: boolean = false;
+  private display: Map<ClassesStatusEnum, (classes: ClassesWithStatus) => any>;
 
   private static readonly STANDARD_CLASSES_DURATION: number = 105;
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.display = new Map([
-      [ClassesStatusEnum.SELECTED, this.classesSelected()],
-      [ClassesStatusEnum.CONFLICT, this.classesConflict()],
-      [ClassesStatusEnum.UNSELECTED, this.classesUnselected()],
-      [ClassesStatusEnum.CREATE_SCHEDULE, this.classesCreateSchedule()],
-      [ClassesStatusEnum.PENDING, this.classesPending()],
-      [ClassesStatusEnum.ACCEPTED, this.classesAccepted()],
-      [ClassesStatusEnum.REJECTED, this.classesRejected()]
+      [ClassesStatusEnum.SELECTED, (classes: ClassesWithStatus) => this.classesSelected(classes)],
+      [ClassesStatusEnum.CONFLICT, (classes: ClassesWithStatus) => this.classesConflict(classes)],
+      [ClassesStatusEnum.UNSELECTED, (classes: ClassesWithStatus) => this.classesUnselected(classes)],
+      [ClassesStatusEnum.CREATE_SCHEDULE, (classes: ClassesWithStatus) => this.classesCreateSchedule(classes)],
+      [ClassesStatusEnum.PENDING, (classes: ClassesWithStatus) => this.classesPending(classes)],
+      [ClassesStatusEnum.ACCEPTED, (classes: ClassesWithStatus) => this.classesAccepted(classes)],
+      [ClassesStatusEnum.REJECTED, (classes: ClassesWithStatus) => this.classesRejected(classes)]
     ]);
   }
 
-  public getTime(time: Time): string {
-    return CalendarUtils.getTime(time);
+  public openDialog(classes: ClassesWithStatus): void {
+     this.dialog.open(ClassesDetailsDialogComponent, {
+      data: classes
+    });
   }
 
-  public getClass() {
-    return this.display.get(this.classes.status!);
+  public elementDisplay(): ClassesDisplay {
+    if (this.isDualDisplay()) {
+      return ClassesDisplay.DUAL;
+    } else if (this.clickable) {
+      return ClassesDisplay.CLICKABLE;
+    } else {
+      return ClassesDisplay.NOT_CLICKABLE;
+    }
   }
 
-  public displayUser(): string {
-    return UserUtils.displayUser(this.classes.classes.course.supervisor);
+  private isDualDisplay(): boolean {
+    return this.classesOddWeek !== undefined;
   }
 
-  private duration(): number {
-    return CalendarUtils.getTimeInMinutes(this.classes.classes.endTime) - CalendarUtils.getTimeInMinutes(this.classes.classes.startTime);
+  public dualDisplay(): ClassesDisplay {
+    return ClassesDisplay.DUAL
   }
 
-  private classesSelected(): any {
+  public clickableDisplay(): ClassesDisplay {
+    return ClassesDisplay.CLICKABLE
+  }
+
+  public notClickableDisplay(): ClassesDisplay {
+    return ClassesDisplay.NOT_CLICKABLE
+  }
+
+  public getClass(classes: ClassesWithStatus) {
+    return this.display.get(classes.status!)!(classes);
+  }
+
+  private duration(classes: ClassesWithStatus): number {
+    return CalendarUtils.getTimeInMinutes(classes.classes.endTime) - CalendarUtils.getTimeInMinutes(classes.classes.startTime);
+  }
+
+  private classesSelected(classes: ClassesWithStatus): any {
     return {
-      'project-selected': this.classes.classes.typ === Typ.PROJECT,
-      'exercise-selected': this.classes.classes.typ === Typ.EXERCISE,
-      'seminar-selected': this.classes.classes.typ === Typ.SEMINAR,
-      'laboratories-selected': this.classes.classes.typ === Typ.LABORATORIES,
-      'lecture-selected': this.classes.classes.typ === Typ.LECTURE
+      'project-selected': classes.classes.typ === Typ.PROJECT,
+      'exercise-selected': classes.classes.typ === Typ.EXERCISE,
+      'seminar-selected': classes.classes.typ === Typ.SEMINAR,
+      'laboratories-selected': classes.classes.typ === Typ.LABORATORIES,
+      'lecture-selected': classes.classes.typ === Typ.LECTURE,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
 
-  private classesConflict(): any {
+  private classesConflict(classes: ClassesWithStatus): any {
     return {
-      'project-conflict': this.classes.classes.typ === Typ.PROJECT,
-      'exercise-conflict': this.classes.classes.typ === Typ.EXERCISE,
-      'seminar-conflict': this.classes.classes.typ === Typ.SEMINAR,
-      'laboratories-conflict': this.classes.classes.typ === Typ.LABORATORIES,
-      'lecture-conflict': this.classes.classes.typ === Typ.LECTURE
+      'project-conflict': classes.classes.typ === Typ.PROJECT,
+      'exercise-conflict': classes.classes.typ === Typ.EXERCISE,
+      'seminar-conflict': classes.classes.typ === Typ.SEMINAR,
+      'laboratories-conflict': classes.classes.typ === Typ.LABORATORIES,
+      'lecture-conflict': classes.classes.typ === Typ.LECTURE,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
 
-  private classesUnselected(): any {
+  private classesUnselected(classes: ClassesWithStatus): any {
     return {
-      'project': this.classes.classes.typ === Typ.PROJECT,
-      'exercise': this.classes.classes.typ === Typ.EXERCISE,
-      'seminar': this.classes.classes.typ === Typ.SEMINAR,
-      'laboratories': this.classes.classes.typ === Typ.LABORATORIES,
-      'lecture': this.classes.classes.typ === Typ.LECTURE
+      'project': classes.classes.typ === Typ.PROJECT,
+      'exercise': classes.classes.typ === Typ.EXERCISE,
+      'seminar': classes.classes.typ === Typ.SEMINAR,
+      'laboratories': classes.classes.typ === Typ.LABORATORIES,
+      'lecture': classes.classes.typ === Typ.LECTURE,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
 
-  private classesCreateSchedule() {
+  private classesCreateSchedule(classes: ClassesWithStatus) {
     return {
-      'project': this.classes.classes.typ === Typ.PROJECT,
-      'exercise': this.classes.classes.typ === Typ.EXERCISE,
-      'seminar': this.classes.classes.typ === Typ.SEMINAR,
-      'laboratories': this.classes.classes.typ === Typ.LABORATORIES,
-      'lecture': this.classes.classes.typ === Typ.LECTURE,
-      'schedule': this.duration() > ClassesComponent.STANDARD_CLASSES_DURATION,
-      'schedule-small': this.duration() <= ClassesComponent.STANDARD_CLASSES_DURATION
+      'project': classes.classes.typ === Typ.PROJECT,
+      'exercise': classes.classes.typ === Typ.EXERCISE,
+      'seminar': classes.classes.typ === Typ.SEMINAR,
+      'laboratories': classes.classes.typ === Typ.LABORATORIES,
+      'lecture': classes.classes.typ === Typ.LECTURE,
+      'schedule': this.duration(classes) > ClassesComponent.STANDARD_CLASSES_DURATION,
+      'schedule-small': this.duration(classes) <= ClassesComponent.STANDARD_CLASSES_DURATION,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
 
-  private classesPending(): any {
+  private classesPending(classes: ClassesWithStatus): any {
     return {
-      'project-conflict': this.classes.classes.typ === Typ.PROJECT,
-      'exercise-conflict': this.classes.classes.typ === Typ.EXERCISE,
-      'seminar-conflict': this.classes.classes.typ === Typ.SEMINAR,
-      'laboratories-conflict': this.classes.classes.typ === Typ.LABORATORIES,
-      'lecture-conflict': this.classes.classes.typ === Typ.LECTURE,
-      'schedule': this.duration() > ClassesComponent.STANDARD_CLASSES_DURATION,
-      'schedule-small': this.duration() <= ClassesComponent.STANDARD_CLASSES_DURATION
+      'project-conflict': classes.classes.typ === Typ.PROJECT,
+      'exercise-conflict': classes.classes.typ === Typ.EXERCISE,
+      'seminar-conflict': classes.classes.typ === Typ.SEMINAR,
+      'laboratories-conflict': classes.classes.typ === Typ.LABORATORIES,
+      'lecture-conflict': classes.classes.typ === Typ.LECTURE,
+      'schedule': this.duration(classes) > ClassesComponent.STANDARD_CLASSES_DURATION,
+      'schedule-small': this.duration(classes) <= ClassesComponent.STANDARD_CLASSES_DURATION,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
 
-  private classesAccepted(): any {
-    return this.classesCreateSchedule();
+  private classesAccepted(classes: ClassesWithStatus): any {
+    return this.classesCreateSchedule(classes);
   }
 
-  private classesRejected(): any {
+  private classesRejected(classes: ClassesWithStatus): any {
     return {
       'rejected': true,
-      'schedule': this.duration() > ClassesComponent.STANDARD_CLASSES_DURATION,
-      'schedule-small': this.duration() <= ClassesComponent.STANDARD_CLASSES_DURATION
+      'schedule': this.duration(classes) > ClassesComponent.STANDARD_CLASSES_DURATION,
+      'schedule-small': this.duration(classes) <= ClassesComponent.STANDARD_CLASSES_DURATION,
+      'pointer': this.clickable,
+      'block-size': this.isDualDisplay()
     };
   }
+}
+
+enum ClassesDisplay {
+  DUAL, CLICKABLE, NOT_CLICKABLE
 }
