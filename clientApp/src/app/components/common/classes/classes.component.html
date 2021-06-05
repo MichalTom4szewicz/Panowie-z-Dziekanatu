@@ -1,9 +1,16 @@
-<mat-card [ngClass]="getClass()">
-    <p class="text-color">
-        {{getTime(classes.classes.startTime)}}-{{getTime(classes.classes.endTime)}}<br>
-        <b>{{classes.classes.course.name}}</b><br>
-        {{classes.classes.building}} / {{classes.classes.room}}<br>
-        {{displayUser()}}<br>
-        {{classes.classes.typ}}
-    </p>
-</mat-card>
+<div [ngSwitch]="elementDisplay()">
+    <div *ngSwitchCase="dualDisplay()" fxLayout="row" fxLayoutAlign="start stretch">
+        <mat-card matRipple [ngClass]="getClass(classes)" (click)="openDialog(classes)">
+            <pzd-classes-content [classes]="classes.classes" [dualDisplay]=true></pzd-classes-content>
+        </mat-card>
+        <mat-card matRipple [ngClass]="getClass(classesOddWeek!)" (click)="openDialog(classesOddWeek!)">
+            <pzd-classes-content [classes]="classesOddWeek!.classes" [dualDisplay]=true></pzd-classes-content>
+        </mat-card>
+    </div>
+    <mat-card *ngSwitchCase="clickableDisplay()" matRipple [ngClass]="getClass(classes)">
+        <pzd-classes-content [classes]="classes.classes" [dualDisplay]=false></pzd-classes-content>
+    </mat-card>
+    <mat-card *ngSwitchCase="notClickableDisplay()" [ngClass]="getClass(classes)">
+        <pzd-classes-content [classes]="classes.classes" [dualDisplay]=false></pzd-classes-content>
+    </mat-card>
+</div>

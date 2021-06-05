@@ -30,7 +30,7 @@ export class ClassesService {
         room: '104',
         groupKey: 'Z05-20a',
         course: {
-          name: 'Zastosowania inform. w gospod.',
+          name: 'Zastosowania Inform. w Gospod.',
           courseKey: 'INZ000011',
           supervisor: {
             firstName: 'Tomasz',
@@ -62,7 +62,7 @@ export class ClassesService {
         room: '104',
         groupKey: 'Z05-20b',
         course: {
-          name: 'Zastosowania inform. w gospod.',
+          name: 'Zastosowania Inform. w Gospod.',
           courseKey: 'INZ000011',
           supervisor: {
             firstName: 'Tomasz',
@@ -84,6 +84,33 @@ export class ClassesService {
           {
             weekDay: weekDay,
             startTime: {
+              hours: 11,
+              minutes: 15
+            },
+            endTime: {
+              hours: 13,
+              minutes: 0
+            },
+            host: undefined,
+            building: 'C-1',
+            room: '104',
+            groupKey: 'Z05-20d',
+            course: {
+              name: 'Zastosowania Inform. w Gospod.',
+              courseKey: 'INZ000011',
+              supervisor: {
+                firstName: 'Tomasz',
+                lastName: 'Szandała',
+                degree: Degree.DR_ENG,
+                username: 'tszandala'
+              }
+            },
+            typ: Typ.LABORATORIES,
+            parity: Parity.EVEN
+          }, 
+          {
+            weekDay: weekDay,
+            startTime: {
               hours: 17,
               minutes: 5
             },
@@ -96,7 +123,7 @@ export class ClassesService {
             room: '104',
             groupKey: 'Z05-20a',
             course: {
-              name: 'Zastosowania inform. w gospod.',
+              name: 'Zastosowania Inform. w Gospod.',
               courseKey: 'INZ000011',
               supervisor: {
                 firstName: 'Tomasz',
@@ -123,7 +150,7 @@ export class ClassesService {
             room: '104',
             groupKey: 'Z05-20b',
             course: {
-              name: 'Zastosowania inform. w gospod.',
+              name: 'Zastosowania Inform. w Gospod.',
               courseKey: 'INZ000011',
               supervisor: {
                 firstName: 'Tomasz',
@@ -136,7 +163,34 @@ export class ClassesService {
             parity: Parity.NONE
           }
         ],
-        [
+        [ 
+          {
+            weekDay: weekDay,
+            startTime: {
+              hours: 11,
+              minutes: 15
+            },
+            endTime: {
+              hours: 13,
+              minutes: 0
+            },
+            host: undefined,
+            building: 'C-1',
+            room: '104',
+            groupKey: 'Z05-20e',
+            course: {
+              name: 'Zastosowania Inform. w Gospod.',
+              courseKey: 'INZ000011',
+              supervisor: {
+                firstName: 'Tomasz',
+                lastName: 'Szandała',
+                degree: Degree.DR_ENG,
+                username: 'tszandala'
+              }
+            },
+            typ: Typ.SEMINAR,
+            parity: Parity.ODD
+          },
           {
             weekDay: weekDay,
             startTime: {
@@ -152,7 +206,7 @@ export class ClassesService {
             room: '104',
             groupKey: 'Z05-20c',
             course: {
-              name: 'Zastosowania inform. w gospod.',
+              name: 'Zastosowania Inform. w Gospod.',
               courseKey: 'INZ000011',
               supervisor: {
                 firstName: 'Tomasz',
@@ -171,18 +225,22 @@ export class ClassesService {
 
   public getClassesConflicts(weekDay: WeekDay): Observable<Map<string, [number, number][]>> {
     let map: Map<string, [number, number][]> = new Map([
-      ['Z05-20a', [[1,0]]],
-      ['Z05-20b', [[1,0]]],
-      ['Z05-20c', [[0,0], [0,1]]]
+      ['Z05-20a', [[1,1]]],
+      ['Z05-20b', [[1,1]]],
+      ['Z05-20c', [[0,1], [0,2]]],
+      ['Z05-20d', []],
+      ['Z05-20e', []],
     ]);
     return of(map);
   }
 
   public getClassesMap(weekDay: WeekDay): Observable<Map<string, [number, number]>> {
     let map: Map<string, [number, number]> = new Map([
-      ['Z05-20a', [0,0]],
-      ['Z05-20b', [0,1]],
-      ['Z05-20c', [1,0]]
+      ['Z05-20d', [0,0]],
+      ['Z05-20a', [0,1]],
+      ['Z05-20b', [0,2]],
+      ['Z05-20e', [1,0]],
+      ['Z05-20c', [1,1]]
     ]);
     return of(map);
   }

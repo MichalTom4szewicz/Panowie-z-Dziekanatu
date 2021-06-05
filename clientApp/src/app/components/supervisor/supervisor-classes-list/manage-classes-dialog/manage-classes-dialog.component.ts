@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Classes } from 'src/app/domain/classes';
 import { Parity } from 'src/app/enums/parity';
 import { Typ } from 'src/app/enums/typ';
+import { Pair } from 'src/app/helpers/pair';
 
 @Component({
   selector: 'pzd-manage-classes-dialog',
@@ -14,7 +15,7 @@ import { Typ } from 'src/app/enums/typ';
 export class ManageClassesDialogComponent implements OnInit {
 
   classesForm: FormGroup;
-  weekDays: Pair[] = [
+  weekDays: Pair<WeekDay, string>[] = [
     {key: WeekDay.Monday, value: 'Poniedziałek'},
     {key: WeekDay.Tuesday, value: 'Wtorek'},
     {key: WeekDay.Wednesday, value: 'Środa'},
@@ -23,7 +24,7 @@ export class ManageClassesDialogComponent implements OnInit {
     {key: WeekDay.Saturday, value: 'Sobota'},
     {key: WeekDay.Sunday, value: 'Niedziela'}
   ];
-  classesTyp: Pair[] = [
+  classesTyp: Pair<Typ, string>[] = [
     {key: Typ.NONE, value: ''},
     {key: Typ.EXERCISE, value: 'Ćwiczenia'},
     {key: Typ.LABORATORIES, value: 'Laboratoria'},
@@ -31,7 +32,7 @@ export class ManageClassesDialogComponent implements OnInit {
     {key: Typ.SEMINAR, value: 'Seminarium'},
     {key: Typ.LECTURE, value: 'Wykład'}
   ];
-  classesParity: Pair[] = [
+  classesParity: Pair<Parity, string>[] = [
     {key: Parity.NONE, value: 'Co tydzień'},
     {key: Parity.EVEN, value: 'Parzyste'},
     {key: Parity.ODD, value: 'Nieparzyste'}
@@ -93,9 +94,4 @@ export class ManageClassesDialogComponent implements OnInit {
 interface ManageClassesDialogResult {
   isSaved: boolean,
   classes?: Classes
-}
-
-interface Pair {
-  key: any,
-  value: string
 }
