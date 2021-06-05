@@ -17,7 +17,7 @@ const routes: Routes = [
     component: ToolbarComponent,
     children: [
       {
-        path: 'home',
+        path: '',
         canActivate: [AuthGuard],
         component: HomeComponent
       },
