@@ -222,12 +222,35 @@ export async function verify(token: any, response: Response) {
     }
 }
 
-class Time {
-    constructor(a: number, b:number) {}
+export function strToTime(str: string) {
+    return {
+        hours: parseInt(str.substr(0, 2)),
+        minutes: parseInt(str.substr(3, 2))
+    }
 }
 
-function strToTime(str: string): Time {
-    const hours = parseInt(str.substr(0, 2));
-    const minutes = parseInt(str.substr(3, 2));
-    return new Time(hours, minutes);
+function isIterable(obj: any) {
+    // checks for null and undefined
+    if (obj == null) {
+      return false;
+    }
+    return typeof obj[Symbol.iterator] === 'function';
+  }
+
+export function alterTimes(items: any): any {
+    if (isIterable(items)) {
+        let newItems = []
+        for(let item of items) {
+            let newItem = item;
+            newItem.startTime = strToTime(item.startTime)
+            newItem.endTime = strToTime(item.endTime)
+            newItems.push(newItem);
+        }
+        return newItems;
+    } else {
+        let newItem = items;
+        newItem.startTime = strToTime(items.startTime)
+        newItem.endTime = strToTime(items.endTime)
+        return newItem;
+    }
 }
