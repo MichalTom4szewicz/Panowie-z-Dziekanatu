@@ -201,15 +201,33 @@ export function isTime(hours: any, minutes: any, response: Response) {
 }
 
 export async function verify(token: any, response: Response) {
-    const auth = await axios.get("https://localhost:4848/verify",
-    {headers: {'token': token}});
+    try {
+        const auth = await axios.get("https://localhost:4848/verify",
+        {headers: {'token': token}});
 
-    if(!auth.data.success) {
+        if(!auth.data.success) {
+            response.status(401).json({
+                status: "failure",
+                message: "invalid token"
+            })
+            return false
+        }
+        return auth.data.token
+    } catch (e) {
         response.status(401).json({
             status: "failure",
-            message: "invalid token"
+            message: "no token found"
         })
         return false
     }
-    return auth.data.token
+}
+
+class Time {
+    constructor(a: number, b:number) {}
+}
+
+function strToTime(str: string): Time {
+    const hours = parseInt(str.substr(0, 2));
+    const minutes = parseInt(str.substr(3, 2));
+    return new Time(hours, minutes);
 }
