@@ -198,6 +198,10 @@ classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Resp
     .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
     .execute()
     .then(items => {
+      if(items.length === 0) {
+        return response.status(200).json({})
+      }
+
       let newItems = alterKeys(items, "class");
       newItems.sort(compareClasses);
       return response.status(200).json(listCollisions(newItems))
@@ -214,7 +218,7 @@ classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Resp
 // PZD-16
 // getClassesMap
 // example: localhost:8000/classes/map/Monday
-classesRouter.get('/map', async (request: Request, response: Response) => {
+classesRouter.get('/map/:weekDay', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -226,6 +230,10 @@ classesRouter.get('/map', async (request: Request, response: Response) => {
     .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
     .execute()
     .then(items => {
+      if(items.length === 0) {
+        return response.status(200).json({})
+      }
+
       let newItems = alterKeys(items, "class");
       newItems.sort(compareClasses);
       newItems = processCollisions(newItems);
@@ -298,7 +306,7 @@ classesRouter.get('/host/:username', async (request: Request, response: Response
     .where("class.hostUsername = :username", {username})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "classes"))
+      return response.status(200).json(alterKeys(items, "class"))
     })
     .catch(error => {
       logger.error(error)
@@ -311,9 +319,9 @@ classesRouter.get('/host/:username', async (request: Request, response: Response
 
 // getClassesByCourse(courseKey)
 classesRouter.get('/course/:courseKey', async (request: Request, response: Response) => {
-  // const token = request.header('token');
-  // const decoded = await verify(token, response)
-  // if(!decoded) return
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const connection = await getConnection();
   const courseKey = request.params.courseKey
@@ -328,7 +336,7 @@ classesRouter.get('/course/:courseKey', async (request: Request, response: Respo
     })
   }
 
-  const cls = await classRepository.findOne({where: {course}, relations: ['course', 'course.supervisor']})
+  const cls = await classRepository.findOne({where: {course}, relations: ['course', 'course.supervisor', 'host']})
   if (cls) {
     return response.status(200).json(alterTimes(cls))
   }
@@ -341,38 +349,23 @@ classesRouter.get('/course/:courseKey', async (request: Request, response: Respo
 
 //getClassByGroupKey()
 classesRouter.get('/:groupKey', async (request: Request, response: Response) => {
-  // const token = request.header('token');
-  // const decoded = await verify(token, response)
-  // if(!decoded) return
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const groupKey = request.params.groupKey
-
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
-  const clas = await classRepository.findOne({groupKey: groupKey});
 
-  if (clas == undefined) {
+  const classes = await classRepository.find({where: {groupKey}, relations: ['course', 'course.supervisor', 'host']})
+
+  if(classes === undefined) {
     return response.status(500).json({
       status: "failure",
-      message: "class not found"
+      message: "no classes found"
     })
   }
-  await getConnection()
-    .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
-    .where("class.groupKey = :groupKey", {groupKey})
-    .execute()
-    .then(item => {
-      return response.status(200).json(alterTimes(alterKeys(item, "class"))[0])
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  return response.status(200).json(alterTimes(classes))
 })
 
 // getAllClasses() -> Classes[]
