@@ -51,6 +51,9 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     course,
     hostingRequests: []
   }
+  if(user !== undefined) {
+    newClass.host = user;
+  }
 
   insertObjectIntoTable(newClass, Class, response)
 })
