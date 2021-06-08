@@ -278,6 +278,10 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
     })
   }
 
+  if(classes.length == 0) {
+    return response.status(200).json([])
+  }
+
   classes.sort(compareClasses);
   const c1 = processCollisions(classes)
   let c2 = []
