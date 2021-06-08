@@ -5,11 +5,60 @@ import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
 import {insertObjectIntoTable, alterKeys, verify, isTime, validateValues} from "../support/support"
-import { report } from "node:process";
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
 
+//PZD-35
+//deleteRejectedForUser
+hostingRequestRouter.delete('/rejected/:id', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const id = parseInt(request.params.id)
+  const connection = await getConnection();
+  const hrRepository = connection.getRepository(HostingRequest)
+  const hr = await hrRepository.findOne({id});
+
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username: decoded.username});
+  const username = decoded.username
+
+  if (hr == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "hosting request not found"
+    })
+  }
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "user not found"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(HostingRequest)
+    .where("id = :id AND userUsername = :username", {id, username})
+    .execute()
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+//removeById
 hostingRequestRouter.delete('/:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -47,6 +96,7 @@ hostingRequestRouter.delete('/:id', async (request: Request, response: Response)
     });
 })
 
+// addHR
 hostingRequestRouter.post('/', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -84,6 +134,7 @@ hostingRequestRouter.post('/', async (request: Request, response: Response) => {
 
 // PZD-10
 // accepted/rejected/pending
+// getByUsernameWithType
 hostingRequestRouter.get('/user/:username/status/:status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -121,6 +172,27 @@ hostingRequestRouter.get('/user/:username/status/:status', async (request: Reque
     });
 })
 
+//getAllByStatus
+hostingRequestRouter.get('/status/:status', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const status = request.params.status
+  if(!validateValues(status, Status, response)) return
+
+  const connection = await getConnection();
+  const hrRepository = connection.getRepository(HostingRequest)
+  const hrs = await hrRepository.find({where: {status}, relations: ['user', 'class']})
+  if (hrs) {
+    return response.status(200).json(hrs)
+  }
+  return response.status(500).json({
+    status: "failure",
+    message: "specified hosting requests not found"
+  })
+})
+
 // PZD-27
 // getHostingRequests by class
 // accepted/rejected/pending
@@ -150,7 +222,7 @@ hostingRequestRouter.get('/class:id/status/:status', async (request: Request, re
     .where("hostingRequest.classGroupKey = :groupKey AND hostingRequest.status = :status", {groupKey: cls.groupKey, status})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "hostingRequests"))
+      return response.status(200).json(alterKeys(items, "hostingRequest"))
     })
     .catch(error => {
       logger.error(error)
@@ -161,6 +233,7 @@ hostingRequestRouter.get('/class:id/status/:status', async (request: Request, re
     });
 })
 
+//getByUsername
 hostingRequestRouter.get('/user/:username', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -186,7 +259,7 @@ hostingRequestRouter.get('/user/:username', async (request: Request, response: R
     .where("hostingRequest.userUsername = :username", {username})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "hostingRequests"))
+      return response.status(200).json(alterKeys(items, "hostingRequest"))
     })
     .catch(error => {
       logger.error(error)
@@ -197,18 +270,18 @@ hostingRequestRouter.get('/user/:username', async (request: Request, response: R
     });
 })
 
-//all h requests
+//getAll()
 hostingRequestRouter.get('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
 
   const connection = await getConnection();
   const hRequestRepository = connection.getRepository(HostingRequest)
 
   const hRequests = await hRequestRepository.find();
 
-  return response.json(alterKeys(hRequests, "hostingRequests"))
+  return response.json(alterKeys(hRequests, "hostingRequest"))
 })
 
 // PZD-10
@@ -338,6 +411,7 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
   })
 })
 
+//modifyByID
 hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)

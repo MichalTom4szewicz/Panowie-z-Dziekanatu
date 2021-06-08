@@ -8,10 +8,10 @@ import {User} from "./User"
 export class Class {
 
     @PrimaryColumn()
-    public groupKey!:string;
+    public groupKey!:     string;
 
     @Column()
-    public weekDay!:      string;
+    public weekDay!:      number;
 
     @Column()
     public parity!:       string;

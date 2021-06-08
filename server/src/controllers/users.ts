@@ -6,10 +6,8 @@ import {Degree} from "../enums/degree"
 
 const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
-const bcrypt = require('bcrypt')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -22,7 +20,6 @@ usersRouter.post('/', async (request: Request, response: Response) => {
     firstName: object.firstName,
     lastName: object.lastName,
     username: object.username,
-    password: "none",
     degree: object.degree,
     courses: [],
     hostingRequests: [],
@@ -40,7 +37,6 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
   if(!decoded) return
 
   const object = request.body.object
-  const password = await bcrypt.hash(object.password, 10)
   const username = request.params.username
 
   const connection = await getConnection();
@@ -60,8 +56,6 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     .set({
         firstName: object.firstName,
         lastName: object.lastName,
-        // username: body.username, // can't update username
-        password,
     })
     .where("username = :username", { username: username })
     .execute()

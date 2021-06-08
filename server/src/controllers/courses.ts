@@ -178,7 +178,7 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
 
-  const courses = await coursesRepository.find({relations: ['supervisor']});
+  const courses = await coursesRepository.find({where: {username: decoded.username},relations: ['supervisor']});
 
   let newCourses = []
   for (const c of courses) {

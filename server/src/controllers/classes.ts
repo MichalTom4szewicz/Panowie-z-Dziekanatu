@@ -269,7 +269,7 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
   const classRepository = connection.getRepository(Class)
   const weekDay = request.params.weekDay
 
-  const classes = await classRepository.find({where: {weekDay}, relations: ['course', 'course.supervisor', 'host']})
+  let classes = await classRepository.find({where: {weekDay}, relations: ['course', 'course.supervisor', 'host']})
 
   if(classes === undefined) {
     return response.status(500).json({
@@ -277,8 +277,15 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
       message: "no classes found"
     })
   }
+
   classes.sort(compareClasses);
-  return response.status(200).json(alterTimes(classes))
+  const c1 = processCollisions(classes)
+  let c2 = []
+  for(let i=0; i< c1.length; i++) {
+    const tmp = alterTimes(c1[i])
+    c2.push(tmp)
+  }
+  return response.status(200).json(c2)
 })
 
 // getClassesHostedByUser(username)

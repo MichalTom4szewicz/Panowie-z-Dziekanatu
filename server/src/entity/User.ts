@@ -8,9 +8,6 @@ import {SchedulePart} from "./SchedulePart"
 @Entity()
 export class User {
 
-    // @PrimaryColumn()
-    // pesel!: string;
-
     @Column()
     public firstName!: string;
 
@@ -24,11 +21,6 @@ export class User {
     type: "varchar"
     })
     public username!: string;
-
-    @Column({
-    type: "varchar"
-    })
-    public password!: string;
 
     @OneToMany(() => Course, course => course.supervisor, { cascade: ['insert', 'update', 'remove'] })
     public courses!: Course[];
