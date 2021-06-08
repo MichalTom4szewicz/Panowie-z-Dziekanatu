@@ -177,8 +177,18 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
 
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
+  const userRepository = connection.getRepository(User)
 
-  const courses = await coursesRepository.find({where: {username: decoded.username},relations: ['supervisor']});
+  const user = await userRepository.findOne({username: decoded.username})
+
+  if(!user) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified user does not exist"
+    })
+  }
+
+  const courses = await coursesRepository.find({where: {supervisor: user},relations: ['supervisor']});
 
   let newCourses = []
   for (const c of courses) {
