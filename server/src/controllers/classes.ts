@@ -251,30 +251,26 @@ classesRouter.get('/map', async (request: Request, response: Response) => {
 
 // PZD-5
 //getClassesByWeekDay
-// example: localhost:8000/classes/weekDay/Monday
+// example: localhost:8000/classes/weekDay/1
 classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
-    .execute()
-    .then(items => {
-      let newItems = alterKeys(items, "class");
-      newItems.sort(compareClasses);
-      return response.status(200).json(processCollisions(newItems))
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class)
+  const weekDay = request.params.weekDay
+
+  const classes = await classRepository.find({where: {weekDay}, relations: ['course', 'course.supervisor', 'host']})
+
+  if(classes === undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "no classes found"
     })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  }
+  classes.sort(compareClasses);
+  return response.status(200).json(alterTimes(classes))
 })
 
 // getClassesHostedByUser(username)
