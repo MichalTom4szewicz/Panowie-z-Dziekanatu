@@ -189,18 +189,6 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
   }
 
   const courses = await coursesRepository.find({where: {supervisor: user},relations: ['supervisor']});
-
-  let newCourses = []
-  for (const c of courses) {
-    let newC: any = c
-    newC.supervisor = {
-      firstName: c.supervisor.firstName,
-      lastName: c.supervisor.lastName,
-      degree: c.supervisor.degree
-    }
-    newCourses.push(newC)
-  }
-
   return response.status(200).json(courses)
 })
 
