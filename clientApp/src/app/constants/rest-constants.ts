@@ -16,3 +16,4 @@ export class RestConstants {
     public static readonly REJECT: string = '/reject';
     public static readonly STATUS: string = '&status';
 }
+
