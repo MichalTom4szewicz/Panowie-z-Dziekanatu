@@ -7,7 +7,7 @@ import {User} from "./User"
 export class SchedulePart {
 
     @PrimaryGeneratedColumn()
-    public id!: number;
+    public id?: number;
 
     @Column()
     public name!:         string;

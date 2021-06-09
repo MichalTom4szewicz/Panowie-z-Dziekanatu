@@ -53,7 +53,7 @@ export class CreateClassesScheduleComponent implements OnInit {
     this.schedulesMenagerService.getSchedulesSaved().subscribe(savedSchedules => {
       this.openDialog(savedSchedules).subscribe(name => {
         if (name !== undefined && name !== '') {
-          this.schedulesMenagerService.saveSchedule(this.getSchedule(), name);
+          this.schedulesMenagerService.saveSchedule(this.getSchedule(), name).subscribe();
           this.openSnackbar('Zapisano plan o nazwie: ' + name);
         }
       });

@@ -1,4 +1,4 @@
-import {getConnection, createQueryBuilder} from "typeorm";
+import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from "../entity/User";
@@ -29,18 +29,6 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     })
   }
 
-  let user = undefined;
-  if(object.host !== undefined) {
-    const userRepository = connection.getRepository(User)
-    user = await userRepository.findOne({username: object.host.username});
-    if (user == undefined) {
-      return response.status(500).json({
-        status: "failure",
-        message: "user not found"
-      })
-    }
-  }
-
   if(!validateValues(object.parity, Parity, response)) return
   if(!validateValues(object.typ, Typ, response)) return
   if(!validateValues(object.weekDay, WeekDay, response)) return
@@ -62,9 +50,6 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     typ: object.typ,
     course,
     hostingRequests: []
-  }
-  if(user !== undefined) {
-    newClass.host = user;
   }
 
   insertObjectIntoTable(newClass, Class, response)
@@ -241,7 +226,7 @@ classesRouter.get('/map/:weekDay', async (request: Request, response: Response) 
 
       let newItems = alterKeys(items, "class");
       newItems.sort(compareClasses);
-      newItems = processCollisions(newItems);
+      newItems = processCollisions(newItems, false);
 
       let map: {
         key: string,
@@ -289,7 +274,7 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
   }
 
   classes.sort(compareClasses);
-  const c1 = processCollisions(classes)
+  const c1 = processCollisions(classes, false)
   let c2 = []
   for(let i=0; i< c1.length; i++) {
     const tmp = alterTimes(c1[i])
@@ -353,15 +338,11 @@ classesRouter.get('/course/:courseKey', async (request: Request, response: Respo
     })
   }
 
-  const cls = await classRepository.findOne({where: {course}, relations: ['course', 'course.supervisor', 'host']})
+  const cls = await classRepository.find({where: {course}, relations: ['course', 'course.supervisor', 'host']})
   if (cls) {
     return response.status(200).json(alterTimes(cls))
   }
-  return response.status(500).json({
-    status: "failure",
-    message: "no such classes found"
-  })
-
+  return response.status(200).json([]);
 })
 
 //getClassByGroupKey()

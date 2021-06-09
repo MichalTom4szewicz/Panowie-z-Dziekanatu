@@ -6,7 +6,7 @@ import axios from 'axios'
 
 const logger = require('../utils/logger')
 
-export function classesCollide (c1: Class, c2: Class): boolean {
+export function classesCollide (c1: Class, c2: Class, conflict: boolean): boolean {
 
     const c1Start = parseInt(c1.startTime.replace(":", ""), 10);
     const c1End = parseInt(c1.endTime.replace(":", ""), 10)
@@ -18,7 +18,7 @@ export function classesCollide (c1: Class, c2: Class): boolean {
 
     // gdy parity1 xor parity2 == 1 mamy gwarancje ze nie koliduja
     // kiedy indziej moze wystapic kolizja
-    if((c1.parity == 'p' && c2.parity == 'n') || (c1.parity == 'n' && c2.parity == 'p')) {
+    if(conflict && ((c1.parity == 'p' && c2.parity == 'n') || (c1.parity == 'n' && c2.parity == 'p'))) {
         return false
     }
 
@@ -71,7 +71,7 @@ export function alterKeys(x: any, className: string): any {
     return new_x;
 }
 
-export function processCollisions(newItems: Class[]):Array<Class[]> {
+export function processCollisions(newItems: Class[], conflit: boolean):Array<Class[]> {
     let nonColliding: Array<Class[]>  = []
     let inserted = false
     let isColliding = false
@@ -80,7 +80,7 @@ export function processCollisions(newItems: Class[]):Array<Class[]> {
     for(let i=1; i<newItems.length; i++) {
         for(let j=0; j<nonColliding.length; j++) {
             for(let k=0; k<nonColliding[j].length; k++) {
-                if(classesCollide(newItems[i], nonColliding[j][k])) {
+                if(classesCollide(newItems[i], nonColliding[j][k], conflit)) {
                 isColliding = true;
                 }
             }
@@ -101,7 +101,7 @@ export function processCollisions(newItems: Class[]):Array<Class[]> {
 }
 
 export function listCollisions(newItems: any): object {
-    const processedItems = processCollisions(newItems);
+    const processedItems = processCollisions(newItems, true);
 
     // array of map items
     let tmpMap = [];

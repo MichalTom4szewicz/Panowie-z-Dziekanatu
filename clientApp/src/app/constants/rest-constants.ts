@@ -6,4 +6,7 @@ export class RestConstants {
     public static readonly CONFLICTS: string = '/conflicts';
     public static readonly COURSE: string = '/course';
     public static readonly COURSES: string = '/courses';
-} 
+    public static readonly SCHEDULEPARTS: string = '/scheduleparts';
+    public static readonly SCHEDULE: string = '/schedule';
+    public static readonly NAMES: string = '/names';
+}

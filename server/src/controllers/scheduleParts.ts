@@ -32,7 +32,7 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
 
   const classRepository = connection.getRepository(Class)
 
-  let newScheduleParts = []
+  let newScheduleParts: SchedulePart[] = []
   for (let groupKey of objects.map((c: { groupKey: string; }) => c.groupKey)) {
     const clas = await classRepository.findOne({groupKey});
     if (clas != undefined) {
@@ -246,16 +246,18 @@ schedulePartRouter.get('/schedule/:name', async (request: Request, response: Res
 
 
 // getNAzwyMoichPlanów
-schedulePartRouter.get('/names/user/:username', async (request: Request, response: Response) => {
+schedulePartRouter.get('/names', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const username = request.params.username
+  const username = decoded.username;
 
   const connection = await getConnection();
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
+  const spRepository = connection.getRepository(SchedulePart);
   const user = await userRepository.findOne({username});
+  const schedulePart = await spRepository.find({where: {username}});
 
   if (user == undefined) {
     return response.status(500).json({
@@ -263,25 +265,7 @@ schedulePartRouter.get('/names/user/:username', async (request: Request, respons
       message: "specified user does not exist"
     })
   }
-
-  await getConnection()
-    .createQueryBuilder()
-    .select("schedulePart")
-    .from(SchedulePart, "schedulePart")
-    .where("schedulePart.ownerUsername = :username", {username})
-    .execute()
-    .then(items => {
-      const altered = alterKeys(items, "scheduleParts")
-      const names = altered.map((a: { name: string; }) => a.name)
-      return response.status(200).json(Array.from(new Set(names)))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  return response.status(200).json(schedulePart.map(element => element.name));
 })
 
 schedulePartRouter.get('/', async (request: Request, response: Response) => {
