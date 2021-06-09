@@ -22,20 +22,23 @@ classesRouter.post('/', async (request: Request, response: Response) => {
 
   const courseRepository = connection.getRepository(Course)
   const course = await courseRepository.findOne({courseKey: object.course.courseKey});
-  const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: object.host.username});
-
   if (course == undefined) {
     return response.status(500).json({
       status: "failure",
       message: "course not found"
     })
   }
-  if (user == undefined) {
-    return response.status(500).json({
-      status: "failure",
-      message: "user not found"
-    })
+
+  let user = undefined;
+  if(object.host !== undefined) {
+    const userRepository = connection.getRepository(User)
+    user = await userRepository.findOne({username: object.host.username});
+    if (user == undefined) {
+      return response.status(500).json({
+        status: "failure",
+        message: "user not found"
+      })
+    }
   }
 
   if(!validateValues(object.parity, Parity, response)) return
@@ -57,9 +60,11 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     building: object.building,
     room: object.room,
     typ: object.typ,
-    host: user,
     course,
     hostingRequests: []
+  }
+  if(user !== undefined) {
+    newClass.host = user;
   }
 
   insertObjectIntoTable(newClass, Class, response)

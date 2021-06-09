@@ -32,7 +32,7 @@ export class Class {
     public typ!:          string;
 
     @ManyToOne(() => User, user => user.classes)
-    public host!: User;
+    public host?: User;
 
     @ManyToOne(() => Course, course => course.classes)
     public course!: Course;
