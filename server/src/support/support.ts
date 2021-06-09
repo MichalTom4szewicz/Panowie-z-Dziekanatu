@@ -122,11 +122,12 @@ export function listCollisions(newItems: any): object {
     tmpMap.sort(compareCollisions);
 
     let map: {
-        [key: string]: number[][]
-    } = {}
+        key: string,
+        value: number[][]
+    } [] = [];
 
     for(let i=0; i < tmpMap.length; i++) {
-        map[tmpMap[i][1].groupKey] = tmpMap[i][2];
+        map.push({key:tmpMap[i][1].groupKey, value: tmpMap[i][2]});
     }
     return map
 }
@@ -251,6 +252,6 @@ export function alterTimes(items: any): any {
         let newItem = items;
         newItem.startTime = strToTime(items.startTime)
         newItem.endTime = strToTime(items.endTime)
-        return newItem;
+        return [newItem];
     }
 }

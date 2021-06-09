@@ -28,7 +28,7 @@ import { EnrollmentForClassesComponent } from './components/enrollment-for-class
 import { CreateClassesScheduleComponent } from './components/enrollment-for-classes/create-classes-schedule/create-classes-schedule.component';
 import { ReplaceClassesDialogComponent } from './components/enrollment-for-classes/class-grid-day/replace-classes-dialog/replace-classes-dialog.component';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
@@ -43,6 +43,7 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
 import { HasRoleDirective } from './directives/has-role.directive';
 import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
 import { ClassesScheduleComponent } from './components/common/classes-schedule/classes-schedule.component';
+import { TokenInterceptor } from './interceptor/token.interceptor';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -91,7 +92,13 @@ import { ClassesScheduleComponent } from './components/common/classes-schedule/c
 		MatTableModule,
 		MatSelectModule
 	],
-	providers: [],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: TokenInterceptor,
+			multi: true
+		}
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {

@@ -199,7 +199,7 @@ classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Resp
     .execute()
     .then(items => {
       if(items.length === 0) {
-        return response.status(200).json({})
+        return response.status(200).json([])
       }
 
       let newItems = alterKeys(items, "class");
@@ -231,7 +231,7 @@ classesRouter.get('/map/:weekDay', async (request: Request, response: Response) 
     .execute()
     .then(items => {
       if(items.length === 0) {
-        return response.status(200).json({})
+        return response.status(200).json([])
       }
 
       let newItems = alterKeys(items, "class");
@@ -239,11 +239,12 @@ classesRouter.get('/map/:weekDay', async (request: Request, response: Response) 
       newItems = processCollisions(newItems);
 
       let map: {
-        [key: string]: [number, number]
-      } = {}
+        key: string,
+        value: [number, number]
+    } [] = [];
       for(let i=0; i<newItems.length; i++) {
         for(let j=0; j<newItems[i].length; j++) {
-          map[newItems[i][j].groupKey] = [i, j]
+          map.push({key: newItems[i][j].groupKey, value: [i, j]})
         }
       }
       return response.status(200).json(map)

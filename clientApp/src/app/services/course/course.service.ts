@@ -1,59 +1,44 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { CommunicationConstants } from 'src/app/constants/communication-constants';
+import { RestConstants } from 'src/app/constants/rest-constants';
 import { Course } from 'src/app/domain/course';
-import { Degree } from 'src/app/enums/degree';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
   
   public getCourses(): Observable<Course[]> {
-    return of([
-      {
-        name: 'Zastosowania inform. w gospod.',
-        courseKey: 'INZ000011',
-        supervisor: {
-          firstName: 'Tomasz',
-          lastName: 'Szandała',
-          degree: Degree.DR_ENG,
-          username: 'tszandala'
-        }
-      },
-      {
-        name: 'Projektowanie baz danych',
-        courseKey: 'INZ546210',
-        supervisor: {
-          firstName: 'Tomasz',
-          lastName: 'Szandała',
-          degree: Degree.DR_ENG,
-          username: 'tszandala'
-        }
-      },
-      {
-        name: 'Projektowanie oprogramowania',
-        courseKey: 'INZ002341',
-        supervisor: {
-          firstName: 'Tomasz',
-          lastName: 'Szandała',
-          degree: Degree.DR_ENG,
-          username: 'tszandala'
-        }
-      }
-    ]);
+    return this.http.get<Course[]>(
+      this.getUrl('')
+    );
   }
 
   public addCourse(course: Course): Observable<boolean> {
-    return of(true);
+    return this.http.post<boolean>(
+      this.getUrl(''),
+      { object: course }
+    );
   }
 
   public updateCourse(course: Course): Observable<boolean> {
-    return of(true);
+    return this.http.put<boolean>(
+      this.getUrl(RestConstants.SLASH + course.courseKey),
+      { object: course }
+    );
   }
 
   public deleteCourse(course: Course): Observable<boolean> {
-    return of(true);
+    return this.http.delete<boolean>(
+      this.getUrl(RestConstants.SLASH + course.courseKey)
+    );
+  }
+
+  private getUrl(url: string): string {
+    return CommunicationConstants.getFullDataApiAddress(RestConstants.COURSES + url);
   }
 }
