@@ -185,7 +185,7 @@ classesRouter.get('/conflicts=:weekDay', async (request: Request, response: Resp
     .createQueryBuilder()
     .select("class")
     .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
+    .where("class.weekDay = :weekDay AND class.host = :host", {weekDay: request.params.weekDay, host: null})
     .execute()
     .then(items => {
       if(items.length === 0) {
@@ -217,7 +217,7 @@ classesRouter.get('/map=:weekDay', async (request: Request, response: Response) 
     .createQueryBuilder()
     .select("class")
     .from(Class, "class")
-    .where("class.weekDay = :weekDay", {weekDay: request.params.weekDay})
+    .where("class.weekDay = :weekDay AND class.host = :host", {weekDay: request.params.weekDay, host: null})
     .execute()
     .then(items => {
       if(items.length === 0) {
@@ -260,7 +260,7 @@ classesRouter.get('/weekDay=:weekDay', async (request: Request, response: Respon
   const classRepository = connection.getRepository(Class)
   const weekDay = request.params.weekDay
 
-  let classes = await classRepository.find({where: {weekDay}, relations: ['course', 'course.supervisor', 'host']})
+  let classes = await classRepository.find({where: {weekDay, host: null}, relations: ['course', 'course.supervisor', 'host']})
 
   if(classes === undefined) {
     return response.status(500).json({

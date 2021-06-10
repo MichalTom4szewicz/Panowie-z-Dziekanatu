@@ -206,6 +206,7 @@ hostingRequestRouter.get('/class=:class&status=:status', async (request: Request
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
+  const hrRepository = connection.getRepository(HostingRequest)
   const cls = await classRepository.findOne({groupKey: classId})
 
   if (cls == undefined) {
@@ -215,22 +216,12 @@ hostingRequestRouter.get('/class=:class&status=:status', async (request: Request
     })
   }
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("hostingRequest")
-    .from(HostingRequest, "hostingRequest")
-    .where("hostingRequest.classGroupKey = :groupKey AND hostingRequest.status = :status", {groupKey: cls.groupKey, status})
-    .execute()
-    .then(items => {
-      return response.status(200).json(alterKeys(items, "hostingRequest"))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  const hr = await hrRepository.find({where: {class: cls, status}, relations: ['user']})
+
+  if (hr) {
+    return response.status(200).json(hr)
+  }
+  return response.status(200).json([]);
 })
 
 //getByUsername
@@ -408,6 +399,37 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
 
   return response.status(200).json({
     status: "success"
+  })
+})
+
+//PZD27
+//acceptSingleHostingRequest
+hostingRequestRouter.put('/accept', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const object = request.body.objects
+  let id = object.id
+
+  await getConnection()
+  .createQueryBuilder()
+  .update(HostingRequest)
+  .set({
+    status: "accepted"
+  })
+  .where("id = :id", {id})
+  .execute()
+  .then(() => {
+    return response.status(200).json({
+      status: "success"
+    })
+  })
+  .catch(error => {
+    return response.status(500).json({
+      status: "failure",
+      message: error.message
+    })
   })
 })
 

@@ -257,7 +257,6 @@ schedulePartRouter.get('/names', async (request: Request, response: Response) =>
   const userRepository = connection.getRepository(User);
   const spRepository = connection.getRepository(SchedulePart);
   const user = await userRepository.findOne({username});
-  const schedulePart = await spRepository.find({where: {username}});
 
   if (user == undefined) {
     return response.status(500).json({
@@ -265,6 +264,13 @@ schedulePartRouter.get('/names', async (request: Request, response: Response) =>
       message: "specified user does not exist"
     })
   }
+
+  const schedulePart = await spRepository.find({where: { owner: user}});
+
+  if(schedulePart == []) {
+    return response.status(200).json([]);
+  }
+
   return response.status(200).json(schedulePart.map(element => element.name));
 })
 
