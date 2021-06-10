@@ -1,10 +1,10 @@
-import {getConnection, getRepository} from "typeorm";
+import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
 import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
-import {insertObjectIntoTable, alterKeys, verify, isTime, validateValues} from "../support/support"
+import {insertObjectIntoTable, alterKeys, verify, validateValues} from "../support/support"
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
@@ -196,7 +196,7 @@ hostingRequestRouter.get('/status/:status', async (request: Request, response: R
 // PZD-27
 // getHostingRequests by class
 // accepted/rejected/pending
-hostingRequestRouter.get('/class:id/status/:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/class/:class/status/:status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

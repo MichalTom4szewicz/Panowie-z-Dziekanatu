@@ -10,9 +10,6 @@ import { Classes } from 'src/app/domain/classes';
 })
 export class SchedulesMenagerService {
 
-  schedulesList: boolean = true;
-  scheduleBoolean: boolean = true;
-
   constructor(private http: HttpClient) { }
 
   public getSchedulesSaved(): Observable<string[]> {

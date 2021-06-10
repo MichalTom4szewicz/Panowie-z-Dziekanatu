@@ -1,4 +1,4 @@
-import {Entity, BaseEntity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
 
 import {Course} from "./Course"
 import {HostingRequest} from "./HostingRequest"

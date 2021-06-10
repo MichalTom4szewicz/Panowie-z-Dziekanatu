@@ -1,7 +1,10 @@
 import { WeekDay } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs/internal/observable/of';
+import { CommunicationConstants } from 'src/app/constants/communication-constants';
+import { RestConstants } from 'src/app/constants/rest-constants';
 import { Classes } from 'src/app/domain/classes';
 import { HostingRequest } from 'src/app/domain/hosting-request';
 import { Degree } from 'src/app/enums/degree';
@@ -15,7 +18,16 @@ import { ClassesUtils } from 'src/app/utils/classes-utils';
 })
 export class HostingRequestService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  public registerForClasses(schedule: Classes[]): Observable<boolean> {
+    return this.http.post<boolean>(
+      this.getUrl(RestConstants.PLAN),
+      {
+        objects: schedule
+      }
+    );
+  }
 
   public deleteRejectedHostingRequests(): Observable<any> {
     return of([]);
@@ -220,52 +232,12 @@ export class HostingRequestService {
   }
 
   public getAllPendingHostingRequests(classes: Classes): Observable<HostingRequest[]> {
-    return of([
-      {
-        id: '1',
-        status: Status.PENDING,
-        user: {
-          firstName: 'Tomasz',
-          lastName: 'Szandała',
-          degree: Degree.DR_ENG,
-          username: 'tszandala'
-        },
-        class: ClassesUtils.getEmptyClasses()
-      },
-      {
-        id: '2',
-        status: Status.PENDING,
-        user: {
-          firstName: 'Janusz',
-          lastName: 'Ratajczak',
-          degree: Degree.DR_HAB_ENG,
-          username: 'jratajczak'
-        },
-        class: ClassesUtils.getEmptyClasses()
-      },
-      {
-        id: '3',
-        status: Status.PENDING,
-        user: {
-          firstName: 'Paweł',
-          lastName: 'Wichary',
-          degree: Degree.MA_ENG,
-          username: 'pwichary'
-        },
-        class: ClassesUtils.getEmptyClasses()
-      },
-      {
-        id: '4',
-        status: Status.PENDING,
-        user: {
-          firstName: 'Zbigniew',
-          lastName: 'Szpunar',
-          degree: Degree.DR_ENG,
-          username: 'zszpunar'
-        },
-        class: ClassesUtils.getEmptyClasses()
-      }
-    ]);
+    return this.http.get<HostingRequest[]>(
+      this.getUrl(
+        RestConstants.CLASS + RestConstants.SLASH + classes.groupKey
+        + RestConstants.STATUS + RestConstants.SLASH + Status.PENDING
+      )
+    );
   }
 
   public rejectHostingRequest(hostingRequest: HostingRequest): Observable<boolean> {
@@ -273,10 +245,19 @@ export class HostingRequestService {
   }
 
   public rejectHostingRequests(hostingRequests: HostingRequest[]): Observable<boolean> {
-    return of(true);
+    return this.http.post<boolean>(
+      this.getUrl(RestConstants.REJECT),
+      {
+        objects: hostingRequests
+      }
+    );
   }
 
   public acceptHostingRequest(hostingRequest: HostingRequest): Observable<boolean> {
     return of(true);
+  }
+
+  private getUrl(url: string): string {
+    return CommunicationConstants.getFullDataApiAddress(RestConstants.HOSTING_REQUEST + url);
   }
 }
