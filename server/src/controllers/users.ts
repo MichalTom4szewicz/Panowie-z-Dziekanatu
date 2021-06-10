@@ -30,7 +30,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   insertObjectIntoTable(newUser, User, response);
 })
 
-usersRouter.put('/:username', async (request: Request, response: Response) => {
+usersRouter.put('=:username', async (request: Request, response: Response) => {
 
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -73,7 +73,7 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.delete('/:username', async (request: Request, response: Response) => {
+usersRouter.delete('=:username', async (request: Request, response: Response) => {
   const username = request.params.username
 
   const token = request.header('token');
@@ -135,7 +135,7 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.get('/:username', async (request: Request, response: Response) => {
+usersRouter.get('=:username', async (request: Request, response: Response) => {
   const username = request.params.username
 
   const token = request.header('token');

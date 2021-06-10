@@ -56,7 +56,7 @@ classesRouter.post('/', async (request: Request, response: Response) => {
 })
 
 // removeClass(groupKey)
-classesRouter.delete('/:groupKey', async (request: Request, response: Response) => {
+classesRouter.delete('=:groupKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -95,7 +95,7 @@ classesRouter.delete('/:groupKey', async (request: Request, response: Response) 
 })
 
 // changeClass(newClass: Class)
-classesRouter.put('/:groupKey', async (request: Request, response: Response) => {
+classesRouter.put('=:groupKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -176,7 +176,7 @@ classesRouter.put('/:groupKey', async (request: Request, response: Response) => 
 //PZD-5
 //getClassesConflicts()
 // example: localhost:8000/classes/conflicts/Monday
-classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Response) => {
+classesRouter.get('/conflicts=:weekDay', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -208,7 +208,7 @@ classesRouter.get('/conflicts/:weekDay', async (request: Request, response: Resp
 // PZD-16
 // getClassesMap
 // example: localhost:8000/classes/map/Monday
-classesRouter.get('/map/:weekDay', async (request: Request, response: Response) => {
+classesRouter.get('/map=:weekDay', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -251,7 +251,7 @@ classesRouter.get('/map/:weekDay', async (request: Request, response: Response) 
 // PZD-5
 //getClassesByWeekDay
 // example: localhost:8000/classes/weekDay/1
-classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Response) => {
+classesRouter.get('/weekDay=:weekDay', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -284,7 +284,7 @@ classesRouter.get('/weekDay/:weekDay', async (request: Request, response: Respon
 })
 
 // getClassesHostedByUser(username)
-classesRouter.get('/host/:username', async (request: Request, response: Response) => {
+classesRouter.get('/host=:username', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -320,7 +320,7 @@ classesRouter.get('/host/:username', async (request: Request, response: Response
 })
 
 // getClassesByCourse(courseKey)
-classesRouter.get('/course/:courseKey', async (request: Request, response: Response) => {
+classesRouter.get('/course=:courseKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -346,7 +346,7 @@ classesRouter.get('/course/:courseKey', async (request: Request, response: Respo
 })
 
 //getClassByGroupKey()
-classesRouter.get('/:groupKey', async (request: Request, response: Response) => {
+classesRouter.get('=:groupKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

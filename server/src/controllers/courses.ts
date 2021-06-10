@@ -36,7 +36,7 @@ coursesRouter.post('/', async (request: Request, response: Response) => {
   insertObjectIntoTable(newCourse, Course, response)
 })
 
-coursesRouter.delete('/:courseKey', async (request: Request, response: Response) => {
+coursesRouter.delete('=:courseKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -102,7 +102,7 @@ coursesRouter.get('/names', async (request: Request, response: Response) => {
 })
 
 // coursesOfUser(username) -> Courses
-coursesRouter.get('/user/:username', async (request: Request, response: Response) => {
+coursesRouter.get('/user=:username', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -140,7 +140,7 @@ coursesRouter.get('/user/:username', async (request: Request, response: Response
     });
 })
 
-coursesRouter.get('/:courseKey', async (request: Request, response: Response) => {
+coursesRouter.get('=:courseKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -192,7 +192,7 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
   return response.status(200).json(courses)
 })
 
-coursesRouter.put('/:courseKey', async (request: Request, response: Response) => {
+coursesRouter.put('=:courseKey', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

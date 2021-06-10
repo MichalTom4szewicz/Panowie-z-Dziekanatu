@@ -1,5 +1,6 @@
 export class RestConstants {
-    public static readonly SLASH: string = '/';
+    public static readonly EQUALS: string = '=';
+    public static readonly AND: string = '&';
     public static readonly CLASSES: string = '/classes';
     public static readonly CLASS: string = '/class';
     public static readonly WEEK_DAY: string = '/weekDay';
@@ -13,5 +14,5 @@ export class RestConstants {
     public static readonly HOSTING_REQUEST: string = '/hrequests';
     public static readonly PLAN: string = '/plan';
     public static readonly REJECT: string = '/reject';
-    public static readonly STATUS: string = '/status';
+    public static readonly STATUS: string = '&status';
 }

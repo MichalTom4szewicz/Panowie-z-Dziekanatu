@@ -234,8 +234,8 @@ export class HostingRequestService {
   public getAllPendingHostingRequests(classes: Classes): Observable<HostingRequest[]> {
     return this.http.get<HostingRequest[]>(
       this.getUrl(
-        RestConstants.CLASS + RestConstants.SLASH + classes.groupKey
-        + RestConstants.STATUS + RestConstants.SLASH + Status.PENDING
+        RestConstants.CLASS + RestConstants.EQUALS + classes.groupKey
+        + RestConstants.STATUS + RestConstants.EQUALS + Status.PENDING
       )
     );
   }

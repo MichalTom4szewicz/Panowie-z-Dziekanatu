@@ -16,25 +16,25 @@ export class ClassesService {
 
   public getClassesByCourse(courseKey: string): Observable<Classes[]> {
     return this.http.get<Classes[]>(
-      this.getUrl(RestConstants.COURSE + RestConstants.SLASH + courseKey)
+      this.getUrl(RestConstants.COURSE + RestConstants.EQUALS + courseKey)
     );
   }
 
   public getClassesByWeekDay(weekDay: WeekDay): Observable<Classes[][]> {
     return this.http.get<Classes[][]>(
-      this.getUrl(RestConstants.WEEK_DAY + RestConstants.SLASH + weekDay)
+      this.getUrl(RestConstants.WEEK_DAY + RestConstants.EQUALS + weekDay)
     );
   }
 
   public getClassesConflicts(weekDay: WeekDay): Observable<Pair<string, [number, number][]>[]> {
     return this.http.get<Pair<string, [number, number][]>[]>(
-      this.getUrl(RestConstants.CONFLICTS + RestConstants.SLASH + weekDay)
+      this.getUrl(RestConstants.CONFLICTS + '=' + weekDay)
     );
   }
 
   public getClassesMap(weekDay: WeekDay): Observable<Pair<string, [number, number]>[]> {
     return this.http.get<Pair<string, [number, number]>[]>(
-      this.getUrl(RestConstants.MAP + RestConstants.SLASH + weekDay)
+      this.getUrl(RestConstants.MAP + RestConstants.EQUALS + weekDay)
     );
   }
 
@@ -47,14 +47,14 @@ export class ClassesService {
 
   public updateClasses(classes: Classes): Observable<boolean> {
     return this.http.put<boolean>(
-      this.getUrl(RestConstants.SLASH + classes.groupKey),
+      this.getUrl(RestConstants.EQUALS + classes.groupKey),
       { object: classes }
     );
   }
 
   public deleteClasses(classes: Classes): Observable<boolean> {
     return this.http.delete<boolean>(
-      this.getUrl(RestConstants.SLASH + classes.groupKey)
+      this.getUrl(RestConstants.EQUALS + classes.groupKey)
     );
   }
 

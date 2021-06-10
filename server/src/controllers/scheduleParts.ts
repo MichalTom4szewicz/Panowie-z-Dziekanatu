@@ -85,7 +85,7 @@ schedulePartRouter.post('/', async (request: Request, response: Response) => {
 })
 
 // deleteSchedule(name: string)
-schedulePartRouter.delete('/schedule/:name', async (request: Request, response: Response) => {
+schedulePartRouter.delete('/schedule=:name', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -124,7 +124,7 @@ schedulePartRouter.delete('/schedule/:name', async (request: Request, response: 
 })
 
 // deleteSingleSchedulePart
-schedulePartRouter.delete('/:id', async (request: Request, response: Response) => {
+schedulePartRouter.delete('=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -163,7 +163,7 @@ schedulePartRouter.delete('/:id', async (request: Request, response: Response) =
 })
 
 // changeSchedulePart(id)
-schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
+schedulePartRouter.put('=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -219,7 +219,7 @@ schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
 // PZD-10
 // getPlan(nazwa) -> Classes[]
 // localhost:8000/scheduleparts/schedule/mojplan
-schedulePartRouter.get('/schedule/:name', async (request: Request, response: Response) => {
+schedulePartRouter.get('/schedule=:name', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

@@ -20,7 +20,7 @@ export class SchedulesMenagerService {
 
   public getSchedule(schedule: string): Observable<Classes[]> {
     return this.http.get<Classes[]>(
-      this.getUrl(RestConstants.SCHEDULE + RestConstants.SLASH + schedule)
+      this.getUrl(RestConstants.SCHEDULE + RestConstants.EQUALS + schedule)
     );
   }
 

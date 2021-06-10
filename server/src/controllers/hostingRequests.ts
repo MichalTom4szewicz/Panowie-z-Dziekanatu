@@ -11,7 +11,7 @@ const hostingRequestRouter = require('express').Router()
 
 //PZD-35
 //deleteRejectedForUser
-hostingRequestRouter.delete('/rejected/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.delete('/rejected=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -59,7 +59,7 @@ hostingRequestRouter.delete('/rejected/:id', async (request: Request, response: 
 })
 
 //removeById
-hostingRequestRouter.delete('/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.delete('=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -135,7 +135,7 @@ hostingRequestRouter.post('/', async (request: Request, response: Response) => {
 // PZD-10
 // accepted/rejected/pending
 // getByUsernameWithType
-hostingRequestRouter.get('/user/:username/status/:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/user=:username&status=:status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -173,7 +173,7 @@ hostingRequestRouter.get('/user/:username/status/:status', async (request: Reque
 })
 
 //getAllByStatus
-hostingRequestRouter.get('/status/:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/status=:status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -196,7 +196,7 @@ hostingRequestRouter.get('/status/:status', async (request: Request, response: R
 // PZD-27
 // getHostingRequests by class
 // accepted/rejected/pending
-hostingRequestRouter.get('/class/:class/status/:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/class=:class&status=:status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -234,7 +234,7 @@ hostingRequestRouter.get('/class/:class/status/:status', async (request: Request
 })
 
 //getByUsername
-hostingRequestRouter.get('/user/:username', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/user=:username', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -287,7 +287,7 @@ hostingRequestRouter.get('/', async (request: Request, response: Response) => {
 // PZD-10
 // zatwierdz badz odrzuc prowadzacego prowadzacego
 // localhost:8000/hrequests/resolve/blabla
-hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('/resolve=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -412,7 +412,7 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
 })
 
 //modifyByID
-hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('=:id', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

@@ -27,14 +27,14 @@ export class CourseService {
 
   public updateCourse(course: Course): Observable<boolean> {
     return this.http.put<boolean>(
-      this.getUrl(RestConstants.SLASH + course.courseKey),
+      this.getUrl(RestConstants.EQUALS + course.courseKey),
       { object: course }
     );
   }
 
   public deleteCourse(course: Course): Observable<boolean> {
     return this.http.delete<boolean>(
-      this.getUrl(RestConstants.SLASH + course.courseKey)
+      this.getUrl(RestConstants.EQUALS + course.courseKey)
     );
   }
 
