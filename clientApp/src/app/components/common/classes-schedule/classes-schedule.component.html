@@ -35,7 +35,13 @@
                 *ngFor="let classes of scheduleForOneDay"
                 [colspan]="1"
                 [rowspan]="classes.rows">
-                <pzd-classes class="classes-block" *ngIf="classes.isNotEmpty" [classes]="classes.classes"></pzd-classes>
+                <pzd-classes
+                    *ngIf="classes.isNotEmpty"
+                    class="classes-block"
+                    [classes]="classes.classes"
+                    [classesOddWeek]="classes.classesOddWeek"
+                    [clickable]="isClickable(classes)">
+                </pzd-classes>
             </mat-grid-tile>
         </mat-grid-list>
     </mat-grid-tile>

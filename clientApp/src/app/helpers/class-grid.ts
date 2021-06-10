@@ -5,4 +5,5 @@ export interface ClassesGrid {
     rows: number,
     isNotEmpty: boolean,
     classes: ClassesWithStatus
+    classesOddWeek?: ClassesWithStatus
 }
