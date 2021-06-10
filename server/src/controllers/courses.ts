@@ -1,9 +1,8 @@
 import {getConnection} from "typeorm";
-import {Class} from "../entity/Class";
 import {Course} from "../entity/Course";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {insertObjectIntoTable, verify, alterKeys, processCollisions, listCollisions} from "../support/support"
+import {insertObjectIntoTable, verify, alterKeys} from "../support/support"
 
 const logger = require('../utils/logger')
 const coursesRouter = require('express').Router()
@@ -36,12 +35,12 @@ coursesRouter.post('/', async (request: Request, response: Response) => {
   insertObjectIntoTable(newCourse, Course, response)
 })
 
-coursesRouter.delete('=:courseKey', async (request: Request, response: Response) => {
+coursesRouter.delete('', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const courseKey = request.params.courseKey
+  const courseKey = request.query.courseKey as string;
 
   const connection = await getConnection();
   const courseRepository = connection.getRepository(Course)
@@ -102,22 +101,22 @@ coursesRouter.get('/names', async (request: Request, response: Response) => {
 })
 
 // coursesOfUser(username) -> Courses
-coursesRouter.get('/user=:username', async (request: Request, response: Response) => {
+coursesRouter.get('/user', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const username = request.params.username
+  const username = request.query.username as string;
 
   const connection = await getConnection();
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
   const user = await userRepository.findOne({username});
 
   if (user == undefined) {
     return response.status(500).json({
       status: "failure",
       message: "specified user does not exist"
-    })
+    });
   }
 
   await getConnection()
@@ -140,17 +139,17 @@ coursesRouter.get('/user=:username', async (request: Request, response: Response
     });
 })
 
-coursesRouter.get('=:courseKey', async (request: Request, response: Response) => {
+coursesRouter.get('/key', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const courseKey = request.params.courseKey
+  const courseKey = request.query.courseKey
 
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
 
-  const course = await coursesRepository.findOne({relations: ['supervisor'], where: {courseKey: courseKey}});
+  const course = await coursesRepository.findOne({relations: ['supervisor'], where: {courseKey}});
 
   if(course !== undefined) {
     let newC: any = course
@@ -192,19 +191,19 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
   return response.status(200).json(courses)
 })
 
-coursesRouter.put('=:courseKey', async (request: Request, response: Response) => {
+coursesRouter.put('/', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const object = request.body.object
-  const courseKey = request.params.courseKey
+  const object = request.body.object;
+  const courseKey = request.query.courseKey as string;
 
   const connection = await getConnection();
-  const courseRepository = connection.getRepository(Course)
+  const courseRepository = connection.getRepository(Course);
   const course = await courseRepository.findOne({courseKey});
 
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
   const user = await userRepository.findOne({username: object.supervisor.username});
 
   if (course == undefined) {

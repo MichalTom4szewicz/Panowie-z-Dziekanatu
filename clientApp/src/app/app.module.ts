@@ -47,7 +47,6 @@ import { ClassesScheduleComponent } from './components/common/classes-schedule/c
 import { TokenInterceptor } from './interceptor/token.interceptor';
 import { ClassesDetailsDialogComponent } from './components/common/classes/classes-details-dialog/classes-details-dialog.component';
 import { ClassesContentComponent } from './components/common/classes/classes-content/classes-content.component';
-import { TokenInterceptor } from './interceptor/token.interceptor';
 @NgModule({
 	declarations: [
 		AppComponent,

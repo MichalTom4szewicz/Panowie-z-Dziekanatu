@@ -16,25 +16,25 @@ export class ClassesService {
 
   public getClassesByCourse(courseKey: string): Observable<Classes[]> {
     return this.http.get<Classes[]>(
-      this.getUrl(RestConstants.COURSE + RestConstants.EQUALS + courseKey)
+      this.getUrl(RestConstants.COURSE + RestConstants.QUERY + RestConstants.COURSE_KEY + courseKey)
     );
   }
 
   public getClassesByWeekDay(weekDay: WeekDay): Observable<Classes[][]> {
     return this.http.get<Classes[][]>(
-      this.getUrl(RestConstants.WEEK_DAY + RestConstants.EQUALS + weekDay)
+      this.getUrl(RestConstants.QUERY + RestConstants.WEEK_DAY + weekDay)
     );
   }
 
   public getClassesConflicts(weekDay: WeekDay): Observable<Pair<string, [number, number][]>[]> {
     return this.http.get<Pair<string, [number, number][]>[]>(
-      this.getUrl(RestConstants.CONFLICTS + '=' + weekDay)
+      this.getUrl(RestConstants.CONFLICTS + RestConstants.QUERY + RestConstants.WEEK_DAY + weekDay)
     );
   }
 
   public getClassesMap(weekDay: WeekDay): Observable<Pair<string, [number, number]>[]> {
     return this.http.get<Pair<string, [number, number]>[]>(
-      this.getUrl(RestConstants.MAP + RestConstants.EQUALS + weekDay)
+      this.getUrl(RestConstants.MAP + RestConstants.QUERY + RestConstants.WEEK_DAY + weekDay)
     );
   }
 
@@ -47,14 +47,14 @@ export class ClassesService {
 
   public updateClasses(classes: Classes): Observable<boolean> {
     return this.http.put<boolean>(
-      this.getUrl(RestConstants.EQUALS + classes.groupKey),
+      this.getUrl(RestConstants.QUERY + RestConstants.GROUP_KEY + classes.groupKey),
       { object: classes }
     );
   }
 
   public deleteClasses(classes: Classes): Observable<boolean> {
     return this.http.delete<boolean>(
-      this.getUrl(RestConstants.EQUALS + classes.groupKey)
+      this.getUrl(RestConstants.QUERY + RestConstants.GROUP_KEY + classes.groupKey)
     );
   }
 

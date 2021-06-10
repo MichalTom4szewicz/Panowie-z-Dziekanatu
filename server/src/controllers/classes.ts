@@ -51,24 +51,21 @@ classesRouter.post('/', async (request: Request, response: Response) => {
     course,
     hostingRequests: []
   }
-  if(user !== undefined) {
-    newClass.host = user;
-  }
 
   insertObjectIntoTable(newClass, Class, response)
 })
 
 // removeClass(groupKey)
-classesRouter.delete('=:groupKey', async (request: Request, response: Response) => {
+classesRouter.delete('/', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const groupKey = request.params.groupKey
+  const groupKey = request.query.groupKey as string;
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
-  const clas = await classRepository.findOne({groupKey: groupKey});
+  const clas = await classRepository.findOne({groupKey});
 
   if (clas == undefined) {
     return response.status(500).json({
@@ -98,22 +95,22 @@ classesRouter.delete('=:groupKey', async (request: Request, response: Response) 
 })
 
 // changeClass(newClass: Class)
-classesRouter.put('=:groupKey', async (request: Request, response: Response) => {
+classesRouter.put('/', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const object = request.body.object
-  const groupKey = request.params.groupKey
+  const object = request.body.object;
+  const groupKey = request.query.groupKey as string;
 
   const connection = await getConnection();
-  const classesRepository = connection.getRepository(Class)
+  const classesRepository = connection.getRepository(Class);
   const clas = await classesRepository.findOne({groupKey});
 
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
   const user = await userRepository.findOne({username: object.host.username});
 
-  const courseRepository = connection.getRepository(Course)
+  const courseRepository = connection.getRepository(Course);
   const course = await courseRepository.findOne({courseKey: object.course.courseKey});
 
   if (clas == undefined) {
@@ -160,7 +157,7 @@ classesRouter.put('=:groupKey', async (request: Request, response: Response) => 
       host: user,
       course,
     })
-    .where("groupKey = :groupKey", {groupKey})
+    .where("groupKey = :groupKey", {groupKey: object.groupKey})
     .execute()
     .then(() => {
       return response.status(200).json({
@@ -179,89 +176,81 @@ classesRouter.put('=:groupKey', async (request: Request, response: Response) => 
 //PZD-5
 //getClassesConflicts()
 // example: localhost:8000/classes/conflicts/Monday
-classesRouter.get('/conflicts=:weekDay', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
-  await getConnection()
-    .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
-    .where("class.weekDay = :weekDay AND class.host = :host", {weekDay: request.params.weekDay, host: null})
-    .execute()
-    .then(items => {
-      if(items.length === 0) {
-        return response.status(200).json([])
-      }
-
-      let newItems = alterKeys(items, "class");
-      newItems.sort(compareClasses);
-      return response.status(200).json(listCollisions(newItems))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
-})
-
-// PZD-16
-// getClassesMap
-// example: localhost:8000/classes/map/Monday
-classesRouter.get('/map=:weekDay', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
-  await getConnection()
-    .createQueryBuilder()
-    .select("class")
-    .from(Class, "class")
-    .where("class.weekDay = :weekDay AND class.host = :host", {weekDay: request.params.weekDay, host: null})
-    .execute()
-    .then(items => {
-      if(items.length === 0) {
-        return response.status(200).json([])
-      }
-
-      let newItems = alterKeys(items, "class");
-      newItems.sort(compareClasses);
-      newItems = processCollisions(newItems, false);
-
-      let map: {
-        key: string,
-        value: [number, number]
-    } [] = [];
-      for(let i=0; i<newItems.length; i++) {
-        for(let j=0; j<newItems[i].length; j++) {
-          map.push({key: newItems[i][j].groupKey, value: [i, j]})
-        }
-      }
-      return response.status(200).json(map)
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
-})
-
-// PZD-5
-//getClassesByWeekDay
-// example: localhost:8000/classes/weekDay/1
-classesRouter.get('/weekDay=:weekDay', async (request: Request, response: Response) => {
+classesRouter.get('/conflicts', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
   const connection = await getConnection();
-  const classRepository = connection.getRepository(Class)
-  const weekDay = request.params.weekDay
+  const classRepository = connection.getRepository(Class);
+  let classes = await classRepository.find({where: {weekDay: request.query.weekDay, host: null}})
+
+  if(classes === undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "no classes found"
+    })
+  }
+
+  if(classes.length === 0) {
+    return response.status(200).json([])
+  }
+
+  let newItems = alterKeys(classes, "class");
+  newItems.sort(compareClasses);
+  return response.status(200).json(listCollisions(newItems))
+})
+
+// PZD-16
+// getClassesMap
+// example: localhost:8000/classes/map/Monday
+classesRouter.get('/map', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class);
+  let classes = await classRepository.find({where: {weekDay: request.query.weekDay, host: null}})
+
+  if(classes === undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "no classes found"
+    })
+  }
+  
+  if(classes.length === 0) {
+    return response.status(200).json([])
+  }
+
+  let newItems = alterKeys(classes, "class");
+  newItems.sort(compareClasses);
+  newItems = processCollisions(newItems, false);
+
+  let map: {
+    key: string,
+    value: [number, number]
+  } [] = [];
+  for(let i=0; i<newItems.length; i++) {
+    for(let j=0; j<newItems[i].length; j++) {
+      map.push({key: newItems[i][j].groupKey, value: [i, j]})
+    }
+  }
+  return response.status(200).json(map)
+})
+
+// PZD-5
+//getClassesByWeekDay
+// example: localhost:8000/classes/weekDay/1
+classesRouter.get('/', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const connection = await getConnection();
+  const classRepository = connection.getRepository(Class);
+  const weekDay = request.query.weekDay;
 
   let classes = await classRepository.find({where: {weekDay, host: null}, relations: ['course', 'course.supervisor', 'host']})
 
@@ -287,13 +276,13 @@ classesRouter.get('/weekDay=:weekDay', async (request: Request, response: Respon
 })
 
 // getClassesHostedByUser(username)
-classesRouter.get('/host=:username', async (request: Request, response: Response) => {
+classesRouter.get('/host', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
   const connection = await getConnection();
-  const username = request.params.username
+  const username = request.query.username as string;
   const userRepository = connection.getRepository(User)
   const user = await userRepository.findOne({username});
 
@@ -323,13 +312,13 @@ classesRouter.get('/host=:username', async (request: Request, response: Response
 })
 
 // getClassesByCourse(courseKey)
-classesRouter.get('/course=:courseKey', async (request: Request, response: Response) => {
+classesRouter.get('/course', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
   const connection = await getConnection();
-  const courseKey = request.params.courseKey
+  const courseKey = request.query.courseKey as string;
   const courseRepository = connection.getRepository(Course)
   const classRepository = connection.getRepository(Class)
   const course = await courseRepository.findOne({courseKey});
@@ -349,12 +338,12 @@ classesRouter.get('/course=:courseKey', async (request: Request, response: Respo
 })
 
 //getClassByGroupKey()
-classesRouter.get('=:groupKey', async (request: Request, response: Response) => {
+classesRouter.get('', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const groupKey = request.params.groupKey
+  const groupKey = request.query.groupKey
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
 

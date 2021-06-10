@@ -1,9 +1,10 @@
 export class RestConstants {
+    public static readonly QUERY: string = '?';
     public static readonly EQUALS: string = '=';
     public static readonly AND: string = '&';
+
     public static readonly CLASSES: string = '/classes';
     public static readonly CLASS: string = '/class';
-    public static readonly WEEK_DAY: string = '/weekDay';
     public static readonly MAP: string = '/map';
     public static readonly CONFLICTS: string = '/conflicts';
     public static readonly COURSE: string = '/course';
@@ -14,6 +15,10 @@ export class RestConstants {
     public static readonly HOSTING_REQUEST: string = '/hrequests';
     public static readonly PLAN: string = '/plan';
     public static readonly REJECT: string = '/reject';
-    public static readonly STATUS: string = '&status';
+    public static readonly STATUS: string = '/status';
+    
+    public static readonly COURSE_KEY: string = 'courseKey=';
+    public static readonly GROUP_KEY: string = 'groupKey=';
+    public static readonly WEEK_DAY: string = 'weekDay=';
 }
 
