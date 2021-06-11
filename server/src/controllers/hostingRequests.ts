@@ -4,7 +4,7 @@ import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
-import {insertObjectIntoTable, alterKeys, verify, validateValues, compareClasses} from "../support/support"
+import {insertObjectIntoTable, alterTimes, alterKeys, verify, validateValues, compareClasses} from "../support/support"
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
@@ -200,8 +200,10 @@ hostingRequestRouter.get('/sorted', async (request: Request, response: Response)
   }
   for(let row of table) {
     row.sort((a,b) => compareClasses(a.class, b.class))
+    for(let hr of row) {
+      hr.class = alterTimes(hr.class)
+    }
   }
-
   if (hrs) {
     return response.status(200).json(table)
   }
@@ -222,7 +224,11 @@ hostingRequestRouter.get('/status', async (request: Request, response: Response)
 
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
-  const hrs = await hrRepository.find({where: {status}, relations: ['user', 'class']})
+  let hrs = await hrRepository.find({where: {status}, relations: ['user', 'class']})
+
+  for(let hr of hrs) {
+    hr.class = alterTimes(hr.class)
+  }
   if (hrs) {
     return response.status(200).json(hrs)
   }
