@@ -20,7 +20,7 @@ export class ManageCoursesDialogComponent implements OnInit {
   ngOnInit(): void {
     this.courseForm = new FormGroup({
       name: new FormControl(this.data.course.name),
-      courseKey: new FormControl(this.data.course.courseKey),
+      courseKey: new FormControl({ value: this.data.course.courseKey, disabled: this.data.edit}),
       supervisor: new FormGroup({
         firstName: new FormControl(this.data.course.supervisor.firstName),
         lastName: new FormControl(this.data.course.supervisor.lastName),
@@ -35,7 +35,7 @@ export class ManageCoursesDialogComponent implements OnInit {
   }
 
   public save(): void {
-    this.closeDialog({isSaved: true, course: this.courseForm.value}); 
+    this.closeDialog({isSaved: true, course: this.courseForm.getRawValue()}); 
   }
 
   private closeDialog(result: ManageCoursesDialogResult): void {

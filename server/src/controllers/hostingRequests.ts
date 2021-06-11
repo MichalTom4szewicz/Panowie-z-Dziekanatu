@@ -11,12 +11,12 @@ const hostingRequestRouter = require('express').Router()
 
 //PZD-35
 //deleteRejectedForUser
-hostingRequestRouter.delete('/rejected=:id', async (request: Request, response: Response) => {
+hostingRequestRouter.delete('/rejected', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
   const hr = await hrRepository.findOne({id});
@@ -59,12 +59,12 @@ hostingRequestRouter.delete('/rejected=:id', async (request: Request, response: 
 })
 
 //removeById
-hostingRequestRouter.delete('=:id', async (request: Request, response: Response) => {
+hostingRequestRouter.delete('', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
   const hr = await hrRepository.findOne({id});
@@ -135,13 +135,13 @@ hostingRequestRouter.post('/', async (request: Request, response: Response) => {
 // PZD-10
 // accepted/rejected/pending
 // getByUsernameWithType
-hostingRequestRouter.get('/user=:username&status=:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/user', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const status = request.params.status
-  const username = request.params.username
+  const status = request.query.status as string;
+  const username = request.query.username as string;
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -173,12 +173,12 @@ hostingRequestRouter.get('/user=:username&status=:status', async (request: Reque
 })
 
 //getAllByStatus
-hostingRequestRouter.get('/status=:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/status', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const status = request.params.status
+  const status = request.query.status as string;
   if(!validateValues(status, Status, response)) return
 
   const connection = await getConnection();
@@ -196,13 +196,13 @@ hostingRequestRouter.get('/status=:status', async (request: Request, response: R
 // PZD-27
 // getHostingRequests by class
 // accepted/rejected/pending
-hostingRequestRouter.get('/class=:class&status=:status', async (request: Request, response: Response) => {
+hostingRequestRouter.get('/class', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const status = request.params.status
-  const classId = request.params.class
+  const status = request.query.status as string;
+  const classId = request.query.class as string;
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
@@ -225,12 +225,12 @@ hostingRequestRouter.get('/class=:class&status=:status', async (request: Request
 })
 
 //getByUsername
-hostingRequestRouter.get('/user=:username', async (request: Request, response: Response) => {
+hostingRequestRouter.get('', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const username = request.params.username
+  const username = decoded.username
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -261,29 +261,15 @@ hostingRequestRouter.get('/user=:username', async (request: Request, response: R
     });
 })
 
-//getAll()
-hostingRequestRouter.get('/', async (request: Request, response: Response) => {
-  // const token = request.header('token');
-  // const decoded = await verify(token, response)
-  // if(!decoded) return
-
-  const connection = await getConnection();
-  const hRequestRepository = connection.getRepository(HostingRequest)
-
-  const hRequests = await hRequestRepository.find();
-
-  return response.json(alterKeys(hRequests, "hostingRequest"))
-})
-
 // PZD-10
 // zatwierdz badz odrzuc prowadzacego prowadzacego
 // localhost:8000/hrequests/resolve/blabla
-hostingRequestRouter.put('/resolve=:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('/resolve', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
   const status = request.body.object.status
 
   if(!validateValues(status, Status, response)) return
@@ -434,19 +420,19 @@ hostingRequestRouter.put('/accept', async (request: Request, response: Response)
 })
 
 //modifyByID
-hostingRequestRouter.put('=:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const object = request.body.object
-  const id = parseInt(request.params.id)
+  const object = request.body.object;
+  const id = parseInt(request.query.id as string);
 
   const connection = await getConnection();
-  const classesRepository = connection.getRepository(Class)
+  const classesRepository = connection.getRepository(Class);
   const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
   const user = await userRepository.findOne({username: object.user.username});
 
   if (clas == undefined) {

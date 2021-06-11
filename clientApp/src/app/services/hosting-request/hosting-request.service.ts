@@ -11,7 +11,6 @@ import { Degree } from 'src/app/enums/degree';
 import { Parity } from 'src/app/enums/parity';
 import { Status } from 'src/app/enums/status';
 import { Typ } from 'src/app/enums/typ';
-import { ClassesUtils } from 'src/app/utils/classes-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +29,9 @@ export class HostingRequestService {
   }
 
   public deleteRejectedHostingRequests(): Observable<any> {
-    return of([]);
+    return this.http.delete<boolean>(
+      this.getUrl(RestConstants.REJECTED)
+    );
   }
 
   public getRegisteredClasses(): Observable<HostingRequest[][]> {
@@ -283,7 +284,7 @@ export class HostingRequestService {
   }
 
   public rejectHostingRequests(hostingRequests: HostingRequest[]): Observable<boolean> {
-    return this.http.post<boolean>(
+    return this.http.put<boolean>(
       this.getUrl(RestConstants.REJECT),
       {
         objects: hostingRequests
@@ -292,7 +293,12 @@ export class HostingRequestService {
   }
 
   public acceptHostingRequest(hostingRequest: HostingRequest): Observable<boolean> {
-    return of(true);
+    return this.http.put<boolean>(
+      this.getUrl(RestConstants.ACCEPT),
+      {
+        objects: hostingRequest
+      }
+    );
   }
 
   private getUrl(url: string): string {

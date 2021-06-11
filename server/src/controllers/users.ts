@@ -30,14 +30,14 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   insertObjectIntoTable(newUser, User, response);
 })
 
-usersRouter.put('=:username', async (request: Request, response: Response) => {
+usersRouter.put('', async (request: Request, response: Response) => {
 
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
   const object = request.body.object
-  const username = request.params.username
+  const username = request.query.username as string
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -73,8 +73,8 @@ usersRouter.put('=:username', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.delete('=:username', async (request: Request, response: Response) => {
-  const username = request.params.username
+usersRouter.delete('', async (request: Request, response: Response) => {
+  const username = request.query.username as string;
 
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -135,8 +135,8 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.get('=:username', async (request: Request, response: Response) => {
-  const username = request.params.username
+usersRouter.get('', async (request: Request, response: Response) => {
+  const username = request.query.username as string;
 
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -171,7 +171,7 @@ usersRouter.get('=:username', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.get('/', async (request: Request, response: Response) => {
+usersRouter.get('/all', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
