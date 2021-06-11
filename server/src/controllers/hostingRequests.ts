@@ -4,7 +4,7 @@ import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
-import {insertObjectIntoTable, alterKeys, verify, validateValues} from "../support/support"
+import {insertObjectIntoTable, alterKeys, verify, validateValues, compareClasses} from "../support/support"
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
@@ -170,6 +170,46 @@ hostingRequestRouter.get('/user', async (request: Request, response: Response) =
         message: error.message
       })
     });
+})
+
+//PZD-34
+//getAllOfUserSorted
+hostingRequestRouter.get('/sorted', async (request: Request, response: Response) => {
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
+  const decoded = {username: "mt"};
+
+  const connection = await getConnection();
+  const userRepository = connection.getRepository(User)
+  const hrRepository = connection.getRepository(HostingRequest)
+
+  const user = await userRepository.findOne({where: {username: decoded.username}})
+
+  if(!user) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified user not found"
+    })
+  }
+
+  const hrs = await hrRepository.find({where: {user}, relations: ['user', 'class']});
+
+  let table : any [][] = new Array(7).fill(false).map(() => []);
+  for(let h of hrs) {
+    table[h.class.weekDay].push(h);
+  }
+  for(let row of table) {
+    row.sort((a,b) => compareClasses(a.class, b.class))
+  }
+
+  if (hrs) {
+    return response.status(200).json(table)
+  }
+  return response.status(500).json({
+    status: "failure",
+    message: "specified hosting requests not found"
+  })
 })
 
 //getAllByStatus
