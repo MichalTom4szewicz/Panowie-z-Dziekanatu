@@ -12,10 +12,10 @@ export class SchedulePart {
     @Column()
     public name!:         string;
 
-    @ManyToOne(() => User, user => user.myclasses)
+    @ManyToOne(() => User, user => user.myclasses, {onDelete: 'CASCADE'})
     public owner!: User;
 
-    @OneToOne(() => Class)
+    @OneToOne(() => Class, {onDelete: 'CASCADE'})
     @JoinColumn()
     public class!: Class;
 }

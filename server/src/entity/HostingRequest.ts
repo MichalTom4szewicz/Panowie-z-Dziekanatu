@@ -12,10 +12,10 @@ export class HostingRequest {
     @Column()
     public status!: string;
 
-    @ManyToOne(() => User, user => user.hostingRequests)
+    @ManyToOne(() => User, user => user.hostingRequests, {onDelete: 'CASCADE'})
     public user!: User;
 
-    @ManyToOne(() => Class, cls => cls.hostingRequests)
+    @ManyToOne(() => Class, cls => cls.hostingRequests, {onDelete: 'CASCADE'})
     public class!: Class;
 
 }

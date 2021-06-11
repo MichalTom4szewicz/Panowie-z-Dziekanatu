@@ -31,10 +31,10 @@ export class Class {
     @Column()
     public typ!:          string;
 
-    @ManyToOne(() => User, user => user.classes)
+    @ManyToOne(() => User, user => user.classes, {onDelete: 'CASCADE'})
     public host?: User;
 
-    @ManyToOne(() => Course, course => course.classes)
+    @ManyToOne(() => Course, course => course.classes, {onDelete: 'CASCADE'})
     public course!: Course;
 
     @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })
