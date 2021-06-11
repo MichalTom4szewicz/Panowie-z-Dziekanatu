@@ -108,7 +108,19 @@ classesRouter.put('/', async (request: Request, response: Response) => {
   const clas = await classesRepository.findOne({groupKey});
 
   const userRepository = connection.getRepository(User);
-  const user = await userRepository.findOne({username: object.host.username});
+  let user;
+  if (object.host) {
+    user = await userRepository.findOne({username: object.host.username});
+    
+    if (user == undefined) {
+      return response.status(500).json({
+        status: "failure",
+        message: "specified user does not exist"
+      })
+    }
+  } else {
+    user = undefined;
+  }
 
   const courseRepository = connection.getRepository(Course);
   const course = await courseRepository.findOne({courseKey: object.course.courseKey});
@@ -117,12 +129,6 @@ classesRouter.put('/', async (request: Request, response: Response) => {
     return response.status(500).json({
       status: "failure",
       message: "class not found"
-    })
-  }
-  if (user == undefined) {
-    return response.status(500).json({
-      status: "failure",
-      message: "specified user does not exist"
     })
   }
   if (course == undefined) {

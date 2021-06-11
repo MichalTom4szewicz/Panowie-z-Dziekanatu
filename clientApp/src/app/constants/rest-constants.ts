@@ -18,6 +18,7 @@ export class RestConstants {
     public static readonly REJECTED: string = '/rejected';
     public static readonly ACCEPT: string = '/accept';
     public static readonly STATUS: string = '/status';
+    public static readonly SORTED: string = '/sorted';
     
     public static readonly COURSE_KEY: string = 'courseKey=';
     public static readonly GROUP_KEY: string = 'groupKey=';

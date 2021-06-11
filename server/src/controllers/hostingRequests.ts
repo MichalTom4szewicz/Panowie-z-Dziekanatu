@@ -175,10 +175,9 @@ hostingRequestRouter.get('/user', async (request: Request, response: Response) =
 //PZD-34
 //getAllOfUserSorted
 hostingRequestRouter.get('/sorted', async (request: Request, response: Response) => {
-  // const token = request.header('token');
-  // const decoded = await verify(token, response)
-  // if(!decoded) return
-  const decoded = {username: "mt"};
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
