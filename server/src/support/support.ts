@@ -111,7 +111,7 @@ export function listCollisions(newItems: any): object {
             let newMapValue = []
             for(let k=0; k< processedItems.length; k++) {
                 for(let l=0; l< processedItems[k].length; l++) {
-                    if(i !== k) {
+                    if(i !== k && j !== l && classesCollide(item, processedItems[k][l], true)) {
                         newMapValue.push([k, l]);
                     }
                 }
