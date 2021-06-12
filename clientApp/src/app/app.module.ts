@@ -21,7 +21,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatRippleModule } from '@angular/material/core'; 
 
 import { ClassesComponent } from './components/common/classes/classes.component';
 import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
@@ -44,6 +43,7 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
 import { HasRoleDirective } from './directives/has-role.directive';
 import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
 import { ClassesScheduleComponent } from './components/common/classes-schedule/classes-schedule.component';
+import { EditUserDataComponent } from './components/edit-user-data/edit-user-data.component';
 import { ClassesDetailsDialogComponent } from './components/common/classes/classes-details-dialog/classes-details-dialog.component';
 import { ClassesContentComponent } from './components/common/classes/classes-content/classes-content.component';
 @NgModule({
@@ -71,7 +71,8 @@ import { ClassesContentComponent } from './components/common/classes/classes-con
 		CreateUserComponent,
 		HasRoleDirective,
 		ClassesDetailsDialogComponent,
-		ClassesContentComponent
+		ClassesContentComponent,
+		EditUserDataComponent
 	],
 	imports: [
 		BrowserModule,
@@ -94,8 +95,7 @@ import { ClassesContentComponent } from './components/common/classes/classes-con
 		MatSnackBarModule,
 		MatExpansionModule,
 		MatTableModule,
-		MatSelectModule,
-		MatRippleModule
+		MatSelectModule
 	],
 	providers: [],
 	bootstrap: [AppComponent],

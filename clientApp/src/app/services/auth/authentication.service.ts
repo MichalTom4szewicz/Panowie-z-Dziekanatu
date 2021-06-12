@@ -26,6 +26,13 @@ export class AuthenticationService {
     return '';
   }
 
+  public static getUsername(): string {
+    const token = AuthenticationService.decodeToken();
+    return token && token.username
+      ? token.username
+      : undefined;
+  }
+
   public isAuthenticated(): boolean {
     const decodedToken = AuthenticationService.decodeToken();
     if (decodedToken) {
@@ -53,14 +60,14 @@ export class AuthenticationService {
   }
 
   public logIn(username: string, password: string): Observable<string | null> {
-		return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
+    return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
         username, password
       }).pipe(map((tokenResponse: any) => {
         return tokenResponse.success && tokenResponse.token
           ? tokenResponse.token
           : null;
       }));
-	}
+  }
 
   public createAccount(username: string, password: string): Observable<boolean> {
     return this.http.post(AuthenticationService.CREATE_ACCOUNT_URL, {

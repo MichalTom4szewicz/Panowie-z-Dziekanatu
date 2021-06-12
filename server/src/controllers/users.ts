@@ -9,10 +9,10 @@ const usersRouter = require('express').Router()
 const bcrypt = require('bcrypt')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  //
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
 
   const object = request.body.object
 
@@ -117,10 +117,10 @@ usersRouter.delete('/:username', async (request: Request, response: Response) =>
 })
 
 usersRouter.get('/usernames', async (request: Request, response: Response) => {
-
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  //
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
 
   await getConnection()
     .createQueryBuilder()
@@ -144,16 +144,12 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
 usersRouter.get('/:username', async (request: Request, response: Response) => {
   const username = request.params.username
 
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const usr = await userRepository.findOne({username: username});
 
   if (usr == undefined) {
-    return response.status(500).json({
+    return response.status(200).json({
       status: "failure",
       message: "user not found"
     })
@@ -166,7 +162,7 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
     .where("user.username = :username", {username: username})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "user"))
+      return response.status(200).json(alterKeys(items, "user")[0])
     })
     .catch(error => {
       logger.error(error)
@@ -178,9 +174,9 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
 })
 
 usersRouter.get('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
 
   await getConnection()
     .createQueryBuilder()
