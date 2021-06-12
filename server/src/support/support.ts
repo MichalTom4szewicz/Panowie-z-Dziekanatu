@@ -252,6 +252,6 @@ export function alterTimes(items: any): any {
         let newItem = items;
         newItem.startTime = strToTime(items.startTime)
         newItem.endTime = strToTime(items.endTime)
-        return [newItem];
+        return newItem;
     }
 }
