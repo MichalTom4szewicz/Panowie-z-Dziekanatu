@@ -125,7 +125,7 @@ usersRouter.get('', async (request: Request, response: Response) => {
   const usr = await userRepository.findOne({username: username});
 
   if (usr == undefined) {
-    return response.status(500).json({
+    return response.status(200).json({
       status: "failure",
       message: "user not found"
     })
@@ -138,7 +138,7 @@ usersRouter.get('', async (request: Request, response: Response) => {
     .where("user.username = :username", {username: username})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "user"))
+      return response.status(200).json(alterKeys(items, "user")[0])
     })
     .catch(error => {
       logger.error(error)

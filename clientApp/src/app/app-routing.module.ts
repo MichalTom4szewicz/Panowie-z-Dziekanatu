@@ -9,31 +9,41 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SupervisorComponent } from './components/supervisor/supervisor.component';
 import { CreateUserComponent } from './components/create-user/create-user.component';
 import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
+import {EditUserDataComponent} from './components/edit-user-data/edit-user-data.component';
+import {UserDataGuard} from './guards/user-data.guard';
 
 const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, UserDataGuard],
     component: ToolbarComponent,
     children: [
       {
         path: '',
-        canActivate: [AuthGuard],
-        component: HomeComponent
+        component: HomeComponent,
+        canActivate: [AuthGuard, UserDataGuard],
       },
       {
         path: 'plan',
-        component: EnrollmentForClassesComponent
+        component: EnrollmentForClassesComponent,
+        canActivate: [AuthGuard, UserDataGuard],
       },
       {
         path: 'supervisor',
-        component: SupervisorComponent
+        component: SupervisorComponent,
+        canActivate: [AuthGuard, UserDataGuard],
       },
       {
         path: 'overview',
-        component: ClassesOverviewComponent
-      }
+        component: ClassesOverviewComponent,
+        canActivate: [AuthGuard, UserDataGuard],
+      },
     ]
+  },
+  {
+    path: 'editUser',
+    component: EditUserDataComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'login',

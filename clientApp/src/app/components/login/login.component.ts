@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AuthenticationService } from '../../services/auth/authentication.service';
 import { Router } from '@angular/router';
+import {UserDataService} from '../../services/user-data/user-data.service';
 
 @Component({
 	selector: 'pzd-login',
@@ -12,7 +13,12 @@ export class LoginComponent implements OnInit {
 	private readonly _loginForm: FormGroup;
 	private _isPasswordVisible = false;
 
-	constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router) {
+	constructor(
+	  private formBuilder: FormBuilder,
+    private authService: AuthenticationService,
+    private userDataService: UserDataService,
+    private router: Router
+  ) {
 		this._loginForm = this.formBuilder.group({
 			username: ['', Validators.required],
 			password: ['', Validators.required],
@@ -52,12 +58,12 @@ export class LoginComponent implements OnInit {
 
 	onSubmit(): void {
 		this.authService.logIn(this.username.value, this.password.value)
-      .subscribe(async (value) => {
+      .subscribe((value) => {
         if (value) {
           this.authService.setToken(value);
-          await this.router.navigate(['']);
+          return this.router.navigate(['']);
         } else {
-          this.loginForm.setErrors({ incorrectLoginData: true });
+          return this.loginForm.setErrors({ incorrectLoginData: true });
         }
       }, () => {
         this.loginForm.setErrors({ incorrectLoginData: true });
