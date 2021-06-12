@@ -1,21 +1,70 @@
-import {getConnection, getRepository} from "typeorm";
+import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
 import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
-import {insertObjectIntoTable, alterKeys, verify, isTime, validateValues} from "../support/support"
-import { report } from "node:process";
+import {insertObjectIntoTable, alterTimes, alterKeys, verify, validateValues, compareClasses} from "../support/support"
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
 
-hostingRequestRouter.delete('/:id', async (request: Request, response: Response) => {
+//PZD-35
+//deleteRejectedForUser
+hostingRequestRouter.delete('/rejected', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
+  const connection = await getConnection();
+  const hrRepository = connection.getRepository(HostingRequest)
+  const hr = await hrRepository.findOne({id});
+
+  const userRepository = connection.getRepository(User)
+  const user = await userRepository.findOne({username: decoded.username});
+  const username = decoded.username
+
+  if (hr == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "hosting request not found"
+    })
+  }
+  if (user == undefined) {
+    return response.status(500).json({
+      status: "failure",
+      message: "user not found"
+    })
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(HostingRequest)
+    .where("id = :id AND userUsername = :username", {id, username})
+    .execute()
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
+})
+
+//removeById
+hostingRequestRouter.delete('', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const id = parseInt(request.query.id as string);
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
   const hr = await hrRepository.findOne({id});
@@ -47,6 +96,7 @@ hostingRequestRouter.delete('/:id', async (request: Request, response: Response)
     });
 })
 
+// addHR
 hostingRequestRouter.post('/', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -84,13 +134,14 @@ hostingRequestRouter.post('/', async (request: Request, response: Response) => {
 
 // PZD-10
 // accepted/rejected/pending
-hostingRequestRouter.get('/user/:username/status/:status', async (request: Request, response: Response) => {
+// getByUsernameWithType
+hostingRequestRouter.get('/user', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const status = request.params.status
-  const username = request.params.username
+  const status = request.query.status as string;
+  const username = request.query.username as string;
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -121,19 +172,86 @@ hostingRequestRouter.get('/user/:username/status/:status', async (request: Reque
     });
 })
 
-// PZD-27
-// getHostingRequests by class
-// accepted/rejected/pending
-hostingRequestRouter.get('/class:id/status/:status', async (request: Request, response: Response) => {
+//PZD-34
+//getAllOfUserSorted
+hostingRequestRouter.get('/sorted', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const status = request.params.status
-  const classId = request.params.class
+  const connection = await getConnection();
+  const userRepository = connection.getRepository(User)
+  const hrRepository = connection.getRepository(HostingRequest)
+
+  const user = await userRepository.findOne({where: {username: decoded.username}})
+
+  if(!user) {
+    return response.status(500).json({
+      status: "failure",
+      message: "specified user not found"
+    })
+  }
+
+  const hrs = await hrRepository.find({where: {user}, relations: ['user', 'class']});
+
+  let table : any [][] = new Array(7).fill(false).map(() => []);
+  for(let h of hrs) {
+    table[h.class.weekDay].push(h);
+  }
+  for(let row of table) {
+    row.sort((a,b) => compareClasses(a.class, b.class))
+    for(let hr of row) {
+      hr.class = alterTimes(hr.class)
+    }
+  }
+  if (hrs) {
+    return response.status(200).json(table)
+  }
+  return response.status(500).json({
+    status: "failure",
+    message: "specified hosting requests not found"
+  })
+})
+
+//getAllByStatus
+hostingRequestRouter.get('/status', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const status = request.query.status as string;
+  if(!validateValues(status, Status, response)) return
+
+  const connection = await getConnection();
+  const hrRepository = connection.getRepository(HostingRequest)
+  let hrs = await hrRepository.find({where: {status}, relations: ['user', 'class']})
+
+  for(let hr of hrs) {
+    hr.class = alterTimes(hr.class)
+  }
+  if (hrs) {
+    return response.status(200).json(hrs)
+  }
+  return response.status(500).json({
+    status: "failure",
+    message: "specified hosting requests not found"
+  })
+})
+
+// PZD-27
+// getHostingRequests by class
+// accepted/rejected/pending
+hostingRequestRouter.get('/class', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response)
+  if(!decoded) return
+
+  const status = request.query.status as string;
+  const classId = request.query.class as string;
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
+  const hrRepository = connection.getRepository(HostingRequest)
   const cls = await classRepository.findOne({groupKey: classId})
 
   if (cls == undefined) {
@@ -143,30 +261,21 @@ hostingRequestRouter.get('/class:id/status/:status', async (request: Request, re
     })
   }
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("hostingRequest")
-    .from(HostingRequest, "hostingRequest")
-    .where("hostingRequest.classGroupKey = :groupKey AND hostingRequest.status = :status", {groupKey: cls.groupKey, status})
-    .execute()
-    .then(items => {
-      return response.status(200).json(alterKeys(items, "hostingRequests"))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  const hr = await hrRepository.find({where: {class: cls, status}, relations: ['user']})
+
+  if (hr) {
+    return response.status(200).json(hr)
+  }
+  return response.status(200).json([]);
 })
 
-hostingRequestRouter.get('/user/:username', async (request: Request, response: Response) => {
+//getByUsername
+hostingRequestRouter.get('', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const username = request.params.username
+  const username = decoded.username
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -186,7 +295,7 @@ hostingRequestRouter.get('/user/:username', async (request: Request, response: R
     .where("hostingRequest.userUsername = :username", {username})
     .execute()
     .then(items => {
-      return response.status(200).json(alterKeys(items, "hostingRequests"))
+      return response.status(200).json(alterKeys(items, "hostingRequest"))
     })
     .catch(error => {
       logger.error(error)
@@ -197,29 +306,15 @@ hostingRequestRouter.get('/user/:username', async (request: Request, response: R
     });
 })
 
-//all h requests
-hostingRequestRouter.get('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
-  const connection = await getConnection();
-  const hRequestRepository = connection.getRepository(HostingRequest)
-
-  const hRequests = await hRequestRepository.find();
-
-  return response.json(alterKeys(hRequests, "hostingRequests"))
-})
-
 // PZD-10
 // zatwierdz badz odrzuc prowadzacego prowadzacego
 // localhost:8000/hrequests/resolve/blabla
-hostingRequestRouter.put('/resolve/:id', async (request: Request, response: Response) => {
+hostingRequestRouter.put('/resolve', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
   const status = request.body.object.status
 
   if(!validateValues(status, Status, response)) return
@@ -338,19 +433,51 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
   })
 })
 
-hostingRequestRouter.put('/:id', async (request: Request, response: Response) => {
+//PZD27
+//acceptSingleHostingRequest
+hostingRequestRouter.put('/accept', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
-  const object = request.body.object
-  const id = parseInt(request.params.id)
+  const object = request.body.objects
+  let id = object.id
+
+  await getConnection()
+  .createQueryBuilder()
+  .update(HostingRequest)
+  .set({
+    status: "accepted"
+  })
+  .where("id = :id", {id})
+  .execute()
+  .then(() => {
+    return response.status(200).json({
+      status: "success"
+    })
+  })
+  .catch(error => {
+    return response.status(500).json({
+      status: "failure",
+      message: error.message
+    })
+  })
+})
+
+//modifyByID
+hostingRequestRouter.put('', async (request: Request, response: Response) => {
+  const token = request.header('token');
+  const decoded = await verify(token, response);
+  if(!decoded) return;
+
+  const object = request.body.object;
+  const id = parseInt(request.query.id as string);
 
   const connection = await getConnection();
-  const classesRepository = connection.getRepository(Class)
+  const classesRepository = connection.getRepository(Class);
   const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
   const user = await userRepository.findOne({username: object.user.username});
 
   if (clas == undefined) {

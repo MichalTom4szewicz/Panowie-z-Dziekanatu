@@ -6,10 +6,8 @@ import {Degree} from "../enums/degree"
 
 const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
-const bcrypt = require('bcrypt')
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
@@ -22,7 +20,6 @@ usersRouter.post('/', async (request: Request, response: Response) => {
     firstName: object.firstName,
     lastName: object.lastName,
     username: object.username,
-    password: "none",
     degree: object.degree,
     courses: [],
     hostingRequests: [],
@@ -33,15 +30,14 @@ usersRouter.post('/', async (request: Request, response: Response) => {
   insertObjectIntoTable(newUser, User, response);
 })
 
-usersRouter.put('/:username', async (request: Request, response: Response) => {
+usersRouter.put('', async (request: Request, response: Response) => {
 
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return
 
   const object = request.body.object
-  const password = await bcrypt.hash(object.password, 10)
-  const username = request.params.username
+  const username = request.query.username as string
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -60,8 +56,6 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     .set({
         firstName: object.firstName,
         lastName: object.lastName,
-        // username: body.username, // can't update username
-        password,
     })
     .where("username = :username", { username: username })
     .execute()
@@ -79,8 +73,8 @@ usersRouter.put('/:username', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.delete('/:username', async (request: Request, response: Response) => {
-  const username = request.params.username
+usersRouter.delete('', async (request: Request, response: Response) => {
+  const username = request.query.username as string;
 
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -141,8 +135,8 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.get('/:username', async (request: Request, response: Response) => {
-  const username = request.params.username
+usersRouter.get('', async (request: Request, response: Response) => {
+  const username = request.query.username as string;
 
   const token = request.header('token');
   const decoded = await verify(token, response)
@@ -177,7 +171,7 @@ usersRouter.get('/:username', async (request: Request, response: Response) => {
     });
 })
 
-usersRouter.get('/', async (request: Request, response: Response) => {
+usersRouter.get('/all', async (request: Request, response: Response) => {
   const token = request.header('token');
   const decoded = await verify(token, response)
   if(!decoded) return

@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
 
 import {HostingRequest} from "./HostingRequest"
 import {Course} from "./Course"
@@ -8,10 +8,10 @@ import {User} from "./User"
 export class Class {
 
     @PrimaryColumn()
-    public groupKey!:string;
+    public groupKey!:     string;
 
     @Column()
-    public weekDay!:      string;
+    public weekDay!:      number;
 
     @Column()
     public parity!:       string;
@@ -31,10 +31,10 @@ export class Class {
     @Column()
     public typ!:          string;
 
-    @ManyToOne(() => User, user => user.classes)
-    public host!: User;
+    @ManyToOne(() => User, user => user.classes, {onDelete: 'CASCADE'})
+    public host?: User;
 
-    @ManyToOne(() => Course, course => course.classes)
+    @ManyToOne(() => Course, course => course.classes, {onDelete: 'CASCADE'})
     public course!: Course;
 
     @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })

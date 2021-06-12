@@ -32,7 +32,7 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
 
   const classRepository = connection.getRepository(Class)
 
-  let newScheduleParts = []
+  let newScheduleParts: SchedulePart[] = []
   for (let groupKey of objects.map((c: { groupKey: string; }) => c.groupKey)) {
     const clas = await classRepository.findOne({groupKey});
     if (clas != undefined) {
@@ -85,15 +85,15 @@ schedulePartRouter.post('/', async (request: Request, response: Response) => {
 })
 
 // deleteSchedule(name: string)
-schedulePartRouter.delete('/schedule/:name', async (request: Request, response: Response) => {
+schedulePartRouter.delete('/schedule', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const name = request.params.name
+  const name = request.query.name as string;
 
   const connection = await getConnection();
-  const spRepository = connection.getRepository(SchedulePart)
+  const spRepository = connection.getRepository(SchedulePart);
   const sp = await spRepository.findOne({name});
 
   if (sp == undefined) {
@@ -124,15 +124,15 @@ schedulePartRouter.delete('/schedule/:name', async (request: Request, response: 
 })
 
 // deleteSingleSchedulePart
-schedulePartRouter.delete('/:id', async (request: Request, response: Response) => {
+schedulePartRouter.delete('', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const id = parseInt(request.params.id)
+  const id = parseInt(request.query.id as string);
 
   const connection = await getConnection();
-  const spRepository = connection.getRepository(SchedulePart)
+  const spRepository = connection.getRepository(SchedulePart);
   const sp = await spRepository.findOne({id});
 
   if (sp == undefined) {
@@ -163,16 +163,16 @@ schedulePartRouter.delete('/:id', async (request: Request, response: Response) =
 })
 
 // changeSchedulePart(id)
-schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
+schedulePartRouter.put('', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const object = request.body.object
-  const id = parseInt(request.params.id)
+  const object = request.body.object;
+  const id = parseInt(request.query.id as string);
 
   const connection = await getConnection();
-  const classesRepository = connection.getRepository(Class)
+  const classesRepository = connection.getRepository(Class);
   const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
   const userRepository = connection.getRepository(User)
@@ -219,12 +219,12 @@ schedulePartRouter.put('/:id', async (request: Request, response: Response) => {
 // PZD-10
 // getPlan(nazwa) -> Classes[]
 // localhost:8000/scheduleparts/schedule/mojplan
-schedulePartRouter.get('/schedule/:name', async (request: Request, response: Response) => {
+schedulePartRouter.get('/schedule', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const name = request.params.name
+  const name = request.query.name;
 
   await getConnection()
     .createQueryBuilder()
@@ -246,15 +246,16 @@ schedulePartRouter.get('/schedule/:name', async (request: Request, response: Res
 
 
 // getNAzwyMoichPlanów
-schedulePartRouter.get('/names/user/:username', async (request: Request, response: Response) => {
+schedulePartRouter.get('/names', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
-  const username = request.params.username
+  const username = decoded.username;
 
   const connection = await getConnection();
-  const userRepository = connection.getRepository(User)
+  const userRepository = connection.getRepository(User);
+  const spRepository = connection.getRepository(SchedulePart);
   const user = await userRepository.findOne({username});
 
   if (user == undefined) {
@@ -264,37 +265,26 @@ schedulePartRouter.get('/names/user/:username', async (request: Request, respons
     })
   }
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("schedulePart")
-    .from(SchedulePart, "schedulePart")
-    .where("schedulePart.ownerUsername = :username", {username})
-    .execute()
-    .then(items => {
-      const altered = alterKeys(items, "scheduleParts")
-      const names = altered.map((a: { name: string; }) => a.name)
-      return response.status(200).json(Array.from(new Set(names)))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  const schedulePart = await spRepository.find({where: { owner: user}});
+
+  if(schedulePart == []) {
+    return response.status(200).json([]);
+  }
+
+  return response.status(200).json(schedulePart.map(element => element.name));
 })
 
 schedulePartRouter.get('/', async (request: Request, response: Response) => {
   const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const decoded = await verify(token, response);
+  if(!decoded) return;
 
   const connection = await getConnection();
-  const spRepository = connection.getRepository(SchedulePart)
+  const spRepository = connection.getRepository(SchedulePart);
 
   const sps = await spRepository.find();
 
-  return response.status(200).json(alterKeys(sps, "scheduleParts"))
+  return response.status(200).json(alterKeys(sps, "scheduleParts"));
 })
 
 

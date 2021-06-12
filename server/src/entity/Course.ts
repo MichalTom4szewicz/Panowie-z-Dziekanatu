@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany} from "typeorm";
+import {Entity, PrimaryColumn, Column, ManyToOne, OneToMany} from "typeorm";
 
 import {User} from "./User"
 import {Class} from "./Class"
@@ -12,7 +12,7 @@ export class Course {
     @Column()
     public name!: string;
 
-    @ManyToOne(() => User, usr => usr.courses)
+    @ManyToOne(() => User, usr => usr.courses, {onDelete: 'CASCADE'})
     public supervisor!: User;
 
     @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update', 'remove'] })

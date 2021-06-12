@@ -79,7 +79,7 @@ export class ManageClassesDialogComponent implements OnInit {
   }
 
   public save(): void {
-    this.closeDialog({isSaved: true, classes: this.classesForm.value});
+    this.closeDialog({isSaved: true, classes: this.classesForm.getRawValue()});
   }
 
   private closeDialog(result: ManageClassesDialogResult): void {

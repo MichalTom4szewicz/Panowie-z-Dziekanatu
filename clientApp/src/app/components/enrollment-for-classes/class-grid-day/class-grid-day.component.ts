@@ -30,21 +30,31 @@ export class ClassGridDayComponent implements OnInit {
   constructor(public dialog: MatDialog, private classesService: ClassesService, private classGridService: ClassGridService) { }
 
   ngOnInit(): void {
+    this.conflicts = new Map();
+    this.classesMap = new Map();
     range(7, 15).subscribe(hour => this.hours.push(hour));
-    this.classesService.getClassesByWeekDay(this.weekDay).subscribe(value =>
+    this.classesService.getClassesByWeekDay(this.weekDay).subscribe(value => {
       this.sortedClasses = value.map(row =>
         row.map(element =>
           ClassesUtils.getClassesWithStatus(element, ClassesStatusEnum.UNSELECTED)
         )
-      )
+      );
+      this.classesService.getClassesMap(this.weekDay).subscribe(value => {
+        value.forEach(mapElement => this.classesMap.set(mapElement.key, mapElement.value));
+        this.classGridService.scheduleLoadedChange.subscribe(() => this.updateSelectedAfterLoad());
+      });
+    });
+    this.classesService.getClassesConflicts(this.weekDay).subscribe(value =>
+      value.forEach(mapElement => this.conflicts.set(mapElement.key, mapElement.value))
     );
-    this.classesService.getClassesConflicts(this.weekDay).subscribe(value => this.conflicts = value);
-    this.classesService.getClassesMap(this.weekDay).subscribe(value => this.classesMap = value);
-    this.classGridService.scheduleLoadedChange.subscribe(() => this.updateSelectedAfterLoad());
   }
 
   private updateSelectedAfterLoad(): void {
-    this.sortedClasses.forEach(row => row.forEach(element => element.status = ClassesStatusEnum.UNSELECTED));
+    this.sortedClasses.forEach(row =>
+      row.forEach(element =>
+        element.status = ClassesStatusEnum.UNSELECTED
+      )
+    );
     this.classGridService.classGridChange.subscribe(grid => {
       let weekDayClasses = grid[CalendarConstants.WEEK_DAYS_ORDER.get(this.weekDay)!];
       this.selectedClasses = new Set(weekDayClasses);

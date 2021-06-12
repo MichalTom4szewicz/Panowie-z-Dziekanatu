@@ -121,6 +121,7 @@ export class AuthServerBuilder {
         'Accept',
         'X-Access-Token',
         'Cache-Control',
+        'token'
       ],
       credentials: false,
       methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',

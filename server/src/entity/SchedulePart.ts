@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn,PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, OneToOne, JoinColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn} from "typeorm";
 
 import {Class} from "./Class"
 import {User} from "./User"
@@ -7,15 +7,15 @@ import {User} from "./User"
 export class SchedulePart {
 
     @PrimaryGeneratedColumn()
-    public id!: number;
+    public id?: number;
 
     @Column()
     public name!:         string;
 
-    @ManyToOne(() => User, user => user.myclasses)
+    @ManyToOne(() => User, user => user.myclasses, {onDelete: 'CASCADE'})
     public owner!: User;
 
-    @OneToOne(() => Class)
+    @OneToOne(() => Class, {onDelete: 'CASCADE'})
     @JoinColumn()
     public class!: Class;
 }
