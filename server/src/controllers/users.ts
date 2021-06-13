@@ -3,6 +3,7 @@ import {User} from "../entity/User";
 import {Request, Response} from "express"
 import {alterKeys, verify, validateValues, insertObjectIntoTable} from "../support/support"
 import {Degree} from "../enums/degree"
+import {Class} from '../entity/Class';
 
 const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
@@ -115,7 +116,19 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
         message: error.message
       })
     });
-})
+});
+
+usersRouter.get('/all', async (request: Request, response: Response) => {
+  // const token = request.header('token');
+  // const decoded = await verify(token, response)
+  // if(!decoded) return
+
+  const result = await getConnection().getRepository(User)
+    .find({ relations: ['courses', 'classes']});
+
+  return response.status(200).json(result ? result : []);
+});
+
 
 usersRouter.get('', async (request: Request, response: Response) => {
   const username = request.query.username as string;
@@ -166,6 +179,9 @@ usersRouter.get('/all', async (request: Request, response: Response) => {
         message: error.message
       })
     });
-})
+});
+
+
+
 
 export default usersRouter;

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {CommunicationConstants} from '../../constants/communication-constants';
 import {Observable} from 'rxjs/internal/Observable';
+import {User} from '../../domain/user';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,21 @@ export class UserDataService {
   }
 
   public getUserData(username: string): Observable<any> {
-    return this._http.get(UserDataService.USER_DATA_URL + '/' + username);
+    return this._http.get(UserDataService.USER_DATA_URL + `?username=${username}`);
+  }
+
+  public getAllUsersData(): Observable<User[]> {
+    return this._http.get(UserDataService.USER_DATA_URL + '/all') as Observable<User[]>;
+  }
+
+  public getUserDescriptor(username: string): Observable<any> {
+    return this._http.get(CommunicationConstants.getFullAuthApiAddress('/user/'.concat(username)));
+  }
+
+  public updateUserRole(username: string, role: string): Observable<any> {
+    return this._http.put(
+      CommunicationConstants.getFullAuthApiAddress('/role/update'),
+      { username, role }
+    );
   }
 }

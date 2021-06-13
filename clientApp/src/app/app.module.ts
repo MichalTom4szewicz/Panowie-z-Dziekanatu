@@ -48,6 +48,10 @@ import { TokenInterceptor } from './interceptor/token.interceptor';
 import { EditUserDataComponent } from './components/edit-user-data/edit-user-data.component';
 import { ClassesDetailsDialogComponent } from './components/common/classes/classes-details-dialog/classes-details-dialog.component';
 import { ClassesContentComponent } from './components/common/classes/classes-content/classes-content.component';
+import { BrowseUsersComponent } from './components/browse-users/browse-users.component';
+import { ItemUserDataComponent } from './components/browse-users/item-user-data/item-user-data.component';
+import { EditUserModalComponent } from './components/browse-users/edit-user-modal/edit-user-modal.component';
+import { ChangeRoleModalComponent } from './components/browse-users/change-role-modal/change-role-modal.component';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -74,7 +78,11 @@ import { ClassesContentComponent } from './components/common/classes/classes-con
 		HasRoleDirective,
 		ClassesDetailsDialogComponent,
 		ClassesContentComponent,
-		EditUserDataComponent
+		BrowseUsersComponent,
+    EditUserDataComponent,
+    ItemUserDataComponent,
+    EditUserModalComponent,
+    ChangeRoleModalComponent
 	],
 	imports: [
 		BrowserModule,

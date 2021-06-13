@@ -1,6 +1,7 @@
 import {Connection, Repository} from "typeorm";
 import {User} from "../database/entities/User";
 import {UserRole} from "../database/entities/UserRole";
+import {Role} from '../dataModel/Role';
 
 export class TokenContent {
   username: string;
@@ -48,6 +49,22 @@ export class UsersRepository {
       }
     } catch (e) {
       return Promise.reject(new Error("No such user"));
+    }
+  }
+
+  public async updateUserRole(username: string, newRole: UserRole): Promise<boolean> {
+    try {
+      const user = await this.getUserById(username);
+      if (user) {
+        user.role = newRole;
+        await this._repository.save(user);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      console.error(e);
+      return false;
     }
   }
 }

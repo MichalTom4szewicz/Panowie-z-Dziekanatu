@@ -35,7 +35,7 @@ export class Class {
     @ManyToOne(() => User, user => user.classes, {onDelete: 'CASCADE'})
     public host?: User;
 
-    @ManyToOne(() => Course, course => course.classes, {onDelete: 'CASCADE'})
+    @ManyToOne(() => Course, course => course.classes, {onDelete: 'CASCADE', eager: true})
     public course!: Course;
 
     @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })

@@ -1,0 +1,33 @@
+<div>
+  <form [formGroup]="userRoleForm" (ngSubmit)="onSubmit()">
+    <mat-card fxLayout="column" class="mat-elevation-z0" fxFlex="100">
+      <mat-card-header fxFlex="80">
+        <mat-card-title>Zmień rolę</mat-card-title>
+        <mat-card-subtitle>Zmień rolę użytkownika.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center" >
+        <div fxLayout="column" fxFlex="80">
+          <mat-form-field>
+            <mat-label>Rola</mat-label>
+            <mat-select formControlName="userRole" [(value)]="selected">
+              <mat-option *ngFor="let role of userRoles" [value]="role">
+                {{ role.displayName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="userRoleForm.hasError('updateError')" class="mat-error">
+            Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie później.
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions fxLayoutAlign="center">
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="warn" (click)="reset()" type="button">Reset</button>
+        </div>
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="primary" type="submit">Zapisz</button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

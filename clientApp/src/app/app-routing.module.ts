@@ -11,6 +11,7 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
 import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
 import {EditUserDataComponent} from './components/edit-user-data/edit-user-data.component';
 import {UserDataGuard} from './guards/user-data.guard';
+import {BrowseUsersComponent} from './components/browse-users/browse-users.component';
 
 const routes: Routes = [
   {
@@ -54,9 +55,20 @@ const routes: Routes = [
     component: CreateUserComponent
   },
   {
+    path: 'admin',
+    component: ToolbarComponent,
+    children: [
+      {
+        path: 'users',
+        component: BrowseUsersComponent
+      }
+    ]
+  },
+  {
     path: '**',
     component: PageNotFoundComponent
   },
+
 ];
 
 @NgModule({
