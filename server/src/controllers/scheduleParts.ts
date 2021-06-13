@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {SchedulePart} from "../entity/schedulePart";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {insertObjectIntoTable, verify, alterKeys} from "../support/support"
+import {insertObjectIntoTable, alterTimes, verify, alterKeys} from "../support/support"
 
 const logger = require('../utils/logger')
 const schedulePartRouter = require('express').Router()
@@ -226,22 +226,17 @@ schedulePartRouter.get('/schedule', async (request: Request, response: Response)
 
   const name = request.query.name;
 
-  await getConnection()
-    .createQueryBuilder()
-    .select("schedulePart")
-    .from(SchedulePart, "schedulePart")
-    .where("schedulePart.name = :name", {name})
-    .execute()
-    .then(items => {
-      return response.status(200).json(alterKeys(items, "scheduleParts"))
-    })
-    .catch(error => {
-      logger.error(error)
-      return response.status(500).json({
-        status: "failure",
-        message: error.message
-      })
-    });
+  const connection = await getConnection();
+  const spRepository = connection.getRepository(SchedulePart);
+  let sp = await spRepository.find({where: {name: name}, relations: ['class']});
+
+  if (sp) {
+    for(let s of sp) {
+      s.class = alterTimes(s.class)
+    }
+    return response.status(200).json(alterTimes(sp))
+  }
+  return response.status(200).json([]);
 })
 
 
