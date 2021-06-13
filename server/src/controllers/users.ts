@@ -8,10 +8,6 @@ const logger = require('../utils/logger')
 const usersRouter = require('express').Router()
 
 usersRouter.post('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const object = request.body.object
 
   if(!validateValues(object.degree, Degree, response)) return
@@ -31,11 +27,6 @@ usersRouter.post('/', async (request: Request, response: Response) => {
 })
 
 usersRouter.put('', async (request: Request, response: Response) => {
-
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const object = request.body.object
   const username = request.query.username as string
 
@@ -76,10 +67,6 @@ usersRouter.put('', async (request: Request, response: Response) => {
 usersRouter.delete('', async (request: Request, response: Response) => {
   const username = request.query.username as string;
 
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const usr = await userRepository.findOne({username: username});
@@ -111,11 +98,6 @@ usersRouter.delete('', async (request: Request, response: Response) => {
 })
 
 usersRouter.get('/usernames', async (request: Request, response: Response) => {
-
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   await getConnection()
     .createQueryBuilder()
     .select("user.username")
@@ -137,10 +119,6 @@ usersRouter.get('/usernames', async (request: Request, response: Response) => {
 
 usersRouter.get('', async (request: Request, response: Response) => {
   const username = request.query.username as string;
-
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -172,9 +150,6 @@ usersRouter.get('', async (request: Request, response: Response) => {
 })
 
 usersRouter.get('/all', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
 
   await getConnection()
     .createQueryBuilder()

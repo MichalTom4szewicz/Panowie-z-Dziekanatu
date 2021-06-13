@@ -3,7 +3,7 @@ import {Class} from "../entity/Class";
 import {SchedulePart} from "../entity/SchedulePart";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {insertObjectIntoTable, alterTimes, verify, alterKeys} from "../support/support"
+import {insertObjectIntoTable, alterTimes, alterKeys} from "../support/support"
 
 const logger = require('../utils/logger')
 const schedulePartRouter = require('express').Router()
@@ -11,13 +11,9 @@ const schedulePartRouter = require('express').Router()
 // PZD-10
 // zapiszPlan(objects: Classes[], name: string, user)
 schedulePartRouter.post('/schedule', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const objects = request.body.objects
   const name = request.body.name
-  const username = decoded.username
+  const username = request.header('caller')
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -49,15 +45,12 @@ schedulePartRouter.post('/schedule', async (request: Request, response: Response
 
 // addSingleItemOfSchedule(scheduleName, Class)
 schedulePartRouter.post('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
+  const username = request.header('caller');
   const object = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: decoded.username});
+  const user = await userRepository.findOne({ username });
 
   const classRepository = connection.getRepository(Class)
   const clas = await classRepository.findOne({groupKey: object.class.groupKey});
@@ -86,10 +79,6 @@ schedulePartRouter.post('/', async (request: Request, response: Response) => {
 
 // deleteSchedule(name: string)
 schedulePartRouter.delete('/schedule', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const name = request.query.name as string;
 
   const connection = await getConnection();
@@ -125,10 +114,6 @@ schedulePartRouter.delete('/schedule', async (request: Request, response: Respon
 
 // deleteSingleSchedulePart
 schedulePartRouter.delete('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const id = parseInt(request.query.id as string);
 
   const connection = await getConnection();
@@ -164,10 +149,6 @@ schedulePartRouter.delete('', async (request: Request, response: Response) => {
 
 // changeSchedulePart(id)
 schedulePartRouter.put('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const object = request.body.object;
   const id = parseInt(request.query.id as string);
 
@@ -220,10 +201,6 @@ schedulePartRouter.put('', async (request: Request, response: Response) => {
 // getPlan(nazwa) -> Classes[]
 // localhost:8000/scheduleparts/schedule/mojplan
 schedulePartRouter.get('/schedule', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const name = request.query.name;
 
   const connection = await getConnection();
@@ -242,11 +219,7 @@ schedulePartRouter.get('/schedule', async (request: Request, response: Response)
 
 // getNAzwyMoichPlanów
 schedulePartRouter.get('/names', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
-  const username = decoded.username;
+  const username = request.header('caller')
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User);
@@ -270,10 +243,6 @@ schedulePartRouter.get('/names', async (request: Request, response: Response) =>
 })
 
 schedulePartRouter.get('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const connection = await getConnection();
   const spRepository = connection.getRepository(SchedulePart);
 

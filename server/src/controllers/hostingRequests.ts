@@ -4,7 +4,7 @@ import {HostingRequest} from "../entity/HostingRequest";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import { Status } from "../enums/status";
-import {insertObjectIntoTable, alterTimes, alterKeys, verify, validateValues, compareClasses} from "../support/support"
+import {insertObjectIntoTable, alterTimes, alterKeys, validateValues, compareClasses} from "../support/support"
 
 const logger = require('../utils/logger')
 const hostingRequestRouter = require('express').Router()
@@ -12,9 +12,7 @@ const hostingRequestRouter = require('express').Router()
 //PZD-35
 //deleteRejectedForUser
 hostingRequestRouter.delete('/rejected', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const username = request.header('caller');
 
   const id = parseInt(request.query.id as string);
   const connection = await getConnection();
@@ -22,8 +20,7 @@ hostingRequestRouter.delete('/rejected', async (request: Request, response: Resp
   const hr = await hrRepository.findOne({id});
 
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: decoded.username});
-  const username = decoded.username
+  const user = await userRepository.findOne({ username });
 
   if (hr == undefined) {
     return response.status(500).json({
@@ -60,10 +57,6 @@ hostingRequestRouter.delete('/rejected', async (request: Request, response: Resp
 
 //removeById
 hostingRequestRouter.delete('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const id = parseInt(request.query.id as string);
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
@@ -98,16 +91,13 @@ hostingRequestRouter.delete('', async (request: Request, response: Response) => 
 
 // addHR
 hostingRequestRouter.post('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
+  const username = request.header('caller');
   const object = request.body.object
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const classesRepository = connection.getRepository(Class)
 
-  const user = await userRepository.findOne({username: decoded.username});
+  const user = await userRepository.findOne({ username });
   const clas = await classesRepository.findOne({groupKey: object.class.groupKey});
 
   if (clas == undefined) {
@@ -136,10 +126,6 @@ hostingRequestRouter.post('/', async (request: Request, response: Response) => {
 // accepted/rejected/pending
 // getByUsernameWithType
 hostingRequestRouter.get('/user', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const status = request.query.status as string;
   const username = request.query.username as string;
 
@@ -175,15 +161,12 @@ hostingRequestRouter.get('/user', async (request: Request, response: Response) =
 //PZD-34
 //getAllOfUserSorted
 hostingRequestRouter.get('/sorted', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
+  const username = request.header('caller');
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
   const hrRepository = connection.getRepository(HostingRequest)
 
-  const user = await userRepository.findOne({where: {username: decoded.username}})
+  const user = await userRepository.findOne({where: { username }})
 
   if(!user) {
     return response.status(500).json({
@@ -215,10 +198,6 @@ hostingRequestRouter.get('/sorted', async (request: Request, response: Response)
 
 //getAllByStatus
 hostingRequestRouter.get('/status', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const status = request.query.status as string;
   if(!validateValues(status, Status, response)) return
 
@@ -242,10 +221,6 @@ hostingRequestRouter.get('/status', async (request: Request, response: Response)
 // getHostingRequests by class
 // accepted/rejected/pending
 hostingRequestRouter.get('/class', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const status = request.query.status as string;
   const classId = request.query.class as string;
 
@@ -271,11 +246,7 @@ hostingRequestRouter.get('/class', async (request: Request, response: Response) 
 
 //getByUsername
 hostingRequestRouter.get('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
-  const username = decoded.username
+  const username = request.header('caller');
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
@@ -310,10 +281,6 @@ hostingRequestRouter.get('', async (request: Request, response: Response) => {
 // zatwierdz badz odrzuc prowadzacego prowadzacego
 // localhost:8000/hrequests/resolve/blabla
 hostingRequestRouter.put('/resolve', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const id = parseInt(request.query.id as string);
   const status = request.body.object.status
 
@@ -373,12 +340,8 @@ hostingRequestRouter.put('/resolve', async (request: Request, response: Response
 // zapiszMnieNaKursy(objects: Classes[]): void
 // localhost:8000/hrequests
 hostingRequestRouter.post('/plan', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
+  const username = request.header('caller');
   const objects = request.body.objects
-  const username = decoded.username
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
@@ -404,10 +367,6 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
 //PZD27
 //rejectHostingRequests
 hostingRequestRouter.put('/reject', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const objects = request.body.objects
   let ids = objects.map((o: { id: any; }) => o.id)
 
@@ -436,10 +395,6 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
 //PZD27
 //acceptSingleHostingRequest
 hostingRequestRouter.put('/accept', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const object = request.body.objects
   let id = object.id
 
@@ -466,10 +421,6 @@ hostingRequestRouter.put('/accept', async (request: Request, response: Response)
 
 //modifyByID
 hostingRequestRouter.put('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const object = request.body.object;
   const id = parseInt(request.query.id as string);
 
