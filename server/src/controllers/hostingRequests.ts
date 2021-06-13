@@ -222,7 +222,7 @@ hostingRequestRouter.get('/status', async (request: Request, response: Response)
 // accepted/rejected/pending
 hostingRequestRouter.get('/class', async (request: Request, response: Response) => {
   const status = request.query.status as string;
-  const classId = request.query.class as string;
+  const classId = request.query.groupKey as string;
 
   const connection = await getConnection();
   const classRepository = connection.getRepository(Class)
@@ -378,8 +378,9 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
 
   const connection = await getConnection();
   const hrRepository = connection.getRepository(HostingRequest)
+  console.log(objects)
 
-  ids.array.forEach(async (id: any) => {
+  ids.forEach(async (id: any) => {
     const tmpHr = await hrRepository.findOne({id});
     if(tmpHr !== undefined) {
       await getConnection()
