@@ -42,6 +42,6 @@ export class Class {
     public hostingRequests!: HostingRequest[];
 
     @OneToMany(() => SchedulePart, sp => sp.class, { cascade: ['insert', 'update', 'remove'] })
-    public schedules!: SchedulePart[];
+    public schedules?: SchedulePart[];
 
 }

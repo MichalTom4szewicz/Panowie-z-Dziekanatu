@@ -1,6 +1,6 @@
 import {getConnection} from "typeorm";
 import {Class} from "../entity/Class";
-import {SchedulePart} from "../entity/schedulePart";
+import {SchedulePart} from "../entity/SchedulePart";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
 import {insertObjectIntoTable, alterTimes, verify, alterKeys} from "../support/support"
@@ -234,7 +234,7 @@ schedulePartRouter.get('/schedule', async (request: Request, response: Response)
     for(let s of sp) {
       s.class = alterTimes(s.class)
     }
-    return response.status(200).json(alterTimes(sp))
+    return response.status(200).json(sp.map(s => s.class))
   }
   return response.status(200).json([]);
 })
@@ -266,7 +266,7 @@ schedulePartRouter.get('/names', async (request: Request, response: Response) =>
     return response.status(200).json([]);
   }
 
-  return response.status(200).json(schedulePart.map(element => element.name));
+  return response.status(200).json(Array.from(new Set(schedulePart.map(element => element.name))));
 })
 
 schedulePartRouter.get('/', async (request: Request, response: Response) => {
