@@ -3,6 +3,7 @@ import {Entity, PrimaryColumn, Column, OneToMany, ManyToOne} from "typeorm";
 import {HostingRequest} from "./HostingRequest"
 import {Course} from "./Course"
 import {User} from "./User"
+import { SchedulePart } from "./SchedulePart";
 
 @Entity()
 export class Class {
@@ -39,5 +40,8 @@ export class Class {
 
     @OneToMany(() => HostingRequest, hr => hr.class, { cascade: ['insert', 'update', 'remove'] })
     public hostingRequests!: HostingRequest[];
+
+    @OneToMany(() => SchedulePart, sp => sp.class, { cascade: ['insert', 'update', 'remove'] })
+    public schedules!: SchedulePart[];
 
 }

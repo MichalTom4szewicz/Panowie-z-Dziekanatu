@@ -15,7 +15,6 @@ export class SchedulePart {
     @ManyToOne(() => User, user => user.myclasses, {onDelete: 'CASCADE'})
     public owner!: User;
 
-    @OneToOne(() => Class, {onDelete: 'CASCADE'})
-    @JoinColumn()
+    @ManyToOne(() => Class, clas => clas.schedules, {onDelete: 'CASCADE'})
     public class!: Class;
 }
