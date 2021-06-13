@@ -347,17 +347,23 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
   const classRepository = connection.getRepository(Class)
   const userRepository = connection.getRepository(User)
 
+  const hrRepository = connection.getRepository(HostingRequest)
+
   let newhostingRequests = []
   for (let groupKey of objects.map((c: { groupKey: string; }) => c.groupKey)) {
     const clas = await classRepository.findOne({groupKey});
     const user = await userRepository.findOne({username});
 
     if (clas != undefined && user != undefined) {
-      newhostingRequests.push({
-        status: "pending",
-        user,
-        class: clas
-      })
+      const hr = await hrRepository.find({where: {user, class: clas}})
+
+      if(!hr) {
+        newhostingRequests.push({
+          status: "pending",
+          user,
+          class: clas
+        })
+      }
     }
   }
 
