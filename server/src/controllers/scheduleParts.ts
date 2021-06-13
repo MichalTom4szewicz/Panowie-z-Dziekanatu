@@ -205,7 +205,7 @@ schedulePartRouter.get('/schedule', async (request: Request, response: Response)
 
   const connection = await getConnection();
   const spRepository = connection.getRepository(SchedulePart);
-  let sp = await spRepository.find({where: {name: name}, relations: ['class']});
+  let sp = await spRepository.find({where: {name: name}, relations: ['class', 'class.course', 'class.course.supervisor']});
 
   if (sp) {
     for(let s of sp) {
