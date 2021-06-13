@@ -30,7 +30,7 @@ hostingRequestRouter.delete('/rejected', async (request: Request, response: Resp
     .createQueryBuilder()
     .delete()
     .from(HostingRequest)
-    .where("status = :status AND user = :user", {status: "rejected", user})
+    .where("status = :status AND userUsername = :user", {status: "rejected", user: user.username})
     .execute()
     .then(() => {
       return response.status(200).json({
