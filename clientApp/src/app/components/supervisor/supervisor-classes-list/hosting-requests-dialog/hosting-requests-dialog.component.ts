@@ -55,8 +55,8 @@ export class HostingRequestsDialogComponent implements OnInit {
       this.requstList
         .filter(element => element.hostingRequest.id !== hostingRequest.id)
         .map(element => element.hostingRequest)
-    );
-    this.hostingRequestService.acceptHostingRequest(hostingRequest);
+    ).subscribe();
+    this.hostingRequestService.acceptHostingRequest(hostingRequest).subscribe();
     this.dialogRef.close(hostingRequest.user);
   }
 
