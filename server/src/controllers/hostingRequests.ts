@@ -14,20 +14,11 @@ const hostingRequestRouter = require('express').Router()
 hostingRequestRouter.delete('/rejected', async (request: Request, response: Response) => {
   const username = request.header('caller');
 
-  const id = parseInt(request.query.id as string);
   const connection = await getConnection();
-  const hrRepository = connection.getRepository(HostingRequest)
-  const hr = await hrRepository.findOne({id});
 
   const userRepository = connection.getRepository(User)
   const user = await userRepository.findOne({ username });
 
-  if (hr == undefined) {
-    return response.status(500).json({
-      status: "failure",
-      message: "hosting request not found"
-    })
-  }
   if (user == undefined) {
     return response.status(500).json({
       status: "failure",
@@ -39,7 +30,7 @@ hostingRequestRouter.delete('/rejected', async (request: Request, response: Resp
     .createQueryBuilder()
     .delete()
     .from(HostingRequest)
-    .where("id = :id AND userUsername = :username", {id, username})
+    .where("status = :status AND user = :user", {status: "rejected", user})
     .execute()
     .then(() => {
       return response.status(200).json({
@@ -401,6 +392,7 @@ hostingRequestRouter.put('/reject', async (request: Request, response: Response)
 //PZD27
 //acceptSingleHostingRequest
 hostingRequestRouter.put('/accept', async (request: Request, response: Response) => {
+  const username = request.header('caller');
   const object = request.body.objects
   let id = object.id
 
@@ -412,7 +404,39 @@ hostingRequestRouter.put('/accept', async (request: Request, response: Response)
   })
   .where("id = :id", {id})
   .execute()
-  .then(() => {
+  .then(async () => {
+    const connection = await getConnection();
+    const userRepository = connection.getRepository(User)
+    const hrRepository = connection.getRepository(HostingRequest)
+
+    const hr = await hrRepository.findOne({where: {id}, relations: ['class']})
+    const host = await userRepository.findOne({username})
+
+    if(!host || !hr) {
+      return response.status(500).json({
+        status: "failure",
+        message: "bad user or hostingRequest"
+      })
+    }
+
+    await getConnection()
+    .createQueryBuilder()
+    .update(Class)
+    .set({host})
+    .where("groupKey = :groupKey", { groupKey: hr.class.groupKey })
+    .execute()
+    .then(() => {
+      return response.status(200).json({
+        status: "success"
+      })
+    })
+    .catch(error => {
+      logger.error(error)
+      return response.status(500).json({
+        status: "failure",
+        message: error.message
+      })
+    });
     return response.status(200).json({
       status: "success"
     })
