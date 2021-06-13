@@ -175,7 +175,7 @@ hostingRequestRouter.get('/sorted', async (request: Request, response: Response)
     })
   }
 
-  const hrs = await hrRepository.find({where: {user}, relations: ['user', 'class']});
+  const hrs = await hrRepository.find({where: {user}, relations: ['user', 'class', 'class.course', 'class.course.supervisor']});
 
   let table : any [][] = new Array(7).fill(false).map(() => []);
   for(let h of hrs) {
