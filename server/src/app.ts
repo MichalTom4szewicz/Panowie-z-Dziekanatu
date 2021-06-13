@@ -16,6 +16,7 @@ app.use(cors());
 app.use(express.static('build'));
 app.use(express.json());
 app.use(middleware.requestLogger);
+app.use(middleware.tokenMiddleware)
 
 app.get('/', (req: express.Request, res: express.Response) => res.send('Hola amigo!!!'));
 app.use('/users', usersRouter);

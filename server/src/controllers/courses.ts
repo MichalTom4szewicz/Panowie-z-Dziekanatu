@@ -2,21 +2,18 @@ import {getConnection} from "typeorm";
 import {Course} from "../entity/Course";
 import {User} from '../entity/User'
 import {Request, Response} from "express"
-import {insertObjectIntoTable, verify, alterKeys} from "../support/support"
+import {insertObjectIntoTable, alterKeys} from "../support/support"
 
 const logger = require('../utils/logger')
 const coursesRouter = require('express').Router()
 
 coursesRouter.post('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
+  const username = request.header('caller');
   const object = request.body.object
 
   const connection = await getConnection();
   const userRepository = connection.getRepository(User)
-  const user = await userRepository.findOne({username: decoded.username});
+  const user = await userRepository.findOne({ username });
 
   if (user == undefined) {
     return response.status(500).json({
@@ -36,10 +33,6 @@ coursesRouter.post('/', async (request: Request, response: Response) => {
 })
 
 coursesRouter.delete('', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const courseKey = request.query.courseKey as string;
 
   const connection = await getConnection();
@@ -77,10 +70,6 @@ coursesRouter.delete('', async (request: Request, response: Response) => {
 // getNazwyKursow() -> String[]
 // localhost:8000/courses/names
 coursesRouter.get('/names', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   await getConnection()
   .createQueryBuilder()
   .select("course")
@@ -102,10 +91,6 @@ coursesRouter.get('/names', async (request: Request, response: Response) => {
 
 // coursesOfUser(username) -> Courses
 coursesRouter.get('/user', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const username = request.query.username as string;
 
   const connection = await getConnection();
@@ -140,10 +125,6 @@ coursesRouter.get('/user', async (request: Request, response: Response) => {
 })
 
 coursesRouter.get('/key', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
-
   const courseKey = request.query.courseKey
 
   const connection = await getConnection();
@@ -170,15 +151,13 @@ coursesRouter.get('/key', async (request: Request, response: Response) => {
 })
 
 coursesRouter.get('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response)
-  if(!decoded) return
+  const username = request.header('caller');
 
   const connection = await getConnection();
   const coursesRepository = connection.getRepository(Course)
   const userRepository = connection.getRepository(User)
 
-  const user = await userRepository.findOne({username: decoded.username})
+  const user = await userRepository.findOne({ username })
 
   if(!user) {
     return response.status(500).json({
@@ -192,10 +171,6 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
 })
 
 coursesRouter.put('/', async (request: Request, response: Response) => {
-  const token = request.header('token');
-  const decoded = await verify(token, response);
-  if(!decoded) return;
-
   const object = request.body.object;
   const courseKey = request.query.courseKey as string;
 
