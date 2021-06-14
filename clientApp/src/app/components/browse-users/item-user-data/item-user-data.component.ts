@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../domain/user';
 import {Classes} from '../../../domain/classes';
 import {Course} from '../../../domain/course';
@@ -22,6 +22,7 @@ export class UserInfo {
 })
 export class ItemUserDataComponent implements OnInit {
   @Input() userData: UserInfo;
+  @Output() changed = new EventEmitter<boolean>();
 
   private readonly _CLASSES_COLUMNS = ['code', 'groupKey', 'type'];
   private readonly _COURSES_COLUMNS = ['code', 'courseName'];
@@ -56,9 +57,12 @@ export class ItemUserDataComponent implements OnInit {
   }
 
   public openEditUserModal(): void {
-    this.dialog.open(EditUserModalComponent, {
+    const dialog = this.dialog.open(EditUserModalComponent, {
       width: '400px',
       data: {...this.userData.details, username: this.userData.username}
+    });
+    dialog.afterClosed().subscribe(() => {
+      this.changed.emit(true);
     });
   }
 
@@ -74,9 +78,12 @@ export class ItemUserDataComponent implements OnInit {
         })
       )
       .subscribe((value) => {
-        this.dialog.open(ChangeRoleModalComponent, {
+        const dialog = this.dialog.open(ChangeRoleModalComponent, {
           width: '400px',
           data: { role: value, username: this.userData.username }
+        });
+        dialog.afterClosed().subscribe(() => {
+          this.changed.emit(true);
         });
       });
   }
@@ -84,10 +91,14 @@ export class ItemUserDataComponent implements OnInit {
   public deleteUser(): void {
     if (this.userData.details !== undefined && this.userData.details !== null) {
       this._userDataService.deleteUserData(this.userData.username).subscribe(() => {
-        this._userDataService.deleteUserAccount(this.userData.username).subscribe();
+        this._userDataService.deleteUserAccount(this.userData.username).subscribe(() => {
+          this.changed.emit(true);
+        });
       });
     } else {
-      this._userDataService.deleteUserAccount(this.userData.username).subscribe();
+      this._userDataService.deleteUserAccount(this.userData.username).subscribe(() => {
+        this.changed.emit(true);
+      });
     }
   }
 }

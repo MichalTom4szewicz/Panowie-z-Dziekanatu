@@ -51,4 +51,10 @@ export class BrowseUsersComponent implements OnInit {
       this.loadData();
     });
   }
+
+  public onChanged(event: boolean): void {
+    if (event) {
+      this.loadData();
+    }
+  }
 }

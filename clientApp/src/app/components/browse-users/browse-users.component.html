@@ -1,6 +1,6 @@
 <div style="margin: 1em" fxLayout="column">
   <div *ngFor="let userData of usersInfo">
-    <pzd-item-user-data [userData]="userData"></pzd-item-user-data>
+    <pzd-item-user-data [userData]="userData" (changed)="onChanged($event)"></pzd-item-user-data>
   </div>
   <div fxLayoutAlign="center" fxFlex="100" style="margin: 1em 1em">
     <button mat-raised-button (click)="openAddUserModal()">Dodaj użytkownika</button>
