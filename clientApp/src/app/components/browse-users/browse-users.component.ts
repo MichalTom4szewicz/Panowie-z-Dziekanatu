@@ -50,7 +50,5 @@ export class BrowseUsersComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.loadData();
     });
-    // this.dialog.afterAllClosed.subscribe(() => {
-    // });
   }
 }

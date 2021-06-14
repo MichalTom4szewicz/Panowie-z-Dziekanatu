@@ -30,7 +30,7 @@ export class InsertRoles1617733023847 implements MigrationInterface {
         {name: "id", type: "integer", isGenerated: true, isPrimary: true},
         {name: "name", type: "varchar"}
       ]
-    }));
+    }), true);
 
     await queryRunner.createTable(new Table({
       name: "user_role",
@@ -38,7 +38,7 @@ export class InsertRoles1617733023847 implements MigrationInterface {
         {name: "id", type: "integer", isPrimary: true, isGenerated: true},
         {name: "name", type: "varchar"}
       ]
-    }));
+    }), true);
 
     await queryRunner.createTable(new Table({
       name: "user_role_permissions_user_permission",
@@ -46,7 +46,7 @@ export class InsertRoles1617733023847 implements MigrationInterface {
         {name: "userRoleId", type: "integer"},
         {name: "userPermissionId", type: "integer"}
       ]
-    }));
+    }), true);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

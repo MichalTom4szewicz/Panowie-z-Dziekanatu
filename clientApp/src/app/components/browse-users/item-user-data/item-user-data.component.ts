@@ -26,7 +26,7 @@ export class ItemUserDataComponent implements OnInit {
   private readonly _CLASSES_COLUMNS = ['code', 'groupKey', 'type'];
   private readonly _COURSES_COLUMNS = ['code', 'courseName'];
 
-  constructor(public readonly dialog: MatDialog, private _authService: UserDataService) { }
+  constructor(public readonly dialog: MatDialog, private _userDataService: UserDataService) { }
 
   ngOnInit(): void {
   }
@@ -63,7 +63,7 @@ export class ItemUserDataComponent implements OnInit {
   }
 
   public openEditRoleModal(): void {
-    this._authService.getUserAccount(this.userData.username)
+    this._userDataService.getUserAccount(this.userData.username)
       .pipe(
         map((userData) => {
           if (userData.success) {
@@ -79,5 +79,15 @@ export class ItemUserDataComponent implements OnInit {
           data: { role: value, username: this.userData.username }
         });
       });
+  }
+
+  public deleteUser(): void {
+    if (this.userData.details !== undefined && this.userData.details !== null) {
+      this._userDataService.deleteUserData(this.userData.username).subscribe(() => {
+        this._userDataService.deleteUserAccount(this.userData.username).subscribe();
+      });
+    } else {
+      this._userDataService.deleteUserAccount(this.userData.username).subscribe();
+    }
   }
 }

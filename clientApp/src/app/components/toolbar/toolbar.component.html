@@ -1,8 +1,15 @@
 <mat-toolbar color="primary">
   <a mat-button routerLink="" class="home"><img src="assets/logo.bmp" class="image">Panowie z Dziekanatu</a>
-  <a mat-button routerLink="/overview">Mój plan</a>
-  <a mat-button routerLink="/plan">Stwórz plan</a>
-  <a mat-button routerLink="/supervisor">Opiekun</a>
+  <div *ngIf="isAdmin(); then thenBlock else elseBlock"></div>
+  <ng-template #thenBlock>
+    <a mat-button routerLink="/supervisor">Kursy i prowadzący</a>
+    <a mat-button routerLink="/users">Użytkownicy</a>
+  </ng-template>
+  <ng-template #elseBlock>
+    <a mat-button routerLink="/overview">Mój plan</a>
+    <a mat-button routerLink="/plan">Stwórz plan</a>
+    <a mat-button routerLink="/supervisor">Opiekun</a>
+  </ng-template>
   <span class="toolbar-spacer"></span>
   <button mat-icon-button (click)="logOut()">
     <mat-icon>logout</mat-icon>

@@ -38,4 +38,16 @@ export class UserDataService {
       { username, role }
     );
   }
+
+  public deleteUserAccount(username: string): Observable<any> {
+    return this._http.delete(
+      CommunicationConstants.getFullAuthApiAddress(`/${username}`)
+    );
+  }
+
+  public deleteUserData(username: string): Observable<any> {
+    return this._http.delete(
+      CommunicationConstants.getFullDataApiAddress(`/users?username=${username}`)
+    );
+  }
 }

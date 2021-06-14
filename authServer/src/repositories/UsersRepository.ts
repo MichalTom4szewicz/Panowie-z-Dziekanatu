@@ -21,14 +21,14 @@ export class UsersRepository {
     return this._repository.find({ relations: ['userRole'] });
   }
 
-  public async addUser(user: TokenContent): Promise<void> {
+  public async addUser(user: TokenContent, role: UserRole | null): Promise<void> {
     try {
       const existingUser = await this.getUserById(user.username);
       if (!existingUser) {
         const savedUser = {
           username: user.username,
           password: user.password,
-          userRole: user.role
+          userRole: role
         };
         await this._repository.save(savedUser as User);
       }
@@ -37,7 +37,7 @@ export class UsersRepository {
     }
   }
 
-  public async getUserById(id: string): Promise<TokenContent> {
+  public async getUserById(id: string): Promise<any> {
     try {
       const result = await this._repository.findOne(id, { relations: ['userRole'] });
       if (result) {
@@ -56,7 +56,7 @@ export class UsersRepository {
     try {
       const user = await this.getUserById(username);
       if (user) {
-        user.role = newRole;
+        user.userRole = newRole;
         await this._repository.save(user);
         return true;
       } else {
@@ -65,6 +65,15 @@ export class UsersRepository {
     } catch (e) {
       console.error(e);
       return false;
+    }
+  }
+
+  async deleteUser(username: string) {
+    try {
+      await this._repository.delete(username);
+      return true
+    } catch (e) {
+      return Promise.reject('error deleting user');
     }
   }
 }

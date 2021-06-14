@@ -11,10 +11,16 @@ import { Course } from 'src/app/domain/course';
 export class CourseService {
 
   constructor(private http: HttpClient) { }
-  
+
   public getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(
       this.getUrl('')
+    );
+  }
+
+  public getAllCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(
+      this.getUrl('/all')
     );
   }
 

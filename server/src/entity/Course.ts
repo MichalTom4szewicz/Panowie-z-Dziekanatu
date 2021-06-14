@@ -12,7 +12,7 @@ export class Course {
     @Column()
     public name!: string;
 
-    @ManyToOne(() => User, usr => usr.courses, {onDelete: 'CASCADE'})
+    @ManyToOne(() => User, usr => usr.courses, {onDelete: 'CASCADE', eager: true})
     public supervisor!: User;
 
     @OneToMany(() => Class, cls => cls.course, { cascade: ['insert', 'update', 'remove'] })

@@ -9,8 +9,9 @@
   </mat-expansion-panel-header>
   <div fxLayout="column">
     <div fxLayout="row" fxLayoutAlign="start">
-      <button mat-raised-button color="primary" (click)="openEditUserModal()">Edytuj dane</button>
-      <button mat-raised-button color="primary" (click)="openEditRoleModal()">Zmień rolę</button>
+      <button style="margin: .5em" mat-raised-button color="primary" (click)="openEditUserModal()">Edytuj dane</button>
+      <button style="margin: .5em" mat-raised-button color="primary" (click)="openEditRoleModal()">Zmień rolę</button>
+      <button style="margin: .5em" mat-raised-button color="warn" (click)="deleteUser()">Usuń użytkownika</button>
     </div>
     <div fxLayout="row">
       <div fxFlex="50">

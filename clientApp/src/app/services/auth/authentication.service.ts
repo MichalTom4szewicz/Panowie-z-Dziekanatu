@@ -26,6 +26,11 @@ export class AuthenticationService {
     return '';
   }
 
+  public static hasRole(role: UserRole): boolean {
+    const decodedToken = AuthenticationService.decodeToken();
+    return decodedToken && decodedToken.role.name === role;
+  }
+
   public static getUsername(): string {
     const token = AuthenticationService.decodeToken();
     return token && token.username
@@ -43,12 +48,6 @@ export class AuthenticationService {
     }
     this.logOut();
     return false;
-  }
-
-  hasRole(role: UserRole): boolean {
-    const decodedToken = AuthenticationService.decodeToken();
-    console.log(decodedToken);
-    return decodedToken && decodedToken.role.name === role;
   }
 
   public setToken(token: string): void {

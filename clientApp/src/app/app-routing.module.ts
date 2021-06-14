@@ -12,6 +12,7 @@ import { ClassesOverviewComponent } from './components/classes-overview/classes-
 import {EditUserDataComponent} from './components/edit-user-data/edit-user-data.component';
 import {UserDataGuard} from './guards/user-data.guard';
 import {BrowseUsersComponent} from './components/browse-users/browse-users.component';
+import {AdminOnlyGuard} from './guards/admin-only.guard';
 
 const routes: Routes = [
   {
@@ -39,6 +40,11 @@ const routes: Routes = [
         component: ClassesOverviewComponent,
         canActivate: [AuthGuard, UserDataGuard],
       },
+      {
+        path: 'users',
+        canActivate: [AuthGuard, UserDataGuard, AdminOnlyGuard],
+        component: BrowseUsersComponent
+      },
     ]
   },
   {
@@ -54,16 +60,7 @@ const routes: Routes = [
     path: 'register',
     component: CreateUserComponent
   },
-  {
-    path: 'admin',
-    component: ToolbarComponent,
-    children: [
-      {
-        path: 'users',
-        component: BrowseUsersComponent
-      }
-    ]
-  },
+
   {
     path: '**',
     component: PageNotFoundComponent

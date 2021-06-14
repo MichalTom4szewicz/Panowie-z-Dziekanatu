@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn} from 'typeorm';
 import {UserRole} from "./UserRole";
 
 @Entity()
@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   })
   public password: string;
 
-  @OneToOne(() => UserRole)
+  @ManyToOne(() => UserRole)
   @JoinColumn()
   public userRole: UserRole;
 }

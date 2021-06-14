@@ -5,7 +5,6 @@ import {SqliteConnection} from "../database/SqliteConnection";
 import {BaseController} from "./BaseController";
 import {User} from "../database/entities/User";
 import {RoleRepository} from '../repositories/RoleRepository';
-import {Role} from '../dataModel/Role';
 import {UserRole} from '../database/entities/UserRole';
 
 export class UsersController extends BaseController {
@@ -15,9 +14,14 @@ export class UsersController extends BaseController {
 
   public async addUser(request: Request, response: Response): Promise<Response> {
     const user: TokenContent = request.body.user;
+    const role = request.body.user.role;
+    const userRole = role
+      ? await this._roleRepository.getRoleByName(role)
+      : null;
+    console.log(userRole);
     if (user) {
       user.password = await EncryptionHelper.encryptPassword(user.password);
-      await this.usersRepository.addUser(user);
+      await this.usersRepository.addUser(user, userRole);
       return response.status(200).json({
         success: true
       });
@@ -97,6 +101,20 @@ export class UsersController extends BaseController {
     }
   }
 
+  public async deleteUser(req: Request, res: Response) {
+    try {
+      const username = req.params.username;
+      await this.usersRepository.deleteUser(username);
+      return res.status(200).json({
+        success: true
+      });
+    } catch (e) {
+      return res.status(200).json({
+        success: false
+      });
+    }
+  }
+
   public static addRouterPaths(router: Router): void {
     router.post('/user', async (req: Request, res: Response) => {
       return new UsersController(
@@ -122,5 +140,10 @@ export class UsersController extends BaseController {
         new RoleRepository(await SqliteConnection.getConnection())
       ).updateUserRole(req, res);
     });
+    router.delete('/:username',  async (req: Request, res: Response) => {
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).deleteUser(req, res)});
   }
 }
