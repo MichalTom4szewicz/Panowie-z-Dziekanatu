@@ -69,8 +69,9 @@ export class AuthenticationService {
   }
 
   public createAccount(username: string, password: string, role?: string): Observable<boolean> {
+    const newRole = role || 'USER';
     return this.http.post(AuthenticationService.CREATE_ACCOUNT_URL, {
-      user: { username, password, role }
+      user: { username, password, role: newRole }
     }).pipe(map((serviceResponse: any) => !!serviceResponse.success));
   }
 }
