@@ -346,7 +346,7 @@ hostingRequestRouter.post('/plan', async (request: Request, response: Response) 
     const user = await userRepository.findOne({username});
 
     if (clas != undefined && user != undefined) {
-      const hr = await hrRepository.find({where: {user, class: clas}})
+      const hr = await hrRepository.findOne({where: {user, class: clas}})
 
       if(!hr) {
         newhostingRequests.push({
