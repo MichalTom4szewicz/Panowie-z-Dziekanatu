@@ -170,7 +170,7 @@ hostingRequestRouter.get('/sorted', async (request: Request, response: Response)
 
   let table : any [][] = new Array(7).fill(false).map(() => []);
   for(let h of hrs) {
-    table[h.class.weekDay].push(h);
+    table[(h.class.weekDay-1)%7].push(h);
   }
   for(let row of table) {
     row.sort((a,b) => compareClasses(a.class, b.class))
