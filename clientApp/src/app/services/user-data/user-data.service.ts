@@ -39,6 +39,13 @@ export class UserDataService {
     );
   }
 
+  public updateUserData(user: User): Observable<any> {
+    return this._http.put(
+      CommunicationConstants.getFullDataApiAddress(`/users?username=${user.username}`),
+      { object: user }
+    );
+  }
+
   public deleteUserAccount(username: string): Observable<any> {
     return this._http.delete(
       CommunicationConstants.getFullAuthApiAddress(`/${username}`)

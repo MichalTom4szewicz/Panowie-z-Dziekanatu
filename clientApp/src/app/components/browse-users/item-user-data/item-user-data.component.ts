@@ -58,7 +58,7 @@ export class ItemUserDataComponent implements OnInit {
   public openEditUserModal(): void {
     this.dialog.open(EditUserModalComponent, {
       width: '400px',
-      data: this.userData.details
+      data: {...this.userData.details, username: this.userData.username}
     });
   }
 

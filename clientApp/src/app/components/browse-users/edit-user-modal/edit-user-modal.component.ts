@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {User} from '../../../domain/user';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Degree} from '../../../enums/degree';
+import {UserDataService} from '../../../services/user-data/user-data.service';
 
 @Component({
   selector: 'pzd-edit-user-modal',
@@ -14,7 +15,8 @@ export class EditUserModalComponent implements OnInit {
   private _degrees = Degree;
   private _selected = Degree.ENG;
 
-  constructor(@Inject(MAT_DIALOG_DATA) private user: User, private _formBuilder: FormBuilder) {
+  constructor(@Inject(MAT_DIALOG_DATA) private user: User, private _formBuilder: FormBuilder, private _userDataService: UserDataService) {
+    console.log(user);
     this._editUserDataForm = this._formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -48,7 +50,7 @@ export class EditUserModalComponent implements OnInit {
     this._editUserDataForm.patchValue(this.user);
   }
 
-  public onSubmit() {
-
+  public onSubmit(): void {
+    this._userDataService.updateUserData({...this._editUserDataForm.value, username: this.user.username}).subscribe();
   }
 }
