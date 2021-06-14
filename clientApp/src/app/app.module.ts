@@ -52,6 +52,7 @@ import { BrowseUsersComponent } from './components/browse-users/browse-users.com
 import { ItemUserDataComponent } from './components/browse-users/item-user-data/item-user-data.component';
 import { EditUserModalComponent } from './components/browse-users/edit-user-modal/edit-user-modal.component';
 import { ChangeRoleModalComponent } from './components/browse-users/change-role-modal/change-role-modal.component';
+import { AddNewUserComponent } from './components/browse-users/add-new-user/add-new-user.component';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -82,7 +83,8 @@ import { ChangeRoleModalComponent } from './components/browse-users/change-role-
     EditUserDataComponent,
     ItemUserDataComponent,
     EditUserModalComponent,
-    ChangeRoleModalComponent
+    ChangeRoleModalComponent,
+    AddNewUserComponent
 	],
 	imports: [
 		BrowserModule,

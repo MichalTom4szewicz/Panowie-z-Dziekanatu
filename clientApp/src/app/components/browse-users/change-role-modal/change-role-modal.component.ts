@@ -17,6 +17,7 @@ export class ChangeRoleModalComponent implements OnInit {
     { role: UserRole.USER, displayName: 'Prowadzący' },
     { role: UserRole.GOD, displayName: 'Dziekanat' }
   ];
+  private _message = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private userData: any,
@@ -53,14 +54,23 @@ export class ChangeRoleModalComponent implements OnInit {
     this._selected = value;
   }
 
+  get message(): string {
+    return this._message;
+  }
+
   public onSubmit(): void {
+    this._message = '';
     this._userDataService.updateUserRole(this._username, this._selected.role)
       .subscribe((value) => {
-        console.log(value);
+        if (value.success) {
+          this._message = 'Rola użytkownika zmieniona!';
+        } else {
+          this._changeUserRoleForm.setErrors({ updateError: true });
+        }
       });
   }
 
   public reset(): void {
-    this._selected = this.userData.role;
+    this.selected = this.userRoles.find((userRole) => userRole.role === this.userData.role);
   }
 }

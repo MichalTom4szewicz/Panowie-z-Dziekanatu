@@ -16,10 +16,13 @@ export class EditUserModalComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) private user: User, private _formBuilder: FormBuilder) {
     this._editUserDataForm = this._formBuilder.group({
-      firstName: [user.firstName, Validators.required],
-      lastName: [user.lastName, Validators.required],
-      degree: [user.degree]
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      degree: ['']
     });
+    if (user) {
+      this._editUserDataForm.patchValue(user);
+    }
   }
 
   ngOnInit(): void {

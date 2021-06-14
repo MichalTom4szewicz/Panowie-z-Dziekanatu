@@ -9,13 +9,19 @@ import {UserDataService} from '../../../services/user-data/user-data.service';
 import {map} from 'rxjs/operators';
 import {throwError} from 'rxjs';
 
+export class UserInfo {
+  public details: User;
+  public userRole: { name: string };
+  public username: string;
+}
+
 @Component({
   selector: 'pzd-item-user-data',
   templateUrl: './item-user-data.component.html',
   styleUrls: ['./item-user-data.component.sass']
 })
 export class ItemUserDataComponent implements OnInit {
-  @Input() userData: User;
+  @Input() userData: UserInfo;
 
   private readonly _CLASSES_COLUMNS = ['code', 'groupKey', 'type'];
   private readonly _COURSES_COLUMNS = ['code', 'courseName'];
@@ -26,15 +32,19 @@ export class ItemUserDataComponent implements OnInit {
   }
 
   get userDescriptor(): string {
-    return `${this.userData.degree} ${this.userData.firstName} ${this.userData.lastName}`;
+    if (this.userData.details) {
+      return `${this.userData.details.degree} ${this.userData.details.firstName} ${this.userData.details.lastName}`;
+    } else {
+      return ``;
+    }
   }
 
   get userCourses(): Array<Course> {
-    return this.userData.courses || [];
+    return this.userData.details?.courses || [];
   }
 
   get userClasses(): Array<Classes> {
-    return this.userData.classes || [];
+    return this.userData.details?.classes || [];
   }
 
   get classesColumns(): Array<string> {
@@ -48,16 +58,16 @@ export class ItemUserDataComponent implements OnInit {
   public openEditUserModal(): void {
     this.dialog.open(EditUserModalComponent, {
       width: '400px',
-      data: this.userData
+      data: this.userData.details
     });
   }
 
   public openEditRoleModal(): void {
-    this._authService.getUserDescriptor(this.userData.username)
+    this._authService.getUserAccount(this.userData.username)
       .pipe(
         map((userData) => {
           if (userData.success) {
-            return userData.result.role.name;
+            return userData.result.role?.name || undefined;
           } else {
             throwError('No such user');
           }

@@ -18,6 +18,9 @@
           <div *ngIf="userRoleForm.hasError('updateError')" class="mat-error">
             Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie później.
           </div>
+          <div *ngIf="!!message">
+            {{ message }}
+          </div>
         </div>
       </mat-card-content>
       <mat-card-actions fxLayoutAlign="center">

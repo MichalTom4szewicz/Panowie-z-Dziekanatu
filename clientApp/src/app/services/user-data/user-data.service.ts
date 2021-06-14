@@ -24,8 +24,12 @@ export class UserDataService {
     return this._http.get(UserDataService.USER_DATA_URL + '/all') as Observable<User[]>;
   }
 
-  public getUserDescriptor(username: string): Observable<any> {
+  public getUserAccount(username: string): Observable<any> {
     return this._http.get(CommunicationConstants.getFullAuthApiAddress('/user/'.concat(username)));
+  }
+
+  public getAllUserAccounts(): Observable<any> {
+    return this._http.get(CommunicationConstants.getFullAuthApiAddress('/users'));
   }
 
   public updateUserRole(username: string, role: string): Observable<any> {

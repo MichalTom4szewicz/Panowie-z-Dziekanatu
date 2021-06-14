@@ -69,9 +69,9 @@ export class AuthenticationService {
       }));
   }
 
-  public createAccount(username: string, password: string): Observable<boolean> {
+  public createAccount(username: string, password: string, role?: string): Observable<boolean> {
     return this.http.post(AuthenticationService.CREATE_ACCOUNT_URL, {
-      user: { username, password }
+      user: { username, password, role }
     }).pipe(map((serviceResponse: any) => !!serviceResponse.success));
   }
 }
