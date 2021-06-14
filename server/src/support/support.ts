@@ -101,7 +101,7 @@ export function processCollisions(newItems: Class[], conflit: boolean):Array<Cla
 }
 
 export function listCollisions(newItems: any): object {
-    const processedItems = processCollisions(newItems, true);
+    const processedItems = processCollisions(newItems, false);
 
     // array of map items
     let tmpMap = [];
@@ -111,7 +111,7 @@ export function listCollisions(newItems: any): object {
             let newMapValue = []
             for(let k=0; k< processedItems.length; k++) {
                 for(let l=0; l< processedItems[k].length; l++) {
-                    if(i !== k && j !== l && classesCollide(item, processedItems[k][l], true)) {
+                    if(processedItems[k][l] !== item && classesCollide(item, processedItems[k][l], true)) {
                         newMapValue.push([k, l]);
                     }
                 }
@@ -129,6 +129,7 @@ export function listCollisions(newItems: any): object {
     for(let i=0; i < tmpMap.length; i++) {
         map.push({key:tmpMap[i][1].groupKey, value: tmpMap[i][2]});
     }
+
     return map
 }
 
