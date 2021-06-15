@@ -1,0 +1,41 @@
+<div>
+  <form [formGroup]="userDataForm" (ngSubmit)="onSubmit()">
+    <mat-card fxLayout="column" class="mat-elevation-z0" fxFlex="100">
+      <mat-card-header fxFlex="80">
+        <mat-card-title>Edytuj dane</mat-card-title>
+        <mat-card-subtitle>Edytuj dane użytkownika.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center" >
+        <div fxLayout="column" fxFlex="80">
+          <mat-form-field>
+            <mat-label>Imię</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Nazwisko</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Stopień naukowy</mat-label>
+            <mat-select formControlName="degree" [(value)]="selected">
+              <mat-option *ngFor="let degree of degrees" [value]="degree">
+                {{ degree }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="userDataForm.hasError('updateError')" class="mat-error">
+            Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie później.
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions fxLayoutAlign="center">
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="warn" (click)="reset()" type="button">Reset</button>
+        </div>
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="primary" type="submit" (click)="onSubmit()">Zapisz</button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

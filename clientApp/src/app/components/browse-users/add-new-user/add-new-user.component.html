@@ -1,0 +1,57 @@
+<div>
+  <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
+    <mat-card fxLayout="column" class="mat-elevation-z0" fxFlex="100">
+      <mat-card-header fxFlex="80">
+        <mat-card-title>Nowe konto użytkownika</mat-card-title>
+        <mat-card-subtitle>Dodaj konto użytkownika.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content fxLayoutAlign="center center" >
+        <div fxLayout="column" fxFlex="80">
+          <mat-form-field>
+            <mat-label>Nazwa użytkownika</mat-label>
+            <input matInput formControlName="username">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Hasło</mat-label>
+            <input matInput formControlName="password" type="password">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Potwierdź hasło</mat-label>
+            <input matInput formControlName="confirmPassword" type="password">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Rola</mat-label>
+            <mat-select formControlName="role" [(value)]="selectedValue">
+              <mat-option *ngFor="let role of userRoles" [value]="role">
+                {{ role.displayName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="username.invalid && username.touched" class="mat-error">
+            Wpisz poprawną nazwę użytkownika
+          </div>
+          <div *ngIf="password.invalid && password.touched" class="mat-error">
+            Wpisz poprawne hasło
+          </div>
+          <div *ngIf="addUserForm.hasError('notIdentical') && confirmPassword.touched" class="mat-error">
+            Hasła nie zgadzają się
+          </div>
+          <div *ngIf="addUserForm.hasError('roleInvalid') && role.touched" class="mat-error">
+            Wybierz poprawną rolę
+          </div>
+          <div *ngIf="!!message" class="mat-error">
+            {{message}}
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions fxLayoutAlign="center">
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="warn" (click)="reset()" type="button">Reset</button>
+        </div>
+        <div fxFlex="30" fxLayoutAlign="center">
+          <button mat-raised-button color="primary" type="submit">Zapisz</button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div>

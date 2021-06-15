@@ -170,6 +170,15 @@ coursesRouter.get('/', async (request: Request, response: Response) => {
   return response.status(200).json(courses)
 })
 
+
+coursesRouter.get('/all', async (request: Request, response: Response) => {
+  const connection = await getConnection();
+  const coursesRepository = connection.getRepository(Course)
+
+  const courses = await coursesRepository.find({relations: ['supervisor']});
+  return response.status(200).json(courses)
+})
+
 coursesRouter.put('/', async (request: Request, response: Response) => {
   const object = request.body.object;
   const courseKey = request.query.courseKey as string;

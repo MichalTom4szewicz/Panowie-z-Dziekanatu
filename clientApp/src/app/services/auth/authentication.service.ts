@@ -26,6 +26,18 @@ export class AuthenticationService {
     return '';
   }
 
+  public static hasRole(role: UserRole): boolean {
+    const decodedToken = AuthenticationService.decodeToken();
+    return decodedToken && decodedToken.role.name === role;
+  }
+
+  public static getUsername(): string {
+    const token = AuthenticationService.decodeToken();
+    return token && token.username
+      ? token.username
+      : undefined;
+  }
+
   public isAuthenticated(): boolean {
     const decodedToken = AuthenticationService.decodeToken();
     if (decodedToken) {
@@ -38,12 +50,6 @@ export class AuthenticationService {
     return false;
   }
 
-  hasRole(role: UserRole): boolean {
-    const decodedToken = AuthenticationService.decodeToken();
-    console.log(decodedToken);
-    return decodedToken && decodedToken.role.name === role;
-  }
-
   public setToken(token: string): void {
     LocalStorageService.setToken(token);
   }
@@ -53,18 +59,19 @@ export class AuthenticationService {
   }
 
   public logIn(username: string, password: string): Observable<string | null> {
-		return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
+    return this.http.post(AuthenticationService.AUTHENTICATE_URL, {
         username, password
       }).pipe(map((tokenResponse: any) => {
         return tokenResponse.success && tokenResponse.token
           ? tokenResponse.token
           : null;
       }));
-	}
+  }
 
-  public createAccount(username: string, password: string): Observable<boolean> {
+  public createAccount(username: string, password: string, role?: string): Observable<boolean> {
+    const newRole = role || 'USER';
     return this.http.post(AuthenticationService.CREATE_ACCOUNT_URL, {
-      user: { username, password }
+      user: { username, password, role: newRole }
     }).pipe(map((serviceResponse: any) => !!serviceResponse.success));
   }
 }

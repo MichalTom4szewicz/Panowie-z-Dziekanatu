@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../../services/auth/authentication.service';
 import {Router} from '@angular/router';
+import {UserRole} from '../../enums/user-role.enum';
 
 @Component({
   selector: 'pzd-toolbar',
@@ -16,5 +17,9 @@ export class ToolbarComponent implements OnInit {
   async logOut(): Promise<void> {
     this._authService.logOut();
     await this._router.navigate(['login']);
+  }
+
+  isAdmin(): boolean {
+    return AuthenticationService.hasRole(UserRole.GOD);
   }
 }

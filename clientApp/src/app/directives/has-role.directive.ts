@@ -7,10 +7,10 @@ import {AuthenticationService} from '../services/auth/authentication.service';
 })
 export class HasRoleDirective extends NgIf {
   @Input() set pzdHasRole(role: any) {
-    this.ngIf = this.authService.hasRole(role);
+    this.ngIf = AuthenticationService.hasRole(role);
   }
 
-  constructor(private authService: AuthenticationService, viewContainer: ViewContainerRef, templateRef: TemplateRef<any>) {
+  constructor(viewContainer: ViewContainerRef, templateRef: TemplateRef<any>) {
     super(viewContainer, templateRef);
   }
 }

@@ -4,19 +4,24 @@ import {EncryptionHelper} from "../helpers/EncryptionHelper";
 import {SqliteConnection} from "../database/SqliteConnection";
 import {BaseController} from "./BaseController";
 import {User} from "../database/entities/User";
-import {PermissionAccessHelper} from "../helpers/PermissionAccessHelper";
-import {Permission} from "../dataModel/Permission";
+import {RoleRepository} from '../repositories/RoleRepository';
+import {UserRole} from '../database/entities/UserRole';
 
 export class UsersController extends BaseController {
-  constructor(private usersRepository: UsersRepository) {
+  constructor(private usersRepository: UsersRepository, private _roleRepository: RoleRepository) {
     super();
   }
 
   public async addUser(request: Request, response: Response): Promise<Response> {
     const user: TokenContent = request.body.user;
+    const role = request.body.user.role;
+    const userRole = role
+      ? await this._roleRepository.getRoleByName(role)
+      : null;
+    console.log(userRole);
     if (user) {
       user.password = await EncryptionHelper.encryptPassword(user.password);
-      await this.usersRepository.addUser(user);
+      await this.usersRepository.addUser(user, userRole);
       return response.status(200).json({
         success: true
       });
@@ -50,6 +55,7 @@ export class UsersController extends BaseController {
   public async getUserById(request: Request, response: Response): Promise<Response> {
     try {
       const userId = request.params.id as string;
+      console.log(userId);
       if (userId) {
         const user = await this.usersRepository.getUserById(userId);
         const result = {
@@ -68,6 +74,7 @@ export class UsersController extends BaseController {
         })
       }
     } catch (e) {
+      console.log(e);
       return response.status(200).json({
         success: false,
         result: null
@@ -75,15 +82,68 @@ export class UsersController extends BaseController {
     }
   }
 
+  public async updateUserRole(req: Request, res: Response): Promise<Response> {
+    try {
+      const username: string = req.body.username;
+      const roleName: string = req.body.role;
+      const role: UserRole = await this._roleRepository.getRoleByName(roleName);
+      if (username && role) {
+        const result = await this.usersRepository.updateUserRole(username, role);
+        return res.status(200).json({
+          success: result
+        });
+      } else {
+        return res.status(400);
+      }
+    } catch (e) {
+      console.error(e.message);
+      return res.status(500);
+    }
+  }
+
+  public async deleteUser(req: Request, res: Response) {
+    try {
+      const username = req.params.username;
+      await this.usersRepository.deleteUser(username);
+      return res.status(200).json({
+        success: true
+      });
+    } catch (e) {
+      return res.status(200).json({
+        success: false
+      });
+    }
+  }
+
   public static addRouterPaths(router: Router): void {
     router.post('/user', async (req: Request, res: Response) => {
-      return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).addUser(req, res);
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).addUser(req, res);
     });
     router.get('/user/:id', async (req: Request, res: Response) => {
-        return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).getUserById(req, res);
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).getUserById(req, res);
     });
     router.get('/users', async (req: Request, res: Response) => {
-      return new UsersController(new UsersRepository(await SqliteConnection.getConnection())).getUsers(req, res);
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).getUsers(req, res);
     });
+    router.put('/role/update', async (req: Request, res: Response) => {
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).updateUserRole(req, res);
+    });
+    router.delete('/:username',  async (req: Request, res: Response) => {
+      return new UsersController(
+        new UsersRepository(await SqliteConnection.getConnection()),
+        new RoleRepository(await SqliteConnection.getConnection())
+      ).deleteUser(req, res)});
   }
 }

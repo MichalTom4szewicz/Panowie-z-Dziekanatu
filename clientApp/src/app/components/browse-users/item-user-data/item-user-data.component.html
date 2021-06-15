@@ -1,0 +1,67 @@
+<mat-expansion-panel class="mat-elevation-z2">
+  <mat-expansion-panel-header>
+    <mat-panel-title fxFlex="30">
+      {{userData.username}}
+    </mat-panel-title>
+    <mat-panel-description>
+      {{userDescriptor}}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div fxLayout="column">
+    <div fxLayout="row" fxLayoutAlign="start">
+      <button style="margin: .5em" mat-raised-button color="primary" (click)="openEditUserModal()">Edytuj dane</button>
+      <button style="margin: .5em" mat-raised-button color="primary" (click)="openEditRoleModal()">Zmień rolę</button>
+      <button style="margin: .5em" mat-raised-button color="warn" (click)="deleteUser()">Usuń użytkownika</button>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="50">
+        <mat-expansion-panel class="mat-elevation-z0" [disabled]="userCourses.length === 0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Prowadzone kursy ({{userCourses.length}})
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table mat-table [dataSource]="userCourses" fxFlex="100">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Kod kursu</th>
+              <td mat-cell *matCellDef="let element;">{{element.courseKey}}</td>
+            </ng-container>
+            <ng-container matColumnDef="courseName">
+              <th mat-header-cell *matHeaderCellDef>Nazwa kursu</th>
+              <td mat-cell *matCellDef="let element;">{{element.name}}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="coursesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: coursesColumns;"></tr>
+          </table>
+        </mat-expansion-panel>
+      </div>
+      <div fxFlex="50">
+        <mat-expansion-panel class="mat-elevation-z0" [disabled]="userClasses.length === 0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Prowadzone zajęcia ({{userClasses.length}})
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table mat-table [dataSource]="userClasses" fxFlex="100">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Kod kursu</th>
+              <td mat-cell *matCellDef="let element;">{{element.course.courseKey}}</td>
+            </ng-container>
+            <ng-container matColumnDef="groupKey">
+              <th mat-header-cell *matHeaderCellDef>Kod grupy</th>
+              <td mat-cell *matCellDef="let element;">{{element.groupKey}}</td>
+            </ng-container>
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Typ zajęć</th>
+              <td mat-cell *matCellDef="let element;">{{element.typ}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="classesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: classesColumns;"></tr>
+          </table>
+        </mat-expansion-panel>
+      </div>
+    </div>
+  </div>
+
+</mat-expansion-panel>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ClassesStatusEnum } from 'src/app/enums/classes-status-enum';
 import { ClassesWithStatus } from 'src/app/helpers/classes-with-status';
 
@@ -13,7 +13,6 @@ export class ClassesDetailsDialogComponent implements OnInit {
   public classes: ClassesWithStatus;
 
   constructor(
-    public dialogRef: MatDialogRef<ClassesDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private input: ClassesWithStatus
   ) {}
 

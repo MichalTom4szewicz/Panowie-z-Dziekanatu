@@ -21,7 +21,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatRippleModule } from '@angular/material/core'; 
+import { MatRippleModule } from '@angular/material/core';
 
 import { ClassesComponent } from './components/common/classes/classes.component';
 import { ClassGridDayComponent } from './components/enrollment-for-classes/class-grid-day/class-grid-day.component';
@@ -45,8 +45,14 @@ import { HasRoleDirective } from './directives/has-role.directive';
 import { ClassesOverviewComponent } from './components/classes-overview/classes-overview.component';
 import { ClassesScheduleComponent } from './components/common/classes-schedule/classes-schedule.component';
 import { TokenInterceptor } from './interceptor/token.interceptor';
+import { EditUserDataComponent } from './components/edit-user-data/edit-user-data.component';
 import { ClassesDetailsDialogComponent } from './components/common/classes/classes-details-dialog/classes-details-dialog.component';
 import { ClassesContentComponent } from './components/common/classes/classes-content/classes-content.component';
+import { BrowseUsersComponent } from './components/browse-users/browse-users.component';
+import { ItemUserDataComponent } from './components/browse-users/item-user-data/item-user-data.component';
+import { EditUserModalComponent } from './components/browse-users/edit-user-modal/edit-user-modal.component';
+import { ChangeRoleModalComponent } from './components/browse-users/change-role-modal/change-role-modal.component';
+import { AddNewUserComponent } from './components/browse-users/add-new-user/add-new-user.component';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -72,7 +78,13 @@ import { ClassesContentComponent } from './components/common/classes/classes-con
 		CreateUserComponent,
 		HasRoleDirective,
 		ClassesDetailsDialogComponent,
-		ClassesContentComponent
+		ClassesContentComponent,
+		BrowseUsersComponent,
+    EditUserDataComponent,
+    ItemUserDataComponent,
+    EditUserModalComponent,
+    ChangeRoleModalComponent,
+    AddNewUserComponent
 	],
 	imports: [
 		BrowserModule,

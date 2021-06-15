@@ -7,7 +7,11 @@ export class Role {
   constructor(private _id: number, private _name: string) {}
 
   public static getById(id: number): Role {
-    return Role._VALUES.find((value: Role) => value._id === id);
+    return Role.values.find((value: Role) => value._id === id);
+  }
+
+  public static getByName(name: string): Role {
+    return Role.values.find((value: Role) => value._name === name);
   }
 
   public static get values(): Role[] {

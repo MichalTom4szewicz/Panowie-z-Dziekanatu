@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Course } from 'src/app/domain/course';
-import { CourseService } from 'src/app/services/course/course.service';
-import { CourseUtils } from 'src/app/utils/course-utils';
-import { UserUtils } from 'src/app/utils/user-utils';
-import { ManageCoursesDialogComponent } from './manage-courses-dialog/manage-courses-dialog.component';
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Course} from 'src/app/domain/course';
+import {CourseService} from 'src/app/services/course/course.service';
+import {CourseUtils} from 'src/app/utils/course-utils';
+import {UserUtils} from 'src/app/utils/user-utils';
+import {ManageCoursesDialogComponent} from './manage-courses-dialog/manage-courses-dialog.component';
+import {AuthenticationService} from '../../services/auth/authentication.service';
+import {UserRole} from '../../enums/user-role.enum';
 
 @Component({
   selector: 'pzd-supervisor',
@@ -12,14 +14,17 @@ import { ManageCoursesDialogComponent } from './manage-courses-dialog/manage-cou
   styleUrls: ['./supervisor.component.sass']
 })
 export class SupervisorComponent implements OnInit {
-  panelOpenState = false;
   coursesList: CourseDisplay[] = [];
-  addButton: boolean = true;
+  addButton = true;
 
   constructor(public dialog: MatDialog, private courseService: CourseService) { }
 
   ngOnInit(): void {
-    this.courseService.getCourses().subscribe(list => this.coursesList = list.map(element => this.getCourseDisplay(element)));
+    if (AuthenticationService.hasRole(UserRole.GOD)) {
+      this.courseService.getAllCourses().subscribe(list => this.coursesList = list.map(element => this.getCourseDisplay(element)));
+    } else {
+      this.courseService.getCourses().subscribe(list => this.coursesList = list.map(element => this.getCourseDisplay(element)));
+    }
   }
 
   public displayUser(course: Course): string {
@@ -62,7 +67,7 @@ export class SupervisorComponent implements OnInit {
   }
 
   public delete(element: Course): void {
-    this.courseService.deleteCourse(element).subscribe(() => 
+    this.courseService.deleteCourse(element).subscribe(() =>
       this.coursesList = this.coursesList.filter(i => i.course.courseKey !== element.courseKey)
     );
   }
